@@ -110,9 +110,11 @@ type
                                        anArchiveFileName: String): IWcxArchiveFileSource;
     class function CreateByArchiveType(anArchiveFileSource: IFileSource;
                                        anArchiveFileName: String;
-                                       anArchiveType: String): IWcxArchiveFileSource;
+                                       anArchiveType: String;
+                                       bIncludeHidden: Boolean = False): IWcxArchiveFileSource;
     class function CreateByArchiveName(anArchiveFileSource: IFileSource;
-                                       anArchiveFileName: String): IWcxArchiveFileSource;
+                                       anArchiveFileName: String;
+                                       bIncludeHidden: Boolean = False): IWcxArchiveFileSource;
     {en
        Returns @true if there is a plugin registered for the archive type
        (only extension is checked).
@@ -149,6 +151,7 @@ uses
   LazUTF8, uDebug, DCStrUtils, uDCUtils, uGlobs, DCOSUtils, uOSUtils, uShowMsg,
   DCDateTimeUtils, uLng, uLog,
   DCConvertEncoding,
+  DCFileAttributes,
   FileUtil, uCryptProc,
   uWcxArchiveListOperation,
   uWcxArchiveCopyInOperation,
@@ -343,9 +346,8 @@ begin
 end;
 
 class function TWcxArchiveFileSource.CreateByArchiveType(
-    anArchiveFileSource: IFileSource;
-    anArchiveFileName: String;
-    anArchiveType: String): IWcxArchiveFileSource;
+  anArchiveFileSource: IFileSource; anArchiveFileName: String;
+  anArchiveType: String; bIncludeHidden: Boolean): IWcxArchiveFileSource;
 var
   i: Integer;
   ModuleFileName: String;
@@ -356,7 +358,7 @@ begin
   for i := 0 to gWCXPlugins.Count - 1 do
   begin
     if SameText(anArchiveType, gWCXPlugins.Ext[i]) and (gWCXPlugins.Enabled[i]) and
-       ((gWCXPlugins.Flags[I] and PK_CAPS_HIDE) <> PK_CAPS_HIDE) then
+       ((bIncludeHidden) or ((gWCXPlugins.Flags[I] and PK_CAPS_HIDE) <> PK_CAPS_HIDE)) then
     begin
       ModuleFileName := GetCmdDirFromEnvVar(gWCXPlugins.FileName[I]);
 
@@ -372,11 +374,12 @@ begin
 end;
 
 class function TWcxArchiveFileSource.CreateByArchiveName(
-    anArchiveFileSource: IFileSource;
-    anArchiveFileName: String): IWcxArchiveFileSource;
+  anArchiveFileSource: IFileSource; anArchiveFileName: String;
+  bIncludeHidden: Boolean): IWcxArchiveFileSource;
 begin
   Result:= CreateByArchiveType(anArchiveFileSource, anArchiveFileName,
-                               ExtractOnlyFileExt(anArchiveFileName));
+                               ExtractOnlyFileExt(anArchiveFileName),
+                               bIncludeHidden);
 end;
 
 class function TWcxArchiveFileSource.CheckPluginByExt(anArchiveType: String): Boolean;
@@ -479,7 +482,7 @@ begin
       end;
     ModificationTimeProperty := TFileModificationDateTimeProperty.Create(0);
     try
-      ModificationTime := WcxFileTimeToDateTime(WcxHeader);
+      ModificationTime := WcxFileTimeToDateTime(WcxHeader.FileTime);
     except
       on EConvertError do;
     end;
@@ -701,7 +704,7 @@ begin
         if (NameLength > 0) and (Header.FileName[NameLength] = PathDelim) then
         begin
           Delete(Header.FileName, NameLength, 1);
-          Header.FileAttr := Header.FileAttr or faFolder;
+          Header.FileAttr := Header.FileAttr or GENERIC_ATTRIBUTE_FOLDER;
         end;
 
         //**********************************************************************
@@ -739,7 +742,7 @@ begin
           try
             Header.FileName := AllDirsList.List[I]^.Key;
             Header.ArcName  := ArchiveFileName;
-            Header.FileAttr := faFolder;
+            Header.FileAttr := GENERIC_ATTRIBUTE_FOLDER;
 {$IFDEF MSWINDOWS}
             WinToDosTime(mbFileAge(ArchiveFileName), Header.FileTime);
 {$ELSE}

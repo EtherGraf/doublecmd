@@ -18,9 +18,10 @@ unit fMultiRename;
 interface
 
 uses
-  LazUtf8, SysUtils, Classes, Graphics, Forms, StdCtrls, Menus, SynRegExpr,
+  LazUtf8, SysUtils, Classes, Graphics, Forms, StdCtrls, Menus, RegExpr,
   Controls, LCLType, DCClassesUtf8, uClassesEx, uFile, uFileSource,
-  StringHashList, Grids, ExtCtrls, Buttons, DCXmlConfig, uOSForms;
+  StringHashList, Grids, ExtCtrls, Buttons, DCXmlConfig, uOSForms,
+  uFileProperty, uFileSourceSetFilePropertyOperation;
 
 type
 
@@ -140,7 +141,7 @@ type
     procedure btnRestoreClick(Sender: TObject);
     procedure btnNameMenuClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure FormShow(Sender: TObject);
+    procedure RestoreProperties(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure miDay1Click(Sender: TObject);
     procedure miDay2Click(Sender: TObject);
@@ -174,9 +175,11 @@ type
     FFileSource: IFileSource;
     FFiles: TFiles;
     FPresets: TStringHashList; // of PMultiRenamePreset
+    FNewNames: TStringHashList;
     FSourceRow: Integer;
     FMoveRow : Boolean;
     FNames: TStringList;
+    FLog: TStringListEx;
 
     {Handles a single formatting string}
     function sHandleFormatString(const sFormatStr: string; ItemNr: Integer): string;
@@ -219,15 +222,11 @@ type
     procedure ClearPresetsList;
     {Load names from file}
     procedure LoadNamesFromFile(const AFileName: String);
+    procedure SetFilePropertyResult(Index: Integer; aFile: TFile; aTemplate: TFileProperty; Result: TSetFilePropertyResult);
   public
     { Public declarations }
     constructor Create(TheOwner: TComponent; aFileSource: IFileSource; var aFiles: TFiles); reintroduce;
     destructor Destroy; override;
-
-    // Temporary for switching configuration from INI to XML
-    procedure PublicSavePresets;
-    procedure LoadPresetsIni(IniFile: TIniFileEx);
-    procedure SavePresetsIni(IniFile: TIniFileEx);
   end;
 
 {initialization function}
@@ -239,8 +238,9 @@ implementation
 
 uses
   uDebug, uLng, uGlobs, uFileProcs, DCOSUtils, DCStrUtils,
-  fSelectTextRange, uShowMsg, uFileSourceUtil, uFileProperty, uFileFunctions,
-  dmCommonData, fMultiRenameWait, uOSUtils;
+  fSelectTextRange, uShowMsg, uFileSourceUtil, uFileFunctions,
+  dmCommonData, fMultiRenameWait, uOSUtils, uFileSourceOperation,
+  uOperationsManager, Dialogs;
 
 const
   sPresetsSection = 'MultiRenamePresets';
@@ -262,6 +262,7 @@ constructor TfrmMultiRename.Create(TheOwner: TComponent; aFileSource: IFileSourc
 begin
   FNames := TStringList.Create;
   FPresets := TStringHashList.Create(False);
+  FNewNames:= TStringHashList.Create(FileNameCaseSensitive);
   FFileSource := aFileSource;
   FFiles := aFiles;
   aFiles := nil;
@@ -275,6 +276,7 @@ begin
   inherited Destroy;
   ClearPresetsList;
   FreeAndNil(FPresets);
+  FreeAndNil(FNewNames);
   FreeAndNil(FFiles);
   FreeAndNil(FNames);
 end;
@@ -291,6 +293,7 @@ begin
 
   // Initialize property storage
   IniPropStorage:= InitPropStorage(Self);
+  IniPropStorage.OnRestoreProperties:= @RestoreProperties;
   IniPropStorage.StoredValues.Add.DisplayName:= 'lsvwFile_Columns.Item0_Width';
   IniPropStorage.StoredValues.Add.DisplayName:= 'lsvwFile_Columns.Item1_Width';
   IniPropStorage.StoredValues.Add.DisplayName:= 'lsvwFile_Columns.Item2_Width';
@@ -305,7 +308,7 @@ begin
   LoadPreset(FLastPreset);
 end;
 
-procedure TfrmMultiRename.FormShow(Sender: TObject);
+procedure TfrmMultiRename.RestoreProperties(Sender: TObject);
 begin
   with StringGrid.Columns do
   begin
@@ -440,8 +443,8 @@ begin
     Result:=StringReplace(Result,edFind.Text,edReplace.Text,[rfReplaceAll,rfIgnoreCase]);
 
   // File name style
-  sTmpName := ExtractOnlyFileName(Result);
   sTmpExt  := ExtractFileExt(Result);
+  sTmpName := Copy(Result, 1, Length(Result) - Length(sTmpExt));
 
   sTmpName := ApplyStyle(sTmpName, cmbNameStyle.ItemIndex);
   sTmpExt  := ApplyStyle(sTmpExt, cmbExtensionStyle.ItemIndex);
@@ -923,14 +926,17 @@ var
   MenuItem: TMenuItem absolute Sender;
 begin
   case MenuItem.Tag of
-    0:  begin
-          sMask := '[=DC().' + MenuItem.Hint + '{}]';
-        end;
+    0: begin
+         sMask := '[=DC().' + MenuItem.Hint + '{}]';
+       end;
     1: begin
-          sMask := '[=Plugin(' + MenuItem.Parent.Caption + ').' + MenuItem.Caption + '{}]';
+         sMask := '[=Plugin(' + MenuItem.Parent.Caption + ').' + MenuItem.Caption + '{}]';
        end;
     2: begin
-          sMask := '[=Plugin(' + MenuItem.Parent.Parent.Caption + ').' + MenuItem.Parent.Caption + '{' + MenuItem.Caption + '}]';
+         sMask := '[=Plugin(' + MenuItem.Parent.Parent.Caption + ').' + MenuItem.Parent.Caption + '{' + MenuItem.Caption + '}]';
+       end;
+    3: begin
+         sMask := '[=DC().' + MenuItem.Parent.Hint + '{' + MenuItem.Hint + '}]';
        end;
   end;
   InsertMask(sMask, ppNameMenu.Tag);
@@ -956,50 +962,103 @@ begin
   Close;
 end;
 
+procedure TfrmMultiRename.SetFilePropertyResult(Index: Integer; aFile: TFile;
+  aTemplate: TFileProperty; Result: TSetFilePropertyResult);
+var
+  S: String;
+begin
+  with TFileNameProperty(aTemplate) do
+  begin
+    case Result of
+      sfprSuccess:
+        begin
+          S:= 'OK      ' + aFile.Name + ' -> ' + Value;
+          FFiles[Index].Name := Value; // Write new name to the file object
+        end;
+      sfprError: S:= 'FAILED  ' + aFile.Name + ' -> ' + Value;
+      sfprSkipped: S:= 'SKIPPED ' + aFile.Name + ' -> ' + Value;
+    end;
+  end;
+  if cbLog.Checked then FLog.Add(S);
+end;
+
 procedure TfrmMultiRename.RenameFiles;
 var
-  hFile: THandle;
-  c: Integer;
-  sNewName,
-  sResult: String;
+  AFile: TFile;
+  NewName: String;
+  I, J, K: Integer;
+  OldFiles, NewFiles: TFiles;
+  AutoRename: Boolean = False;
+  Operation: TFileSourceOperation;
+  theNewProperties: TFileProperties;
 begin
+  if cbLog.Checked then
+  begin
+    if edFile.Text = EmptyStr then
+      edFile.Text:= FFiles[0].Path + 'default.log';
+    mbForceDirectory(ExtractFileDir(edFile.Text));
+    FLog:= TStringListEx.Create;
+  end;
+
+  OldFiles:= FFiles.Clone;
+  NewFiles:= TFiles.Create(EmptyStr);
+
   try
-    if cbLog.Checked then
+    FNewNames.Clear;
+    for I:= 0 to FFiles.Count - 1 do
     begin
-      if edFile.Text = EmptyStr then
-        edFile.Text:= FFiles[0].Path + 'default.log';
-      mbForceDirectory(ExtractFileDir(edFile.Text));
-
-      if mbFileExists(edFile.Text) then
+      AFile:= TFile.Create(EmptyStr);
+      AFile.Name:= FreshText(I);
+      // Checking duplicates
+      NewName:= FFiles[I].Path + AFile.Name;
+      J:= FNewNames.Find(NewName);
+      if J < 0 then
+        FNewNames.Add(NewName)
+      else begin
+        if not AutoRename then
         begin
-          hFile:= mbFileOpen(edFile.Text, fmOpenReadWrite);
-          FileTruncate(hFile, 0);
-        end
-      else
-        begin
-          hFile:= mbFileCreate(edFile.Text);
+          if MessageDlg(rsMulRenWarningDuplicate + LineEnding +
+                     NewName + LineEnding + LineEnding + rsMulRenAutoRename,
+                     mtWarning, [mbYes, mbAbort], 0, mbAbort) <> mrYes then Exit;
+          AutoRename:= True;
         end;
+        K:= 1;
+        while J >= 0 do
+        begin
+          NewName:= FFiles[I].Path + AFile.NameNoExt + ' (' + IntToStr(K) + ')';
+          if AFile.Extension <> '' then
+            NewName:= NewName + ExtensionSeparator + AFile.Extension;
+          J:= FNewNames.Find(NewName);
+          Inc(K);
+        end;
+        FNewNames.Add(NewName);
+        AFile.Name:= ExtractFileName(NewName);
+      end;
+      NewFiles.Add(AFile);
     end;
-    for c:= 0 to FFiles.Count - 1 do
+    FillChar({%H-}theNewProperties, SizeOf(TFileProperties), 0);
+    Operation:= FFileSource.CreateSetFilePropertyOperation(OldFiles, theNewProperties);
+    if Assigned(Operation) then
     begin
-      sResult:= FFiles[c].Name;
-      sNewName:= FreshText(c);
-      if RenameFile(FFileSource, FFiles[c], sNewName, True) = True then
-        begin
-          FFiles[c].Name := sNewName; // Write new name to the file object
-          sResult := 'OK    ' + sResult + ' -> ' + sNewName;
-        end
-      else
-        begin
-          sResult := 'FAILED' + sResult + ' -> ' + sNewName;
-        end;
-
-      if cbLog.Checked then
-        FileWriteLn(hFile, sResult);
+      with Operation as TFileSourceSetFilePropertyOperation do
+      begin
+        SetTemplateFiles(NewFiles);
+        OnSetFilePropertyResult:= @SetFilePropertyResult;
+      end;
+      OperationsManager.AddOperationModal(Operation);
     end;
   finally
     if cbLog.Checked then
-      FileClose(hFile);
+    begin
+      try
+        FLog.SaveToFile(edFile.Text);
+      except
+        on E: Exception do msgError(E.Message);
+      end;
+      FLog.Free;
+    end;
+    OldFiles.Free;
+    NewFiles.Free;
   end;
 
   StringGridTopLeftChanged(StringGrid);
@@ -1083,52 +1142,7 @@ end;
 
 procedure TfrmMultiRename.LoadPresets;
 begin
-  if Assigned(gIni) then
-    LoadPresetsIni(gIni)
-  else
-    LoadPresetsXml(gConfig);
-end;
-
-procedure TfrmMultiRename.LoadPresetsIni(IniFile: TIniFileEx);
-var
-  i: Integer;
-  PresetIndex: Integer;
-  PresetName: String;
-  sPresetNr: String;
-  PresetsCount: Integer;
-begin
-  ClearPresetsList;
-
-  FLastPreset := IniFile.ReadString(sPresetsSection, 'LastPreset', '');
-  PresetsCount := IniFile.ReadInteger(sPresetsSection, 'Presets', -1);
-
-  for i := 0 to PresetsCount - 1 do
-  begin
-    sPresetNr := 'Preset' + IntToStr(I + 1);
-
-    PresetName := IniFile.ReadString(sPresetsSection, sPresetNr + 'PresetName', '');
-    if PresetName <> '' then
-    begin
-      PresetIndex := FPresets.Add(PresetName, New(PMultiRenamePreset));
-
-      with PMultiRenamePreset(FPresets.List[PresetIndex]^.Data)^ do
-      begin
-        FileName := IniFile.ReadString(sPresetsSection, sPresetNr + 'Filename', '[N]');
-        Extension := IniFile.ReadString(sPresetsSection, sPresetNr + 'Extension', '[E]');
-        FileNameStyle := IniFile.ReadInteger(sPresetsSection, sPresetNr + 'FilenameStyle', 0);
-        ExtensionStyle := IniFile.ReadInteger(sPresetsSection, sPresetNr + 'ExtensionStyle', 0);
-        Find := IniFile.ReadString(sPresetsSection, sPresetNr + 'Find', '');
-        Replace := IniFile.ReadString(sPresetsSection, sPresetNr + 'Replace', '');
-        RegExp := IniFile.ReadBool(sPresetsSection, sPresetNr + 'RegExp', False);
-        UseSubs := IniFile.ReadBool(sPresetsSection, sPresetNr + 'UseSubs', False);
-        Counter := IniFile.ReadString(sPresetsSection, sPresetNr + 'Counter', '1');
-        Interval := IniFile.ReadString(sPresetsSection, sPresetNr + 'Interval', '1');
-        Width := IniFile.ReadInteger(sPresetsSection, sPresetNr + 'Width', 0);
-        Log := IniFile.ReadBool(sPresetsSection, sPresetNr + 'Log', False);
-        LogFile := IniFile.ReadString(sPresetsSection, sPresetNr + 'LogFile', '');
-      end;
-    end;
-  end;
+  LoadPresetsXml(gConfig);
 end;
 
 procedure TfrmMultiRename.LoadPresetsXml(AConfig: TXmlConfig);
@@ -1181,41 +1195,8 @@ end;
 
 procedure TfrmMultiRename.SavePresets;
 begin
-  if Assigned(gIni) then
-    SavePresetsIni(gIni);
   SavePresetsXml(gConfig);
   gConfig.Save;
-end;
-
-procedure TfrmMultiRename.SavePresetsIni(IniFile: TIniFileEx);
-var
-  i: Integer;
-  sPresetNr: String;
-begin
-  IniFile.EraseSection(sPresetsSection);
-  IniFile.WriteString(sPresetsSection, 'LastPreset', FLastPreset);
-  IniFile.WriteInteger(sPresetsSection, 'Presets', FPresets.Count);
-
-  for i := 0 to FPresets.Count - 1 do
-    with PMultiRenamePreset(FPresets.List[i]^.Data)^ do
-    begin
-      sPresetNr := 'Preset' + IntToStr(I + 1);
-
-      IniFile.WriteString(sPresetsSection, sPresetNr + 'PresetName', FPresets.List[i]^.Key);
-      IniFile.WriteString(sPresetsSection, sPresetNr + 'Filename', FileName);
-      IniFile.WriteString(sPresetsSection, sPresetNr + 'Extension', Extension);
-      IniFile.WriteInteger(sPresetsSection, sPresetNr + 'FilenameStyle', FileNameStyle);
-      IniFile.WriteInteger(sPresetsSection, sPresetNr + 'ExtensionStyle', ExtensionStyle);
-      IniFile.WriteString(sPresetsSection, sPresetNr + 'Find', Find);
-      IniFile.WriteString(sPresetsSection, sPresetNr + 'Replace', Replace);
-      IniFile.WriteBool(sPresetsSection, sPresetNr + 'RegExp', RegExp);
-      IniFile.WriteBool(sPresetsSection, sPresetNr + 'UseSubs', UseSubs);
-      IniFile.WriteString(sPresetsSection, sPresetNr + 'Counter', Counter);
-      IniFile.WriteString(sPresetsSection, sPresetNr + 'Interval', Interval);
-      IniFile.WriteInteger(sPresetsSection, sPresetNr + 'Width', Width);
-      IniFile.WriteBool(sPresetsSection, sPresetNr + 'Log', Log);
-      IniFile.WriteString(sPresetsSection, sPresetNr + 'LogFile', LogFile);
-    end;
 end;
 
 procedure TfrmMultiRename.SavePresetsXml(AConfig: TXmlConfig);
@@ -1355,12 +1336,6 @@ begin
   for i := 0 to FPresets.Count - 1 do
     Dispose(PMultiRenamePreset(FPresets.List[i]^.Data));
   FPresets.Clear;
-end;
-
-// Temporary for switching configuration from INI to XML
-procedure TfrmMultiRename.PublicSavePresets;
-begin
-  SavePresetsXml(gConfig);
 end;
 
 end.

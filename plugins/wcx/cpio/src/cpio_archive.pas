@@ -64,7 +64,7 @@ function  CanYouHandleThisFile(FileName: PAnsiChar): Boolean; dcpcall;
 implementation
 
 uses
-  SysUtils, DCDateTimeUtils, DCBasicTypes;
+  SysUtils, DCDateTimeUtils, DCBasicTypes, DCFileAttributes;
 
 function GetArchiveID(hArcData : THandle) : Integer;
 var
@@ -183,8 +183,8 @@ begin
                 copy_str2buf(TStrBuf(FileName), header.filename);
                 PackSize := header.filesize;
                 UnpSize  := header.filesize;
-                FileAttr := LongInt(header.mode);
-                FileTime := LongInt(UnixFileTimeToDosTime(TUnixFileTime(header.mtime)));
+                FileAttr := UnixToWcxFileAttr(header.mode);
+                FileTime := UnixFileTimeToWcxTime(TUnixFileTime(header.mtime));
               end;{with}
               Result := 0;
               Break;
@@ -322,7 +322,7 @@ begin
             end else
               if not AlignFilePointer(arec^.handle_file, 4) then Result := E_EREAD;
           end;
-          FileSetDate(tfilerec(cpio_file).handle, LongInt(UnixFileTimeToDosTime(TUnixFileTime(head.mtime))));
+          FileSetDate(tfilerec(cpio_file).handle, UnixFileTimeToWcxTime(TUnixFileTime(head.mtime)));
           CloseFile(cpio_file);
           if result<>0 then
             Erase(cpio_file);

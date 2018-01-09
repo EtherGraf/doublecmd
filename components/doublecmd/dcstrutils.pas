@@ -3,7 +3,7 @@
    -------------------------------------------------------------------------
    Useful functions dealing with strings.
    
-   Copyright (C) 2006-2016  Alexander Koblov (alexx2000@mail.ru)
+   Copyright (C) 2006-2017  Alexander Koblov (alexx2000@mail.ru)
    Copyright (C) 2012       Przemyslaw Nagay (cobines@gmail.com)
 
    This program is free software; you can redistribute it and/or modify
@@ -17,8 +17,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software
-   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+   along with this program. If not, see <http://www.gnu.org/licenses/>.
 }
 
 unit DCStrUtils;
@@ -209,6 +208,12 @@ function scopy(IndexBegin,IndexEnd:integer;str:string):string;
 }
 procedure DivFileName(const sFileName:String; out n,e:String);
 {en
+   Split ';' separated path list to array
+   @param(Path Path list to split)
+   @returns(Path array)
+}
+function SplitPath(const Path: String): TDynamicStringArray;
+{en
    Split file mask on name mask and extension mask
    @param(DestMask File mask)
    @param(DestNameMask Name mask)
@@ -242,6 +247,7 @@ procedure StrDisposeW(var pStr : PWideChar);
 function StrLCopyW(Dest, Source: PWideChar; MaxLen: SizeInt): PWideChar;
 function StrPCopyW(Dest: PWideChar; const Source: WideString): PWideChar;
 function StrPLCopyW(Dest: PWideChar; const Source: WideString; MaxLen: Cardinal): PWideChar;
+function RPos(const Substr : UnicodeString; const Source : UnicodeString) : Integer; overload;
 
 {en
    Checks if a string begins with another string.
@@ -317,6 +323,7 @@ procedure SetValue(var anArray: TDynamicStringArray; Key, NewValue: String);
 procedure SetValue(var anArray: TDynamicStringArray; Key: String; NewValue: Boolean);
 function ShortcutsToText(const Shortcuts: TDynamicStringArray): String;
 function GetDateTimeInStrEZSortable(DateTime:TDateTime):string;
+function WrapTextSimple(const S: String; MaxCol: Integer): String;
 
 implementation
 
@@ -469,6 +476,8 @@ begin
 {$ENDIF UNIX}
       Result := ptAbsolute
     else if ( Pos( PathDelim, sPath ) > 0 ) then
+      Result := ptRelative
+    else if (sPath = '..') then
       Result := ptRelative
     else
       Result := ptNone;
@@ -685,6 +694,29 @@ begin
   n:=sFileName;
 end;
 
+function SplitPath(const Path: String): TDynamicStringArray;
+const
+  cDelta = {$IF DEFINED(UNIX)}1{$ELSE}2{$ENDIF};
+  cDelimiter = {$IF DEFINED(UNIX)}'/'{$ELSE}':'{$ENDIF};
+var
+  L, F: Integer;
+  S: Integer = 1;
+begin
+  L:= Length(Path);
+  for F:= 1 to L - cDelta do
+  begin
+    if (Path[F] = ';') and (Path[F + cDelta] = cDelimiter) then
+    begin
+      AddString(Result, Copy(Path, S, F - S));
+      S:= F + 1;
+    end;
+  end;
+  if S <= L then
+  begin
+    AddString(Result, Copy(Path, S, L - S + 1));
+  end;
+end;
+
 procedure SplitFileMask(const DestMask: String; out DestNameMask: String; out DestExtMask: String);
 var
   iPos: LongInt;
@@ -879,6 +911,33 @@ end;
 function StrPLCopyW(Dest: PWideChar; const Source: WideString; MaxLen: Cardinal): PWideChar;
 begin
   Result := StrLCopyW(Dest, PWideChar(Source), MaxLen);
+end;
+
+function RPos(const Substr: UnicodeString; const Source: UnicodeString): Integer;
+var
+  c : WideChar;
+  pc, pc2 : PWideChar;
+  MaxLen, llen : Integer;
+begin
+  Result:= 0;
+  llen:= Length(SubStr);
+  maxlen:= Length(Source);
+  if (llen > 0) and (maxlen > 0) and (llen <= maxlen) then
+   begin
+     pc:= @Source[maxlen];
+     pc2:= @Source[llen - 1];
+     c:= Substr[llen];
+     while pc >= pc2 do
+      begin
+        if (c = pc^) and
+           (CompareByte(Substr[1], PByte(pc - llen + 1)^, llen * SizeOf(WideChar)) = 0) then
+         begin
+           Result:= PWideChar(pc - llen + 1) - PWideChar(@source[1]) + 1;
+           Exit;
+         end;
+        Dec(pc);
+      end;
+   end;
 end;
 
 function StrBegins(const StringToCheck, StringToMatch: String): Boolean;
@@ -1160,8 +1219,20 @@ begin
   result:=Format('%d-%2.2d-%2.2d@%2.2d-%2.2d-%2.2d', [MyYear, MyMonth, MyDay, MyHour, MyMin, MySec]);
 end;
 
-
-
+function WrapTextSimple(const S: String; MaxCol: Integer): String;
+var
+  Len, Index: Integer;
+begin
+  Index:= 1;
+  Result:= EmptyStr;
+  Len:= UTF8Length(S);
+  while (Len > 0) do
+  begin
+    Result:= Result + UTF8Copy(S, Index, MaxCol) + LineEnding;
+    Inc(Index, MaxCol); Dec(Len, MaxCol);
+  end;
+  SetLength(Result, Length(Result) - Length(LineEnding));
+end;
 
 end.
 

@@ -3,8 +3,8 @@
    -------------------------------------------------------------------------
    Directories synchronization utility (specially for DC)
 
-   Copyright (C) 2013  Anton Panferov (ast.a_s@mail.ru)
-   Copyright (C) 2014-2015  Alexander Koblov (alexx2000@mail.ru)
+   Copyright (C) 2013 Anton Panferov (ast.a_s@mail.ru)
+   Copyright (C) 2014-2016 Alexander Koblov (alexx2000@mail.ru)
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -78,6 +78,7 @@ type
     procedure btnCompareClick(Sender: TObject);
     procedure btnSynchronizeClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
     procedure FormCreate(Sender: TObject);
     procedure MainDrawGridDblClick(Sender: TObject);
     procedure MainDrawGridDrawCell(Sender: TObject; aCol, aRow: Integer;
@@ -118,6 +119,7 @@ type
     procedure SortFoundItems;
     procedure SortFoundItems(sl: TStringList);
     procedure UpdateStatusBar;
+    procedure StopCheckContentThread;
     property SortIndex: Integer read FSortIndex write SetSortIndex;
   public
     { public declarations }
@@ -142,7 +144,7 @@ uses
   fMain, uDebug, fDiffer, fSyncDirsPerformDlg, uGlobs, LCLType, LazUTF8, LazFileUtils,
   DCClassesUtf8, uFileSystemFileSource, uFileSourceOperationOptions, DCDateTimeUtils,
   uFileSourceOperation, uDCUtils, uFileSourceUtil, uFileSourceOperationTypes,
-  uShowForm, uFileSourceDeleteOperation, uOSUtils;
+  uShowForm, uFileSourceDeleteOperation, uOSUtils, uLng;
 
 {$R *.lfm}
 
@@ -367,13 +369,8 @@ procedure TfrmSyncDirsDlg.btnCompareClick(Sender: TObject);
 begin
   InsertFirstItem(Trim(cbExtFilter.Text), cbExtFilter);
   StatusBar1.Panels[0].Text := Format(rsComparingPercent, [0]);
-  if Assigned(CheckContentThread) then
-    with TCheckContentThread(CheckContentThread) do
-    begin
-      Terminate;
-      WaitFor;
-    end;
-  Compare
+  StopCheckContentThread;
+  Compare;
 end;
 
 procedure TfrmSyncDirsDlg.btnSynchronizeClick(Sender: TObject);
@@ -383,10 +380,14 @@ var
 
   function CopyFiles(src, dst: IFileSource; fs: TFiles; Dest: string): Boolean;
   var
-    Operation: TFileSourceCopyOperation;
+    Operation: TFileSourceCopyOperation = nil;
   begin
-    if GetCopyOperationType(Src, Dst, OperationType) then
+    if not GetCopyOperationType(Src, Dst, OperationType) then
     begin
+      MessageDlg(rsMsgErrNotSupported, mtError, [mbOK], 0);
+      Exit(False);
+    end
+    else begin
       Fs.Path:= fs[0].Path;
       // Create destination directory
       Dst.CreateDirectory(Dest);
@@ -416,6 +417,11 @@ var
                            Dest) as TFileSourceCopyOperation;
           end;
       end;
+      if not Assigned(Operation) then
+      begin
+        MessageDlg(rsMsgErrNotSupported, mtError, [mbOK], 0);
+        Exit(False);
+      end;
       Operation.FileExistsOption := FileExistsOption;
       Operation.AddUserInterface(FFileSourceOperationMessageBoxesUI);
       try
@@ -432,7 +438,13 @@ var
   var
     Operation: TFileSourceDeleteOperation;
   begin
+    Files.Path := Files[0].Path;
     Operation:= FileSource.CreateDeleteOperation(Files) as TFileSourceDeleteOperation;
+    if not Assigned(Operation) then
+    begin
+      MessageDlg(rsMsgErrNotSupported, mtError, [mbOK], 0);
+      Exit(False);
+    end;
     Operation.AddUserInterface(FFileSourceOperationMessageBoxesUI);
     try
       Operation.Execute;
@@ -576,6 +588,16 @@ begin
   glsMaskHistory.Assign(cbExtFilter.Items);
 end;
 
+procedure TfrmSyncDirsDlg.FormCloseQuery(Sender: TObject; var CanClose: boolean);
+begin
+  CanClose := FCancel;
+  if not FCancel then
+  begin
+    FCancel := True;
+    StopCheckContentThread;
+  end;
+end;
+
 procedure TfrmSyncDirsDlg.FormCreate(Sender: TObject);
 begin
   // Initialize property storage
@@ -598,17 +620,19 @@ end;
 
 procedure TfrmSyncDirsDlg.MainDrawGridDblClick(Sender: TObject);
 var
-  r: Integer;
+  r, x: Integer;
   sr: TFileSyncRec;
 begin
   r := MainDrawGrid.Row;
   if (r < 0) or (r >= FVisibleItems.Count) then Exit;
+  x := MainDrawGrid.ScreenToClient(Mouse.CursorPos).X;
+  if (x > hCols[3].Left) and (x < hCols[3].Left + hCols[3].Width) then Exit;
   sr := TFileSyncRec(FVisibleItems.Objects[r]);
   if not Assigned(sr)
   or not Assigned(sr.FFileR) or not Assigned(sr.FFileL) or (sr.FState = srsEqual)
   then
     Exit;
-  ShowDifferByGlob(sr.FFileL.FullPath, sr.FFileR.FullPath);
+  PrepareToolData(FFileSourceL, sr.FFileL, FFileSourceR, sr.FFileR, @ShowDifferByGlobList);
 end;
 
 procedure TfrmSyncDirsDlg.MainDrawGridDrawCell(Sender: TObject; aCol,
@@ -1058,6 +1082,7 @@ begin
     FFileExists:= srsCopyLeft;
   end;
   ScanDir('');
+  if FCancel then Exit;
   if (FFoundItems.Count > 0) and chkByContent.Checked then
     CheckContentThread := TCheckContentThread.Create(Self);
   FCancel := True;
@@ -1197,6 +1222,18 @@ begin
   StatusBar1.Panels[0].Text := s;
 end;
 
+procedure TfrmSyncDirsDlg.StopCheckContentThread;
+begin
+  if Assigned(CheckContentThread) then
+  begin
+    with TCheckContentThread(CheckContentThread) do
+    begin
+      Terminate;
+      WaitFor;
+    end;
+  end;
+end;
+
 constructor TfrmSyncDirsDlg.Create(AOwner: TComponent; FileView1,
   FileView2: TFileView);
 begin
@@ -1216,6 +1253,7 @@ begin
   MainDrawGrid.Font.Bold := True;
   FSortIndex := -1;
   SortIndex := 0;
+  FCancel := True;
   FSortDesc := False;
   MainDrawGrid.RowCount := 0;
   chkAsymmetric.Enabled := fsoDelete in FileView2.FileSource.GetOperationsTypes;

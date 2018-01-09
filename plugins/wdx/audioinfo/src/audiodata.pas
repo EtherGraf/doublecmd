@@ -91,7 +91,8 @@ type
     BitRateType,
     Channels,
     Date, Genre, Comment, Tags,
-    Encoder, Composer, Copyright, URL, FullText: String;
+    Encoder, Composer, Copyright, URL: String;
+    FullText: UnicodeString;
   public
     constructor Create;
     destructor Destroy; override;
@@ -99,6 +100,9 @@ type
   end;
 
 implementation
+
+uses
+  LazUTF8;
 
 { TAudioData }
 
@@ -119,9 +123,9 @@ begin
   Encoder:= EmptyStr;
   Channels:= EmptyStr;
   Composer:= EmptyStr;
-  FullText:= EmptyStr;
   Copyright:= EmptyStr;
   DurationHMS:= EmptyStr;
+  FullText:= EmptyWideStr;
   BitRateType:= 'Unknown';
 end;
 
@@ -621,9 +625,9 @@ begin
 
   if Result then
   begin
-    FullText:= Title + LineEnding + Artist + LineEnding + Album + LineEnding +
-               Comment + LineEnding + Composer + LineEnding + Copyright + LineEnding +
-               URL + LineEnding + Encoder + LineEnding;
+    FullText:= UTF8ToUTF16(Title + LineEnding + Artist + LineEnding + Album + LineEnding +
+                 Comment + LineEnding + Composer + LineEnding + Copyright + LineEnding +
+                 URL + LineEnding + Encoder + LineEnding);
   end;
 end;
 

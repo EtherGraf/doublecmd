@@ -77,14 +77,25 @@ const
   S_IRWXU =  S_IRUSR or S_IWUSR or S_IXUSR;
   S_IRWXG =  S_IRGRP or S_IWGRP or S_IXGRP;
   S_IRWXO =  S_IROTH or S_IWOTH or S_IXOTH;
+  S_IXUGO =  S_IXUSR or S_IXGRP or S_IXOTH;
 
   { POSIX setuid(), setgid(), and sticky bit }
   S_ISUID  = $0800;
   S_ISGID  = $0400;
   S_ISVTX  = $0200;
 
+  // Generic attributes
+{$IF DEFINED(MSWINDOWS)}
+  GENERIC_ATTRIBUTE_FILE   = FILE_ATTRIBUTE_ARCHIVE;
+  GENERIC_ATTRIBUTE_FOLDER = GENERIC_ATTRIBUTE_FILE or FILE_ATTRIBUTE_DIRECTORY;
+{$ELSEIF DEFINED(UNIX)}
+  GENERIC_ATTRIBUTE_FILE   = S_IRUSR or S_IWUSR or S_IRGRP or S_IROTH;
+  GENERIC_ATTRIBUTE_FOLDER = GENERIC_ATTRIBUTE_FILE or S_IFDIR or S_IXUGO;
+{$ENDIF}
+
   function WinToUnixFileAttr(Attr: TFileAttrs): TFileAttrs;
   function UnixToWinFileAttr(Attr: TFileAttrs): TFileAttrs;
+  function UnixToWcxFileAttr(Attr: TFileAttrs): TFileAttrs;
   function UnixToWinFileAttr(const FileName: String; Attr: TFileAttrs): TFileAttrs;
 
   function SingleStrToFileAttr(sAttr: String): TFileAttrs;
@@ -115,6 +126,11 @@ const
        @returns(File attributes as number)
     }
   function UnixStrToFileAttr(sAttr: String): TFileAttrs;
+
+  function FormatNtfsAttributes(iAttr: TFileAttrs): String;
+  function FormatUnixAttributes(iAttr: TFileAttrs): String;
+
+  function FormatUnixModeOctal(iAttr: TFileAttrs): String;
 
 implementation
 
@@ -171,7 +187,7 @@ begin
     Result := Result or S_IWUSR;
 
   if (Attr and faDirectory) <> 0 then
-    Result := Result or S_IFDIR
+    Result := Result or S_IFDIR or S_IXUGO
   else
     Result := Result or S_IFREG;
 end;
@@ -195,6 +211,17 @@ begin
 
   if (Attr and S_IWUSR) = 0 then
     Result := Result or faReadOnly;
+end;
+
+function UnixToWcxFileAttr(Attr: TFileAttrs): TFileAttrs;
+begin
+{$IF DEFINED(MSWINDOWS)}
+  Result := UnixToWinFileAttr(Attr);
+{$ELSEIF DEFINED(UNIX)}
+  Result := Attr;
+{$ELSE}
+  Result := 0;
+{$ENDIF}
 end;
 
 function UnixToWinFileAttr(const FileName: String; Attr: TFileAttrs): TFileAttrs;
@@ -325,6 +352,75 @@ begin
   if sAttr[4] = 's' then Result:= Result or S_IXUSR or S_ISUID;
   if sAttr[7] = 's' then Result:= Result or S_IXGRP or S_ISGID;
   if sAttr[10] = 't' then Result:= Result or S_IXOTH or S_ISVTX;
+end;
+
+function FormatNtfsAttributes(iAttr: TFileAttrs): String;
+begin
+  Result:= '--------';
+
+  if (iAttr and FILE_ATTRIBUTE_DIRECTORY    ) <> 0 then Result[1] := 'd';
+  if (iAttr and FILE_ATTRIBUTE_REPARSE_POINT) <> 0 then Result[1] := 'l';
+  if (iAttr and FILE_ATTRIBUTE_READONLY     ) <> 0 then Result[2] := 'r';
+  if (iAttr and FILE_ATTRIBUTE_ARCHIVE      ) <> 0 then Result[3] := 'a';
+  if (iAttr and FILE_ATTRIBUTE_HIDDEN       ) <> 0 then Result[4] := 'h';
+  if (iAttr and FILE_ATTRIBUTE_SYSTEM       ) <> 0 then Result[5] := 's';
+
+  // These two are exclusive on NTFS.
+  if (iAttr and FILE_ATTRIBUTE_COMPRESSED   ) <> 0 then Result[6] := 'c';
+  if (iAttr and FILE_ATTRIBUTE_ENCRYPTED    ) <> 0 then Result[6] := 'e';
+
+  if (iAttr and FILE_ATTRIBUTE_TEMPORARY    ) <> 0 then Result[7] := 't';
+  if (iAttr and FILE_ATTRIBUTE_SPARSE_FILE  ) <> 0 then Result[8] := 'p';
+end;
+
+function FormatUnixAttributes(iAttr: TFileAttrs): String;
+begin
+  Result:= '----------';
+
+  if ((iAttr and S_IFMT) = S_IFDIR)  then Result[1]  := 'd';
+  if ((iAttr and S_IFMT) = S_IFLNK)  then Result[1]  := 'l';
+  if ((iAttr and S_IFMT) = S_IFSOCK) then Result[1]  := 's';
+  if ((iAttr and S_IFMT) = S_IFIFO)  then Result[1]  := 'f';
+  if ((iAttr and S_IFMT) = S_IFBLK)  then Result[1]  := 'b';
+  if ((iAttr and S_IFMT) = S_IFCHR)  then Result[1]  := 'c';
+
+  if ((iAttr and S_IRUSR) = S_IRUSR) then Result[2]  := 'r';
+  if ((iAttr and S_IWUSR) = S_IWUSR) then Result[3]  := 'w';
+  if ((iAttr and S_IXUSR) = S_IXUSR) then Result[4]  := 'x';
+  if ((iAttr and S_IRGRP) = S_IRGRP) then Result[5]  := 'r';
+  if ((iAttr and S_IWGRP) = S_IWGRP) then Result[6]  := 'w';
+  if ((iAttr and S_IXGRP) = S_IXGRP) then Result[7]  := 'x';
+  if ((iAttr and S_IROTH) = S_IROTH) then Result[8]  := 'r';
+  if ((iAttr and S_IWOTH) = S_IWOTH) then Result[9]  := 'w';
+  if ((iAttr and S_IXOTH) = S_IXOTH) then Result[10] := 'x';
+
+  if ((iAttr and S_ISUID) = S_ISUID) then
+  begin
+    if Result[4] = 'x' then
+      Result[4]  := 's'
+    else
+      Result[4]  := 'S';
+  end;
+  if ((iAttr and S_ISGID) = S_ISGID) then
+  begin
+    if Result[7] = 'x' then
+      Result[7]  := 's'
+    else
+      Result[7]  := 'S';
+  end;
+  if ((iAttr and S_ISVTX) = S_ISVTX) then
+  begin
+    if Result[10] = 'x' then
+      Result[10]  := 't'
+    else
+      Result[10]  := 'T';
+  end;
+end;
+
+function FormatUnixModeOctal(iAttr: TFileAttrs): String;
+begin
+  Result:= DecToOct(iAttr and $0FFF);
+  Result:= StringOfChar('0', 4 - Length(Result)) + Result;
 end;
 
 end.

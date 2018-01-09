@@ -7,6 +7,7 @@ interface
 uses
   Classes, SysUtils, contnrs, syncobjs, StringHashList,
   uDisplayFile, uFile, uFileSource, uFileSorting, uFileProperty,
+  DCBasicTypes,
   uFileSourceOperation,
   uFileSourceListOperation,
   fQuickSearch,uMasks;
@@ -93,6 +94,7 @@ type
     FCurrentPath: String;
     FFlatView: Boolean;
     FSortings: TFileSortings;
+    FVariantProperties: TDynamicStringArray;
     FFilePropertiesNeeded: TFilePropertiesTypes;
 
     {en
@@ -127,6 +129,7 @@ type
                        AFlatView: Boolean;
                        AThread: TThread;
                        AFilePropertiesNeeded: TFilePropertiesTypes;
+                       AVariantProperties: TDynamicStringArray;
                        ASetFileListMethod: TSetFileListMethod;
                        var ExistingDisplayFiles: TDisplayFiles;
                        var ExistingDisplayFilesHashed: TStringHashList); reintroduce;
@@ -174,6 +177,7 @@ type
     FFileList: TFVWorkerFileList;
     FUpdateFileMethod: TUpdateFileMethod;
     FFileSource: IFileSource;
+    FVariantProperties: TDynamicStringArray;
     FFilePropertiesNeeded: TFilePropertiesTypes;
 
     {en
@@ -189,6 +193,7 @@ type
     constructor Create(AFileSource: IFileSource;
                        AThread: TThread;
                        AFilePropertiesNeeded: TFilePropertiesTypes;
+                       AVariantProperties: TDynamicStringArray;
                        AUpdateFileMethod: TUpdateFileMethod;
                        var AFileList: TFVWorkerFileList); reintroduce;
     destructor Destroy; override;
@@ -361,6 +366,7 @@ constructor TFileListBuilder.Create(AFileSource: IFileSource;
   const AFilterOptions: TQuickSearchOptions; const ACurrentPath: String;
   const ASorting: TFileSortings; AFlatView: Boolean; AThread: TThread;
   AFilePropertiesNeeded: TFilePropertiesTypes;
+  AVariantProperties: TDynamicStringArray;
   ASetFileListMethod: TSetFileListMethod;
   var ExistingDisplayFiles: TDisplayFiles;
   var ExistingDisplayFilesHashed: TStringHashList);
@@ -383,6 +389,7 @@ begin
   FFilterOptions        := AFilterOptions;
   FCurrentPath          := ACurrentPath;
   FSortings             := CloneSortings(ASorting);
+  FVariantProperties    := AVariantProperties;
   FFilePropertiesNeeded := AFilePropertiesNeeded;
   FSetFileListMethod    := ASetFileListMethod;
 end;
@@ -469,7 +476,7 @@ begin
       if (not HaveUpDir) and
          ((not FFileSource.IsPathAtRoot(FCurrentPath)) or
           // Add '..' to go to higher level file source, if there is more than one.
-          (FFileSourceIndex > 0)) then
+          ((FFileSourceIndex > 0) and not (fspNoneParent in FFileSource.Properties))) then
       begin
         AFile := FFileSource.CreateFileObject(FCurrentPath);
         AFile.Name := '..';
@@ -493,7 +500,7 @@ begin
     if FFilePropertiesNeeded <> [] then
     begin
       for I:= 0 to FileSourceFiles.Count - 1 do
-        FFileSource.RetrieveProperties(FileSourceFiles[I], FFilePropertiesNeeded);
+        FFileSource.RetrieveProperties(FileSourceFiles[I], FFilePropertiesNeeded, FVariantProperties);
     end;
 
     // Make display file list from file source file list.
@@ -881,10 +888,9 @@ end;
 { TFilePropertiesRetriever }
 
 constructor TFilePropertiesRetriever.Create(AFileSource: IFileSource;
-                                            AThread: TThread;
-                                            AFilePropertiesNeeded: TFilePropertiesTypes;
-                                            AUpdateFileMethod: TUpdateFileMethod;
-                                            var AFileList: TFVWorkerFileList);
+  AThread: TThread; AFilePropertiesNeeded: TFilePropertiesTypes;
+  AVariantProperties: TDynamicStringArray;
+  AUpdateFileMethod: TUpdateFileMethod; var AFileList: TFVWorkerFileList);
 begin
   inherited Create(AThread);
 
@@ -892,6 +898,7 @@ begin
   FFileList             := AFileList;
   AFileList             := nil;
   FFileSource           := AFileSource;
+  FVariantProperties    := AVariantProperties;
   FFilePropertiesNeeded := AFilePropertiesNeeded;
   FUpdateFileMethod     := AUpdateFileMethod;
 end;
@@ -924,7 +931,7 @@ begin
       FWorkingUserData := FFileList.Data[i];
 
       if FFileSource.CanRetrieveProperties(FWorkingFile.FSFile, FFilePropertiesNeeded) then
-        FFileSource.RetrieveProperties(FWorkingFile.FSFile, FFilePropertiesNeeded);
+        FFileSource.RetrieveProperties(FWorkingFile.FSFile, FFilePropertiesNeeded, FVariantProperties);
 
       if FWorkingFile.TextColor = clNone then
         FWorkingFile.TextColor:= gColorExt.GetColorBy(FWorkingFile.FSFile);
@@ -1039,7 +1046,11 @@ begin
           CalcStatisticsOperation.SkipErrors := True;
           CalcStatisticsOperation.SymLinkOption := fsooslDontFollow;
 
-          FOperation.Execute; // blocks until finished
+          if fspListOnMainThread in FFileSource.Properties then
+            TThread.Synchronize(Thread, @FOperation.Execute)
+          else begin
+            FOperation.Execute; // blocks until finished
+          end;
 
           if FOperation.Result = fsorFinished then
           begin

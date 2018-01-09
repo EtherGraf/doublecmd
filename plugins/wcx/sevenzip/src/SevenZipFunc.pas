@@ -3,7 +3,7 @@
   -------------------------------------------------------------------------
   SevenZip archiver plugin
 
-  Copyright (C) 2014-2015 Alexander Koblov (alexx2000@mail.ru)
+  Copyright (C) 2014-2017 Alexander Koblov (alexx2000@mail.ru)
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -49,7 +49,7 @@ implementation
 
 uses
   JwaWinBase, Windows, SysUtils, Classes, JclCompression, SevenZip, SevenZipAdv,
-  SevenZipDlg, SevenZipLng, SevenZipOpt, LazFileUtils, SyncObjs, LazUTF8;
+  SevenZipDlg, SevenZipLng, SevenZipOpt, LazFileUtils, SyncObjs, LazUTF8, SevenZipCodecs;
 
 type
 
@@ -178,6 +178,7 @@ end;
 
 function ReadHeaderExW(hArcData : TArcHandle; var HeaderData: THeaderDataExW) : Integer; stdcall;
 var
+  FileNameW: UnicodeString;
   Item: TJclCompressionItem;
   Handle: TSevenZipHandle absolute hArcData;
 begin
@@ -185,13 +186,22 @@ begin
   begin
     if Index >= Count then Exit(E_END_ARCHIVE);
     Item:= FArchive.Items[Index];
-    HeaderData.FileName:= Item.PackedName;
+    FileNameW:= Item.PackedName;
     HeaderData.UnpSize:= Int64Rec(Item.FileSize).Lo;
     HeaderData.UnpSizeHigh:= Int64Rec(Item.FileSize).Hi;
     HeaderData.PackSize:= Int64Rec(Item.PackedSize).Lo;
     HeaderData.PackSizeHigh:= Int64Rec(Item.PackedSize).Hi;
     HeaderData.FileAttr:= Item.Attributes;
     WinToDosTime(Item.LastWriteTime, LongWord(HeaderData.FileTime));
+    if Item.Encrypted then begin
+      HeaderData.Flags:= RHDF_ENCRYPTED;
+    end;
+    // Special case for absolute file name
+    if (Length(FileNameW) > 0) and (FileNameW[1] = PathDelim) then
+      HeaderData.FileName:= Copy(FileNameW, 2, Length(FileNameW) - 1)
+    else begin
+      HeaderData.FileName:= FileNameW;
+    end;
     // Special case for BZip2, GZip and Xz archives
     if (HeaderData.FileName[0] = #0) then
     begin
@@ -356,7 +366,7 @@ begin
         FileName := WideString(AddList);
         FileNameUTF8:= Utf16ToUtf8(WideString(SrcPath + FileName));
         if FileName[Length(FileName)] = PathDelim then
-          Archive.AddDirectory(FilePath + FileName, FileNameUTF8)
+          Archive.AddDirectory(FilePath + Copy(FileName, 1, Length(FileName) - 1), FileNameUTF8)
         else
           Archive.AddFile(FilePath + FileName, FileNameUTF8);
         if (AddList + Length(FileName) + 1)^ = #0 then
@@ -465,8 +475,9 @@ begin
   // Don't process PE files as archives
   GetArchiveFormats.UnregisterFormat(TJclPeDecompressArchive);
   // Try to load 7z.dll
-  if not (Is7ZipLoaded or Load7Zip) then
-  begin
+  if (Is7ZipLoaded or Load7Zip) then
+    LoadLibraries
+  else begin
     MessageBoxW(0, PWideChar(UTF8Decode(rsSevenZipLoadError)), 'SevenZip', MB_OK or MB_ICONERROR);
   end;
 end;
@@ -513,17 +524,14 @@ begin
 end;
 
 function TSevenZipUpdate.Update: Integer;
-var
-  AllowCancel: Boolean;
 begin
   FArchive.OnProgress:= JclCompressionProgress;
-  AllowCancel:= not (FArchive is TJclUpdateArchive);
   while not Terminated do
   begin
     // Wait progress event
     FProgress.WaitFor(INFINITE);
     // If the user has clicked on Cancel, the function returns zero
-    FArchive.CancelCurrentOperation:= (ProcessDataProcT(PWideChar(FFileName), -FPercent) = 0) and AllowCancel;
+    FArchive.CancelCurrentOperation:= (ProcessDataProcT(PWideChar(FFileName), -FPercent) = 0);
     // Drop pause
     FPause.SetEvent;
   end;

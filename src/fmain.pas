@@ -52,6 +52,8 @@ uses
   {$ENDIF}
   {$IF DEFINED(LCLQT)}
   , Qt4, QtWidgets
+  {$ELSEIF DEFINED(LCLQT5)}
+  , Qt5, QtWidgets
   {$ELSEIF DEFINED(LCLGTK2)}
   , Glib2, Gtk2
   {$ENDIF}
@@ -104,6 +106,15 @@ type
     actCopyAllTabsToOpposite: TAction;
     actConfigTreeViewMenus: TAction;
     actConfigTreeViewMenusColors: TAction;
+    actConfigSaveSettings: TAction;
+    actExecuteScript: TAction;
+    actFocusSwap: TAction;
+    actUnmarkCurrentNameExt: TAction;
+    actMarkCurrentNameExt: TAction;
+    actUnmarkCurrentName: TAction;
+    actMarkCurrentName: TAction;
+    actUnmarkCurrentPath: TAction;
+    actMarkCurrentPath: TAction;
     actTreeView: TAction;
     actToggleFullscreenConsole: TAction;
     actSrcOpenDrives: TAction;
@@ -209,6 +220,8 @@ type
     lblRightDriveInfo: TLabel;
     lblLeftDriveInfo: TLabel;
     lblCommandPath: TLabel;
+    mnuConfigSaveSettings: TMenuItem;
+    miLine55: TMenuItem;
     mnuConfigureFavoriteTabs: TMenuItem;
     mnuRewriteFavoriteTabs: TMenuItem;
     mnuCreateNewFavoriteTabs: TMenuItem;
@@ -418,6 +431,8 @@ type
     mnuMarkInvert: TMenuItem;
     miLine5: TMenuItem;
     mnuCmdSearch: TMenuItem;
+    mnuCmdAddNewSearch:TMenuItem;
+    mnuCmdViewSearches:TMenuItem;
     actionLst: TActionList;
     actExit: TAction;
     actView: TAction;
@@ -434,6 +449,11 @@ type
     actShowMainMenu: TAction;
     actRefresh: TAction;
     actSearch: TAction;
+    actAddNewSearch: TAction;
+    actViewSearches: TAction;
+    actDeleteSearches: TAction;
+    actConfigSearches: TAction;
+    actConfigHotKeys: TAction;
     actDirHotList: TAction;
     actMarkMarkAll: TAction;
     actMarkInvert: TAction;
@@ -462,6 +482,7 @@ type
     actRunTerm: TAction;
     miLine9: TMenuItem;
     miRunTerm: TMenuItem;
+    actBenchmark: TAction;
     actCalculateSpace: TAction;
     actFileProperties:  TAction;
     actFileLinker: TAction;
@@ -517,12 +538,12 @@ type
     actResaveFavoriteTabs: TAction;
     procedure actExecute(Sender: TObject);
     procedure btnF3MouseWheelDown(Sender: TObject; Shift: TShiftState;
-      MousePos: TPoint; var Handled: Boolean);
+      {%H-}MousePos: TPoint; var {%H-}Handled: Boolean);
     procedure btnF3MouseWheelUp(Sender: TObject; Shift: TShiftState;
-      MousePos: TPoint; var Handled: Boolean);
+      {%H-}MousePos: TPoint; var {%H-}Handled: Boolean);
     procedure btnF8MouseDown(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: Integer);
-    procedure FormKeyUp( Sender: TObject; var Key: Word; Shift: TShiftState) ;
+      {%H-}Shift: TShiftState; X, Y: Integer);
+    procedure FormKeyUp( Sender: TObject; var {%H-}Key: Word; Shift: TShiftState) ;
     function MainToolBarToolItemShortcutsHint(ToolItem: TKASNormalItem): String;
     procedure mnuAllOperStartClick(Sender: TObject);
     procedure mnuAllOperStopClick(Sender: TObject);
@@ -533,12 +554,12 @@ type
     procedure btnLeftDirectoryHotlistClick(Sender: TObject);
     procedure btnRightClick(Sender: TObject);
     procedure btnRightDirectoryHotlistClick(Sender: TObject);
-    procedure btnDriveMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+    procedure btnDriveMouseUp(Sender: TObject; Button: TMouseButton; {%H-}Shift: TShiftState; X, Y: Integer);
     procedure ConsoleSplitterCanResize(Sender: TObject; var NewSize: Integer;
-      var Accept: Boolean);
+      var {%H-}Accept: Boolean);
     procedure dskLeftResize(Sender: TObject);
     procedure dskRightResize(Sender: TObject);
-    procedure dskLeftRightToolButtonDragDrop(Sender, Source: TObject; X, Y: Integer);
+    procedure dskLeftRightToolButtonDragDrop(Sender, {%H-}Source: TObject; {%H-}X, {%H-}Y: Integer);
     procedure dskToolButtonMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
     procedure lblAllProgressPctClick(Sender: TObject);
     procedure MainToolBarToolButtonDragDrop(Sender, Source: TObject; X, Y: Integer);
@@ -553,7 +574,7 @@ type
     procedure miTrayIconExitClick(Sender: TObject);
     procedure miTrayIconRestoreClick(Sender: TObject);
     procedure PanelButtonClick(Button: TSpeedButton; FileView: TFileView);
-    procedure ShellTreeViewDblClick(Sender: TObject);
+    procedure ShellTreeViewSelect;
     procedure ShellTreeViewKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure ShellTreeViewMouseUp(Sender: TObject; Button: TMouseButton;
@@ -585,7 +606,7 @@ type
     procedure MainToolBarMouseUp(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure frmMainClose(Sender: TObject; var CloseAction: TCloseAction);
-    procedure frmMainAfterShow(Data: PtrInt);
+    procedure frmMainAfterShow(Sender: TObject);
     procedure frmMainShow(Sender: TObject);
     procedure mnuDropClick(Sender: TObject);
     procedure mnuSplitterPercentClick(Sender: TObject);
@@ -633,7 +654,8 @@ type
     procedure OnUniqueInstanceMessage(Sender: TObject; Params: TCommandLineParams);
     procedure tbPasteClick(Sender: TObject);
     procedure AllProgressOnUpdateTimer(Sender: TObject);
-{$IFDEF LCLQT}
+    procedure OnCmdBoxInput(ACmdBox: TCmdBox; AInput: String);
+{$IF DEFINED(LCLQT) or DEFINED(LCLQT5)}
   private
     QEventHook: QObject_hookH;
     function QObjectEventFilter(Sender: QObjectH; Event: QEventH): Boolean; cdecl;
@@ -718,8 +740,15 @@ type
     procedure RightDriveBarExecuteDrive(ToolItem: TKASToolItem);
     procedure SetDragCursor(Shift: TShiftState);
 
+  protected
+{$if lcl_fullversion >= 1070000}
+    procedure DoAutoAdjustLayout(const AMode: TLayoutAdjustmentPolicy;
+                            const AXProportion, AYProportion: Double); override;
+{$endif}
+
   public
     constructor Create(TheOwner: TComponent); override;
+    procedure AfterConstruction; override;
     Function ActiveFrame: TFileView;  // get Active frame
     Function NotActiveFrame: TFileView; // get NotActive frame :)
     function ActiveNotebook: TFileViewNotebook;
@@ -727,7 +756,7 @@ type
     function FrameLeft: TFileView;
     function FrameRight: TFileView;
     procedure ForEachView(CallbackFunction: TForEachViewFunction; UserData: Pointer);
-    procedure GetListOpenedPaths(out APaths:TStringList);
+    procedure GetListOpenedPaths(const APaths:TStringList);
     //check selected count and generate correct msg, parameters is lng indexs
     Function GetFileDlgStr(sLngOne, sLngMulti : String; Files: TFiles):String;
     procedure HotDirSelected(Sender:TObject);
@@ -777,23 +806,23 @@ type
     procedure UpdateSelectedDrives;
     procedure UpdateGUIFunctionKeys;
     procedure CreateDiskPanel(dskPanel : TKASToolBar);
-    function CreateFileView(sType: String; Page: TFileViewPage; AConfig: TIniFileEx; ASectionName: String; ATabIndex: Integer): TFileView;
     function CreateFileView(sType: String; Page: TFileViewPage; AConfig: TXmlConfig; ANode: TXmlNode): TFileView;
     procedure AssignEvents(AFileView: TFileView);
     function RemovePage(ANoteBook: TFileViewNotebook; iPageIndex:Integer; CloseLocked: Boolean = True; ConfirmCloseLocked: integer = 0; ShowButtonAll: Boolean = False): LongInt;
-    procedure LoadTabsIni(ANoteBook: TFileViewNotebook);
     procedure LoadTabsXml(AConfig: TXmlConfig; ABranch:string; ANoteBook: TFileViewNotebook);
     procedure SaveTabsXml(AConfig: TXmlConfig; ABranch:string; ANoteBook: TFileViewNotebook; ASaveHistory: boolean);
     procedure LoadTheseTabsWithThisConfig(Config: TXmlConfig; ABranch:string; Source, Destination:TTabsConfigLocation; DestinationToKeep : TTabsConfigLocation; var TabsAlreadyDestroyedFlags:TTabsFlagsAlreadyDestroyed);
     procedure ToggleConsole;
     procedure UpdateWindowView;
     procedure MinimizeWindow;
+    procedure RestoreWindow;
     procedure LoadTabs;
     procedure LoadTabsCommandLine(Params: TCommandLineParams);
     procedure LoadWindowState;
     procedure SaveWindowState;
     procedure LoadMainToolbar;
     procedure SaveMainToolBar;
+    procedure ConfigSaveSettings;
     function  IsCommandLineVisible: Boolean;
     procedure ShowDrivesList(APanel: TFilePanelSelect);
     procedure ExecuteCommandLine(bRunInTerm: Boolean);
@@ -839,20 +868,14 @@ uses
   uDragDropEx, uKeyboard, uFileSystemFileSource, fViewOperations, uMultiListFileSource,
   uFileSourceOperationTypes, uFileSourceCopyOperation, uFileSourceMoveOperation,
   uFileSourceProperty, uFileSourceExecuteOperation, uArchiveFileSource, uThumbFileView,
-  uShellExecute, fSymLink, fHardLink, uExceptions, uUniqueInstance, Clipbrd,
+  uShellExecute, fSymLink, fHardLink, uExceptions, uUniqueInstance, Clipbrd, ShellCtrls,
   uFileSourceOperationOptionsUI, uDebug, uHotkeyManager, uFileSourceUtil, uTempFileSystemFileSource,
-  XMLRead, DCOSUtils, DCStrUtils, fOptions, fOptionsFrame, fOptionsToolbar,
+  Laz2_XMLRead, DCOSUtils, DCStrUtils, fOptions, fOptionsFrame, fOptionsToolbar, uClassesEx,
   uHotDir, uFileSorting, DCBasicTypes, foptionsDirectoryHotlist, uConnectionManager
   {$IFDEF COLUMNSFILEVIEW_VTV}
   , uColumnsFileViewVtv
   {$ELSE}
   , uColumnsFileView
-  {$ENDIF}
-  // TODO: remove when switch to Lazarus 1.6
-  {$IF (lcl_fullversion < 1060000)}
-  , uShellCtrls
-  {$ELSE}
-  , ShellCtrls
   {$ENDIF}
   ;
 
@@ -862,12 +885,12 @@ const
   TCToolbarClipboardHeader  = 'TOTALCMD#BAR#DATA';
   DCToolbarClipboardHeader  = 'DOUBLECMD#BAR#DATA';
 
-{$IF DEFINED(LCLGTK2) or DEFINED(LCLQT)}
+{$IF DEFINED(LCLGTK2) or DEFINED(LCLQT) or DEFINED(LCLQT5)}
 var
   LastActiveWindow: TCustomForm = nil;
 {$ENDIF}
 
-{$IFDEF LCLQT}
+{$IF DEFINED(LCLQT) or DEFINED(LCLQT5)}
 var
   CloseQueryResult: Boolean = False;
 {$ENDIF}
@@ -909,6 +932,9 @@ procedure TfrmMain.FormCreate(Sender: TObject);
     Result := TFileViewNotebook.Create(aParent, aSide);
     Result.Align := alClient;
     Result.Options := [nboHidePageListPopup];
+    {$if lcl_fullversion >= 1070000}
+      Result.Options := Result.Options + [nboDoChangeOnSetIndex];
+    {$endif}
 
     Result.OnCloseTabClicked := @NotebookCloseTabClicked;
     Result.OnMouseDown := @nbPageMouseDown;
@@ -943,6 +969,9 @@ begin
   Application.OnShowHint := @AppShowHint;
   Application.OnEndSession := @AppEndSession;
   Application.OnQueryEndSession := @AppQueryEndSession;
+
+  // Save real main form handle
+  Application.MainForm.Tag:= Handle;
 
   // Use LCL's method of dropping files from external
   // applications if we don't support it ourselves.
@@ -985,6 +1014,8 @@ begin
   InitPropStorage(Self);
 
   PanelSelected:=fpLeft;
+
+  seLogWindow.FixDefaultKeystrokes;
 
   HMMainForm := HotMan.Register(Self, HotkeysCategory);
   HotMan.Register(edtCommand, 'Command Line');
@@ -1042,7 +1073,7 @@ begin
 
   UpdateWindowView;
 
-{$IFDEF LCLQT}
+{$IF DEFINED(LCLQT) or DEFINED(LCLQT5)}
   // Fixes bug - [0000033] "DC cancels shutdown in KDE"
   // http://doublecmd.sourceforge.net/mantisbt/view.php?id=33
   QEventHook:= QObject_hook_create(TQtWidget(Self.Handle).Widget);
@@ -1244,20 +1275,31 @@ end;
 procedure TfrmMain.dskLeftRightToolButtonDragDrop(Sender, Source: TObject; X, Y: Integer);
 var
   ToolItem: TKASToolItem;
-  DriveItem: TKASDriveItem;
+  SourceFiles: TFiles;
+  TargetFileSource: IFileSource;
+  TargetPath: String;
 begin
   if Sender is TKASToolButton then
   begin
-    ToolItem := TKASToolButton(Sender).ToolItem;
-    if ToolItem is TKASDriveItem then
-    begin
-      DriveItem := TKASDriveItem(ToolItem);
-      case GetDropEffectByKeyAndMouse(GetKeyShiftState, mbLeft) of
-        DropCopyEffect:
-          Self.CopyFiles(DriveItem.Drive^.Path, gShowDialogOnDragDrop);
-        DropMoveEffect:
-          Self.MoveFiles(DriveItem.Drive^.Path, gShowDialogOnDragDrop);
+    SourceFiles := ActiveFrame.CloneSelectedOrActiveFiles;
+    try
+      ToolItem := TKASToolButton(Sender).ToolItem;
+      if ToolItem is TKASDriveItem then
+      begin
+        TargetPath := TKASDriveItem(ToolItem).Drive^.Path;
+        TargetFileSource := ParseFileSource(TargetPath, ActiveFrame.FileSource);
+        TargetPath := IncludeTrailingPathDelimiter(TargetPath);
+        if not Assigned(TargetFileSource) then
+          TargetFileSource := TFileSystemFileSource.GetFileSource;
+        case GetDropEffectByKeyAndMouse(GetKeyShiftState, mbLeft) of
+          DropCopyEffect:
+            Self.CopyFiles(ActiveFrame.FileSource, TargetFileSource, SourceFiles, TargetPath, gShowDialogOnDragDrop);
+          DropMoveEffect:
+            Self.MoveFiles(ActiveFrame.FileSource, TargetFileSource, SourceFiles, TargetPath, gShowDialogOnDragDrop);
+        end;
       end;
+    finally
+      SourceFiles.Free;
     end;
   end;
 end;
@@ -1463,7 +1505,7 @@ begin
     SetActiveFrame(FileView);
 end;
 
-procedure TfrmMain.ShellTreeViewDblClick(Sender: TObject);
+procedure TfrmMain.ShellTreeViewSelect;
 begin
   ShellTreeView.Tag := 1;
   try
@@ -1476,7 +1518,7 @@ end;
 procedure TfrmMain.ShellTreeViewKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
-  if Key = VK_RETURN then ShellTreeViewDblClick(Sender);
+  if Key = VK_RETURN then ShellTreeViewSelect;
 end;
 
 procedure TfrmMain.ShellTreeViewMouseUp(Sender: TObject; Button: TMouseButton;
@@ -1506,6 +1548,8 @@ begin
     else;
   end;
 {$ENDIF}
+  if Button = mbLeft then
+    ShellTreeViewSelect;
 end;
 
 procedure TfrmMain.FormDestroy(Sender: TObject);
@@ -1528,7 +1572,7 @@ begin
 
   FreeAndNil(DrivesList);
 
-{$IFDEF LCLQT}
+{$IF DEFINED(LCLQT) or DEFINED(LCLQT5)}
   QObject_hook_destroy(QEventHook);
 {$ENDIF}
 
@@ -1545,7 +1589,7 @@ begin
   end
   else
     CanClose := True;
-{$IFDEF LCLQT}
+{$IF DEFINED(LCLQT) or DEFINED(LCLQT5)}
   CloseQueryResult:= CanClose;
 {$ENDIF}
 end;
@@ -1560,6 +1604,8 @@ var
   Point: TPoint;
   DropParams: TDropParams;
 begin
+  Point.x := 0;
+  Point.y := 0;
   TargetControl := FindLCLControl(Mouse.CursorPos);
   while TargetControl <> nil do
   begin
@@ -1664,6 +1710,33 @@ begin
     begin
       if Assigned(TargetFileSource) then
       begin
+
+{$IF DEFINED(MSWINDOWS)}
+        // If drop from external application and from temporary directory then
+        // in most cases it is a drop from archiver application that extracting
+        // files via temporary directory and requires run operation in the main thread
+        // See http://doublecmd.sourceforge.net/mantisbt/view.php?id=1124
+        if (GetDragDropType = ddtExternal) and (Operation in [ddoMove, ddoCopy]) and
+           IsInPath(GetTempDir, DropParams.Files[0].FullPath, True, True) then
+        begin
+          if gShowDialogOnDragDrop then
+          begin
+            case Operation of
+              ddoMove: SourceFileName := GetFileDlgStr(rsMsgRenSel, rsMsgRenFlDr, DropParams.Files);
+              ddoCopy: SourceFileName := GetFileDlgStr(rsMsgCpSel, rsMsgCpFlDr, DropParams.Files);
+            end;
+            if MessageDlg(SourceFileName, mtConfirmation, [mbOK, mbCancel], 0) <> mrOK then
+              Exit;
+          end;
+          case Operation of
+            ddoMove: Self.MoveFiles(TFileSystemFileSource.GetFileSource,
+                           TargetFileSource, Files, TargetPath, False, ModalQueueId);
+            ddoCopy: Self.CopyFiles(TFileSystemFileSource.GetFileSource,
+                           TargetFileSource, Files, TargetPath, False, ModalQueueId);
+          end;
+        end else
+{$ENDIF}
+
         case Operation of
 
           ddoMove:
@@ -2097,42 +2170,32 @@ begin
     Commands.cm_CloseDuplicateTabs(['RightTabs']);
   end;
 
-  if gSaveConfiguration then
-  try
-    DebugLn('Saving configuration');
-    if Assigned(gIni) then
-      uGlobs.ConvertIniToXml;
-    if gSaveCmdLineHistory then
-      glsCmdLineHistory.Assign(edtCommand.Items);
-    SaveWindowState;
-    if gButtonBar then SaveMainToolBar;
-    SaveGlobs; // Should be last, writes configuration file
-  except
-    on E: Exception do
-      DebugLn('Cannot save main configuration: ', e.Message);
-  end;
+  if gSaveConfiguration then ConfigSaveSettings;
 
   FreeAndNil(Cons);
 
   Application.Terminate;
 end;
 
-procedure TfrmMain.frmMainAfterShow(Data: PtrInt);
+procedure TfrmMain.frmMainAfterShow(Sender: TObject);
 begin
-  ActiveFrame.SetFocus;
-
+  OnPaint := nil;
+  if Assigned(ActiveFrame) then
+    ActiveFrame.SetFocus
+  else begin
+    DCDebug('ActiveFrame = nil');
+  end;
   HiddenToTray := False;
 end;
 
 procedure TfrmMain.frmMainShow(Sender: TObject);
 begin
   DCDebug('frmMain.frmMainShow');
-  {$IF DEFINED(LCLCARBON) and DECLARED(lcl_fullversion) and (lcl_fullversion >= 093100)}
-  ActiveControl:= ActiveFrame;
-  HiddenToTray := False;
-  {$ELSE}
-  Application.QueueAsyncCall(@frmMainAfterShow, 0);
-  {$ENDIF}
+{$IF NOT (DEFINED(LCLWIN32) or DEFINED(LCLGTK2) or (DEFINED(DARWIN) and DEFINED(LCLQT)))}
+  OnPaint := @frmMainAfterShow;
+{$ELSE}
+  Application.QueueAsyncCall(TDataEvent(@frmMainAfterShow), 0);
+{$ENDIF}
 end;
 
 procedure TfrmMain.mnuDropClick(Sender: TObject);
@@ -2314,7 +2377,7 @@ begin
 
     mbMiddle:
       begin
-        TabNr := NoteBook.TabIndexAtClientPos(Point(X, Y));
+        TabNr := NoteBook.IndexOfPageAt(Point(X, Y));
         if TabNr <> -1 then
         begin
           Commands.DoCloseTab(NoteBook, TabNr);
@@ -2323,18 +2386,10 @@ begin
 
     mbRight:
       begin
-        TabNr := NoteBook.TabIndexAtClientPos(Point(X, Y));
+        TabNr := NoteBook.IndexOfPageAt(Point(X, Y));
         if TabNr <> -1 then
         begin
           PopUpPoint := NoteBook.ClientToScreen(Point(X, Y));
-
-{$IFDEF LCLQT}
-          // In QT the NoteBook.ClientToScreen calculates coordinates
-          // relative to Page contents (client rectangle),
-          // so we must substract the height and width of the tab bar.
-          PopUpPoint.X := PopUpPoint.X - (NoteBook.Width - NoteBook.ClientWidth);
-          PopUpPoint.Y := PopUpPoint.Y - (NoteBook.Height - NoteBook.ClientHeight);
-{$ENDIF}
 
           // Check tab options items.
           case NoteBook.Page[TabNr].LockState of
@@ -2521,21 +2576,23 @@ begin
   EnumerateNotebook(nbRight);
 end;
 
-procedure TfrmMain.GetListOpenedPaths(out APaths: TStringList);
-  procedure GetNotebookPaths(ANoteBook: TFileViewNotebook;out notePaths: TStringList);
+procedure TfrmMain.GetListOpenedPaths(const APaths: TStringList);
+
+  procedure GetNotebookPaths(ANoteBook: TFileViewNotebook);
   var
-    i: Integer;
-    s :string;
+    S: String;
+    I: Integer;
   begin
-    for i := 0 to ANoteBook.PageCount - 1 do
+    for I := 0 to ANoteBook.PageCount - 1 do
     begin
-        s:=ANoteBook.View[i].CurrentPath;
-        notePaths.Add(s);
+      S:= ANoteBook.View[I].CurrentPath;
+      APaths.Add(S);
     end;
   end;
+
 begin
-  GetNotebookPaths(nbLeft,APaths);
-  GetNotebookPaths(nbRight,APaths);
+  GetNotebookPaths(nbLeft);
+  GetNotebookPaths(nbRight);
 end;
 
 procedure TfrmMain.AppException(Sender: TObject; E: Exception);
@@ -2572,6 +2629,14 @@ begin
   Screen.Cursors[crArrowCopy] := LoadCursorFromLazarusResource('ArrowCopy');
   Screen.Cursors[crArrowMove] := LoadCursorFromLazarusResource('ArrowMove');
   Screen.Cursors[crArrowLink] := LoadCursorFromLazarusResource('ArrowLink');
+end;
+
+procedure TfrmMain.AfterConstruction;
+begin
+  FResizingFilePanels:= True;
+  inherited AfterConstruction;
+  FResizingFilePanels:= False;
+  pnlNotebooksResize(pnlNotebooks);
 end;
 
 procedure TfrmMain.UpdateActionIcons();
@@ -2734,7 +2799,7 @@ end;
 
 procedure TfrmMain.miHotAddOrConfigClick(Sender: TObject);
 begin
-  with Sender as TComponent do Commands.cm_WorkWithDirectoryHotlist(['action='+HOTLISTMAGICWORDS[tag], 'source='+QuoteStr(ActiveFrame.CurrentPath), 'target='+QuoteStr(NotActiveFrame.CurrentPath), 'index=0']);
+  with Sender as TComponent do Commands.cm_WorkWithDirectoryHotlist(['action='+HOTLISTMAGICWORDS[tag], 'source='+QuoteStr(ActiveFrame.CurrentLocation), 'target='+QuoteStr(NotActiveFrame.CurrentLocation), 'index=0']);
 end;
 
 procedure TfrmMain.CreatePopUpDirHistory;
@@ -2889,6 +2954,8 @@ var
   mi: TMenuItem;
 begin
   pmDirHistory.Items.Clear;
+  p.x := 0;
+  p.y := 0;
 
   if FromFileSourceIndex <> -1 then
     FindBoundsForward
@@ -3583,12 +3650,29 @@ begin
   FrameRight.SetDragCursor(Shift);
 end;
 
+{$if lcl_fullversion >= 1070000}
+procedure TfrmMain.DoAutoAdjustLayout(const AMode: TLayoutAdjustmentPolicy;
+  const AXProportion, AYProportion: Double);
+begin
+  if AMode in [lapAutoAdjustWithoutHorizontalScrolling, lapAutoAdjustForDPI] then
+  begin
+    DisableAutoSizing;
+    try
+      ScaleFontsPPI(AYProportion);
+      BorderSpacing.AutoAdjustLayout(AXProportion, AYProportion);
+      Constraints.AutoAdjustLayout(AXProportion, AYProportion);
+    finally
+      EnableAutoSizing;
+    end;
+  end;
+end;
+{$endif}
+
 procedure TfrmMain.FormKeyUp( Sender: TObject; var Key: Word;
   Shift: TShiftState) ;
 begin
   SetDragCursor(Shift);
 end;
-
 
 procedure TfrmMain.FormKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
@@ -3609,7 +3693,8 @@ begin
 
   case Key of
     VK_BACK:
-      if (GetKeyTypingAction(ShiftEx) = ktaCommandLine) and (edtCommand.Text <> '') then
+      if IsCommandLineVisible and
+         (GetKeyTypingAction(ShiftEx) = ktaCommandLine) and (edtCommand.Text <> '') then
       begin
         // Delete last character.
         CmdText := edtCommand.Text;
@@ -4043,6 +4128,7 @@ begin
     begin
       ReadOnly := True;
       RightClickSelect := True;
+      FileSortType := fstFoldersFirst;
       TCustomShellTreeViewCrack(ShellTreeView).PopulateWithBaseFiles;
 
       Images := TImageList.Create(Self);
@@ -4052,9 +4138,9 @@ begin
 
       OnKeyDown := @ShellTreeViewKeyDown;
       OnMouseUp := @ShellTreeViewMouseUp;
-      OnDblClick := @ShellTreeViewDblClick;
       OnAdvancedCustomDrawItem := @ShellTreeViewAdvancedCustomDrawItem;
 
+      ExpandSignType := tvestPlusMinus;
       Options := Options - [tvoThemedDraw];
       Options := Options + [tvoReadOnly, tvoRightClickSelect];
     end;
@@ -4224,20 +4310,6 @@ begin
   end;
 end;
 
-function TfrmMain.CreateFileView(sType: String; Page: TFileViewPage; AConfig: TIniFileEx; ASectionName: String; ATabIndex: Integer): TFileView;
-var
-  FileViewFlags: TFileViewFlags = [];
-begin
-  // This function should be changed to a separate TFileView factory.
-
-  if gDelayLoadingTabs then
-    FileViewFlags := [fvfDelayLoadingFiles];
-  if sType = 'columns' then
-    Result := TColumnsFileView.Create(Page, AConfig, ASectionName, ATabIndex, FileViewFlags)
-  else
-    raise Exception.Create('Invalid file view type');
-end;
-
 function TfrmMain.CreateFileView(sType: String; Page: TFileViewPage; AConfig: TXmlConfig; ANode: TXmlNode): TFileView;
 var
   FileViewFlags: TFileViewFlags = [];
@@ -4314,72 +4386,6 @@ begin
   begin
     ANoteBook.View[I].UpdateView;
   end;
-end;
-
-procedure TfrmMain.LoadTabsIni(ANoteBook: TFileViewNotebook);
-var
-  I: Integer;
-  sIndex,
-  TabsSection: String;
-  sCurrentDir,
-  sPath: String;
-  iActiveTab: Integer;
-  Page: TFileViewPage;
-  AFileView: TFileView;
-  aFileSource: IFileSource;
-begin
-  if ANoteBook = nbLeft then
-    begin
-      TabsSection:= 'lefttabs';
-    end
-  else
-    begin
-      TabsSection:= 'righttabs';
-    end;
-
-  I:= 0;
-  sIndex:= '0';
-  // create one tab in any way
-  sCurrentDir:= gpExePath; // default path
-  sPath:= gIni.ReadString(TabsSection, sIndex + '_path', sCurrentDir);
-  while True do
-    begin
-      sPath := GetDeepestExistingPath(sPath);
-      if sPath = EmptyStr then
-        sPath := sCurrentDir;
-
-      Page := ANoteBook.AddPage;
-
-      aFileSource := TFileSystemFileSource.GetFileSource;
-
-      AFileView := CreateFileView('columns', Page, gIni, TabsSection, StrToInt(sIndex));
-      if not Assigned(AFileView) then
-      begin
-        ANoteBook.RemovePage(Page);
-        continue;
-      end;
-
-      Page.LockState := TTabLockState(gIni.ReadInteger(TabsSection, sIndex + '_options', Integer(tlsNormal)));
-      Page.LockPath  := sPath;
-
-      AFileView.AddFileSource(aFileSource, sPath);
-      // Assign events after loading file source.
-      AssignEvents(AFileView);
-
-      Inc(I);
-      // get page index in string representation
-      sIndex:= IntToStr(I);
-      // get path of next tab
-      sPath:= gIni.ReadString(TabsSection, sIndex + '_path', '');
-      // if not found then break
-      if sPath = '' then Break;
-    end;
-
-  // read active tab index
-  iActiveTab:= gIni.ReadInteger(TabsSection, 'activetab', 0);
-  // set active tab
-  if (iActiveTab >= 0) and (iActiveTab < ANoteBook.PageCount) then
-    ANoteBook.PageIndex := iActiveTab;
 end;
 
 procedure TfrmMain.LoadTabsXml(AConfig: TXmlConfig; ABranch:string; ANoteBook: TFileViewNotebook);
@@ -4573,6 +4579,12 @@ begin
   end; // if Destination<>tclNone then
 end;
 
+procedure TfrmMain.OnCmdBoxInput(ACmdBox: TCmdBox; AInput: String);
+begin
+  Cons.Terminal.Write_pty(AInput + LineEnding);
+  ACmdBox.StartRead(clWhite, clBlack, ACmdBox.Hint, clWhite, clBlack);
+end;
+
 procedure TfrmMain.ToggleConsole;
 begin
   if gTermWindow then
@@ -4584,7 +4596,23 @@ begin
         cmdConsole.Align:= alClient;
         cmdConsole.AutoFollow:= True;
         cmdConsole.LineCount:= 256;
+        cmdConsole.ShowHint:= False;
+        cmdConsole.CaretType:= cartSubBar;
+        cmdConsole.OnInput:= @OnCmdBoxInput;
+        ShowScrollBar(cmdConsole.Handle, SB_Horz, False);
         FontOptionsToFont(gFonts[dcfConsole], cmdConsole.Font);
+        cmdConsole.Hint:= Format(fmtCommandPath, [GetComputerNetName]);
+      end;
+      if gCmdLine then
+      begin
+        cmdConsole.Tag := 0;
+        cmdConsole.StopRead;
+      end
+      else if cmdConsole.Tag = 0 then
+      begin
+        cmdConsole.Tag := MaxInt;
+        cmdConsole.Writeln(EmptyStr);
+        cmdConsole.StartRead(clWhite, clBlack, cmdConsole.Hint, clWhite, clBlack);
       end;
       if not Assigned(Cons) then
         begin
@@ -4611,13 +4639,15 @@ end;
 
 procedure TfrmMain.ToggleFullscreenConsole;
 begin
-  if  nbConsole.Height < (nbConsole.Height + pnlNotebooks.Height) then
+  if  nbConsole.Height < (nbConsole.Height + pnlNotebooks.Height - 1) then
     begin
       nbConsole.Height := nbConsole.Height + pnlNotebooks.Height;
+      if (not gCmdLine) and cmdConsole.CanFocus then cmdConsole.SetFocus;
     end
   else
     begin
       nbConsole.Height := 0;
+      if (not gCmdLine) and ActiveFrame.CanFocus then ActiveFrame.SetFocus;
     end;
 end;
 
@@ -4767,6 +4797,11 @@ begin
       dskRight.Parent := pnlDskRight;
     end;
 
+    dskLeft.GlyphSize:= gDiskIconsSize;
+    dskRight.GlyphSize:= gDiskIconsSize;
+    dskLeft.ButtonHeight:= gDiskIconsSize + 6;
+    dskRight.ButtonHeight:= gDiskIconsSize + 6;
+
     pnlDiskLeftInner.Visible := gHorizontalFilePanels and gDriveBar1 and gDriveBar2;
     pnlDiskRightInner.Visible := gHorizontalFilePanels and gDriveBar1 and gDriveBar2;
     pnlDskLeft.Visible := not gHorizontalFilePanels and gDriveBar1 and gDriveBar2;
@@ -4855,13 +4890,13 @@ begin
     // Operations panel and menu
     if (gPanelOfOp = False) then
       FreeAndNil(FOperationsPanel)
-    else
-      begin
-        FOperationsPanel := TOperationsPanel.Create(Self);
-        FOperationsPanel.Parent := PanelAllProgress;
-        FOperationsPanel.DoubleBuffered := True;
-        PanelAllProgress.OnResize := @FOperationsPanel.ParentResized;
-      end;
+    else if (FOperationsPanel = nil) then
+    begin
+      FOperationsPanel := TOperationsPanel.Create(Self);
+      FOperationsPanel.Parent := PanelAllProgress;
+      FOperationsPanel.DoubleBuffered := True;
+      PanelAllProgress.OnResize := @FOperationsPanel.ParentResized;
+    end;
     PanelAllProgress.Visible := gPanelOfOp;
     Timer.Enabled := gPanelOfOp or gProgInMenuBar;
 
@@ -4874,7 +4909,8 @@ begin
     FontOptionsToFont(gFonts[dcfLog], seLogWindow.Font);
 
     // Command line
-    pnlCommand.Visible := gCmdLine;
+    pnlCmdLine.Visible := gCmdLine;
+    pnlCommand.Visible := gCmdLine or gTermWindow;
 
     // Align command line and terminal window
     pnlCommand.Top := -Height;
@@ -4975,8 +5011,11 @@ end;
 procedure TfrmMain.edtCommandExit(Sender: TObject);
 begin
   // Hide command line if it was temporarily shown.
-  if (not gCmdLine) and IsCommandLineVisible then
-    pnlCommand.Hide;
+  if (not gCmdLine) and IsCommandLineVisible and (edtCommand.Text = '') then
+  begin
+    pnlCmdLine.Visible := False;
+    pnlCommand.Visible := gTermWindow;
+  end;
 end;
 
 procedure TfrmMain.tbChangeDirClick(Sender: TObject);
@@ -5042,16 +5081,8 @@ end;
 
 procedure TfrmMain.OnUniqueInstanceMessage(Sender: TObject; Params: TCommandLineParams);
 begin
-  if HiddenToTray then
-    RestoreFromTray
-  else
-  begin
-    WindowState:= lastWindowState;
-    BringToFront;
-  end;
-
+  RestoreWindow;
   LoadTabsCommandLine(Params);
-
 end;
 
 procedure TfrmMain.tbPasteClick(Sender: TObject);
@@ -5188,6 +5219,17 @@ begin
             begin
               sDir:= RemoveQuotation(Copy(sCmd, iIndex + 3, Length(sCmd)));
               sDir:= NormalizePathDelimiters(Trim(sDir));
+
+              if (sDir = DirectorySeparator) or (sDir = '..') then
+              begin
+                if (sDir = DirectorySeparator) then
+                  Commands.DoChangeDirToRoot(ActiveFrame)
+                else begin
+                  ActiveFrame.ChangePathToParent(True);
+                end;
+                Exit;
+              end;
+
               sDir:= ReplaceTilde(sDir);
               sDir:= GetAbsoluteFileName(ActiveFrame.CurrentPath, sDir);
               if mbFileExists(sDir) then //if user entered an existing file, let's switch to the parent folder AND select that file
@@ -5198,7 +5240,7 @@ begin
             end;
 
           // Choose FileSource by path
-          ChooseFileSource(ActiveFrame, sDir);
+          ChooseFileSource(ActiveFrame, sDir, True);
           if sFilename <> '' then
             ActiveFrame.SetActiveFile(sFilename);
 
@@ -5297,18 +5339,21 @@ begin
 end;
 //LaBero end
 
-procedure TfrmMain.LoadTabs;
+procedure TfrmMain.RestoreWindow;
 begin
-  if Assigned(gIni) then
-  begin
-    LoadTabsIni(nbLeft);
-    LoadTabsIni(nbRight);
-  end
+  if HiddenToTray then
+    RestoreFromTray
   else
   begin
-    LoadTabsXml(gConfig,'Tabs/OpenedTabs/Left', nbLeft);
-    LoadTabsXml(gConfig,'Tabs/OpenedTabs/Right', nbRight);
+    WindowState:= lastWindowState;
+    BringToFront;
   end;
+end;
+
+procedure TfrmMain.LoadTabs;
+begin
+  LoadTabsXml(gConfig,'Tabs/OpenedTabs/Left', nbLeft);
+  LoadTabsXml(gConfig,'Tabs/OpenedTabs/Right', nbRight);
 
   LoadTabsCommandLine(CommandLineParams);
 
@@ -5379,39 +5424,35 @@ begin
     LoadPanel((ActiveFrame.NotebookPage as TFileViewPage).Notebook, Params.ActivePanelPath);
   end;
 
+  ActiveFrame.SetFocus;
 end;
 
 procedure TfrmMain.LoadWindowState;
 var
   ANode: TXmlNode;
+  FPixelsPerInch: Integer;
+  ALeft, ATop, AWidth, AHeight: Integer;
 begin
-
   (* Load window bounds and state *)
-  if Assigned(gIni) then
+  ANode := gConfig.FindNode(gConfig.RootNode, 'MainWindow/Position', True);
   begin
-    Left := gIni.ReadInteger('Configuration', 'Main.Left', 80);
-    Top := gIni.ReadInteger('Configuration', 'Main.Top', 48);
-    Width :=  gIni.ReadInteger('Configuration', 'Main.Width', 800);
-    Height :=  gIni.ReadInteger('Configuration', 'Main.Height', 480);
-    if gIni.ReadBool('Configuration', 'Maximized', True) then
-      Self.WindowState := wsMaximized;
-  end
-  else
-  begin
-    ANode := gConfig.FindNode(gConfig.RootNode, 'MainWindow/Position');
-    if Assigned(ANode) then
+    MainSplitterPos := gConfig.GetValue(ANode, 'Splitter', 50.0);
+    ALeft := gConfig.GetValue(ANode, 'Left', 80);
+    ATop := gConfig.GetValue(ANode, 'Top', 48);
+    AWidth := gConfig.GetValue(ANode, 'Width', 800);
+    AHeight := gConfig.GetValue(ANode, 'Height', 480);
+{$if lcl_fullversion >= 1070000}
+    FPixelsPerInch := gConfig.GetValue(ANode, 'PixelsPerInch', DesignTimePPI);
+    if Scaled and (Screen.PixelsPerInch <> FPixelsPerInch) then
     begin
-      MainSplitterPos := gConfig.GetValue(ANode, 'Splitter', 50.0);
-      Left := gConfig.GetValue(ANode, 'Left', 80);
-      Top := gConfig.GetValue(ANode, 'Top', 48);
-      Width := gConfig.GetValue(ANode, 'Width', 800);
-      Height := gConfig.GetValue(ANode, 'Height', 480);
-      if gConfig.GetValue(ANode, 'Maximized', True) then
-        Self.WindowState := wsMaximized;
+      AWidth := MulDiv(AWidth, Screen.PixelsPerInch, FPixelsPerInch);
+      AHeight := MulDiv(AHeight, Screen.PixelsPerInch, FPixelsPerInch);
     end;
+{$endif}
+    SetBounds(ALeft, ATop, AWidth, AHeight);
+    if gConfig.GetValue(ANode, 'Maximized', True) then
+      Self.WindowState := wsMaximized;
   end;
-
-
 end;
 
 procedure TfrmMain.SaveWindowState;
@@ -5431,6 +5472,7 @@ begin
     gConfig.SetValue(ANode, 'Top', Top);
     gConfig.SetValue(ANode, 'Width', Width);
     gConfig.SetValue(ANode, 'Height', Height);
+    gConfig.SetValue(ANode, 'PixelsPerInch', Screen.PixelsPerInch);
   end;
   gConfig.SetValue(ANode, 'Maximized', (WindowState = wsMaximized));
   gConfig.SetValue(ANode, 'Splitter', FMainSplitterPos);
@@ -5463,9 +5505,24 @@ begin
   MainToolBar.SaveConfiguration(gConfig, ToolBarNode);
 end;
 
+procedure TfrmMain.ConfigSaveSettings;
+begin
+  try
+    DebugLn('Saving configuration');
+    if gSaveCmdLineHistory then
+      glsCmdLineHistory.Assign(edtCommand.Items);
+    SaveWindowState;
+    if gButtonBar then SaveMainToolBar;
+    SaveGlobs; // Should be last, writes configuration file
+  except
+    on E: Exception do
+      DebugLn('Cannot save main configuration: ', e.Message);
+  end;
+end;
+
 function TfrmMain.IsCommandLineVisible: Boolean;
 begin
-  Result := (edtCommand.Visible and pnlCommand.Visible);
+  Result := (edtCommand.Visible and pnlCommand.Visible and pnlCmdLine.Visible);
 end;
 
 function TfrmMain.FindMatchingDrive(Address, Path: String): Integer;
@@ -5528,7 +5585,7 @@ begin
     Drive := DrivesList[DriveIndex];
     DriveButton.Caption := Drive^.DisplayName;
     DriveButton.Tag := DriveIndex;
-    BitmapTmp := PixMapManager.GetDriveIcon(Drive, 22, DriveButton.Color);
+    BitmapTmp := PixMapManager.GetDriveIcon(Drive, gDiskIconsSize, DriveButton.Color);
   end
   else
   begin
@@ -5536,15 +5593,15 @@ begin
     DriveButton.Tag := -1;
 
     if FileView.FileSource.IsClass(TArchiveFileSource) then
-      BitmapTmp := PixMapManager.GetArchiveIcon(22, DriveButton.Color)
+      BitmapTmp := PixMapManager.GetArchiveIcon(gDiskIconsSize, DriveButton.Color)
     else
-      BitmapTmp := PixMapManager.GetDefaultDriveIcon(22, DriveButton.Color);
+      BitmapTmp := PixMapManager.GetDefaultDriveIcon(gDiskIconsSize, DriveButton.Color);
   end;
 
   DriveButton.Glyph := BitmapTmp;
 
   DriveButton.Width := DriveButton.Glyph.Width
-                     + DriveButton.Canvas.TextWidth(DriveButton.Caption) + 16;
+                     + DriveButton.Canvas.TextWidth(DriveButton.Caption) + 24;
 
   FreeAndNil(BitmapTmp);
 end;
@@ -5640,7 +5697,7 @@ begin
 end;
 
 procedure TfrmMain.HideToTray;
-{$IF DEFINED(LCLGTK2) or DEFINED(LCLQT)}
+{$IF DEFINED(LCLGTK2) or DEFINED(LCLQT) or DEFINED(LCLQT5)}
 var
   ActiveWindow: HWND;
   LCLObject: TObject;
@@ -5658,7 +5715,7 @@ begin
   window has capture) thus preventing the user from restoring the main window.
   So when the main form is hidden the modal window is hidden too.
 }
-{$IF DEFINED(LCLGTK2) or DEFINED(LCLQT)}
+{$IF DEFINED(LCLGTK2) or DEFINED(LCLQT) or DEFINED(LCLQT5)}
   LastActiveWindow := nil;
   if not Self.Active then    // If there is another window active
   begin
@@ -5676,7 +5733,7 @@ begin
         // We only want to hide it.
         LastActiveWindow.Visible := False;
 {$ENDIF}
-{$IFDEF LCLQT}
+{$IF DEFINED(LCLQT) or DEFINED(LCLQT5)}
         // Have to use QT directly to hide the window for this to work.
         TQtWidget(LastActiveWindow.Handle).setVisible(False);
 {$ENDIF}
@@ -5699,10 +5756,10 @@ begin
     ShowTrayIcon(False);
 
   // After the main form is shown, restore the last active modal form if there was any.
-{$IF DEFINED(LCLGTK2) or DEFINED(LCLQT)}
+{$IF DEFINED(LCLGTK2) or DEFINED(LCLQT) or DEFINED(LCLQT5)}
    if Assigned(LastActiveWindow) then
    begin
-{$IFDEF LCLQT}
+{$IF DEFINED(LCLQT) or DEFINED(LCLQT5)}
      TQtWidget(LastActiveWindow.Handle).setVisible(true);
 {$ENDIF}
 {$IFDEF LCLGTK2}
@@ -5771,6 +5828,7 @@ const
   PTLen = 40;
 var
   st: String;
+  Properties: TFileSourceProperties;
 begin
   if (fsoExecute in ActiveFrame.FileSource.GetOperationsTypes) then
   begin
@@ -5806,7 +5864,8 @@ begin
     edtCommand.Visible := False;
   end;
   // Change program current path
-  if (fspDirectAccess in ActiveFrame.FileSource.GetProperties) then
+  Properties := ActiveFrame.FileSource.GetProperties;
+  if (fspDirectAccess in Properties) and not (fspLinksToLocalFiles in Properties) then
   begin
     mbSetCurrentDir(ActiveFrame.CurrentPath);
   end;
@@ -6056,7 +6115,7 @@ begin
   Cancel := not CanClose;
 end;
 
-{$IFDEF LCLQT}
+{$IF DEFINED(LCLQT) or DEFINED(LCLQT5)}
 function TfrmMain.QObjectEventFilter(Sender: QObjectH; Event: QEventH): Boolean; cdecl;
 begin
   Result:= False;

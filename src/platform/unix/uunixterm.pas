@@ -189,7 +189,7 @@ function execl(__path:Pchar; __arg:Pchar):longint;cdecl;varargs;external clib na
 implementation
 
 uses
-  uDebug;
+  DCUnix, uDebug;
 
 { TUnixConThread }
 
@@ -480,12 +480,13 @@ begin
   if ChildPid=0 then
   begin
     //Child
+    FileCloseOnExecAll;
     setenv('TERM', 'linux', 1);
     execl(pchar(cmd), pchar(params), nil);
     
     //если execl не сработал и новый процесс не подменил форкнутый, то ошибка
     fpWrite(C_stderr, pchar('execl() failed. Command: '+ cmd),length('execl() failed. Command: '+ cmd));
-    exit(127);  // error exec'ing
+    fpExit(127);  // error exec'ing
   end;
 FChildPid:=ChildPid;
 Result:=ChildPid;

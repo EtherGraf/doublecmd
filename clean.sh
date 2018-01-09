@@ -1,9 +1,7 @@
 #!/bin/sh
 
-rm -f units/i386-linux-gtk2/*
-rm -f units/i386-linux-qt/*
-rm -f units/x86_64-linux-gtk2/*
-rm -f units/x86_64-linux-qt/*
+# Clean up output directories
+rm -f units/*/*
 
 # Clean up components output directories
 rm -rf components/chsdet/lib/*
@@ -14,7 +12,7 @@ rm -rf components/gifanim/lib/*
 rm -rf components/KASToolBar/lib/*
 rm -rf components/multithreadprocs/lib/*
 rm -rf components/viewer/lib/*
-rm -rf components/ZVDateTimeCtrls/lib/*
+rm -rf components/synunihighlighter/lib/*
 
 # Clean up all temporary files
 find . -iname '*.compiled' -delete

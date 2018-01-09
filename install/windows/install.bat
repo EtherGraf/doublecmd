@@ -19,14 +19,16 @@ mkdir  %DC_INSTALL_DIR%\plugins\wdx
 mkdir  %DC_INSTALL_DIR%\plugins\wdx\scripts
 mkdir  %DC_INSTALL_DIR%\plugins\wdx\rpm_wdx
 mkdir  %DC_INSTALL_DIR%\plugins\wdx\deb_wdx
+mkdir  %DC_INSTALL_DIR%\plugins\wdx\audioinfo
 rem WFX plugins directories
 mkdir  %DC_INSTALL_DIR%\plugins\wfx
 mkdir  %DC_INSTALL_DIR%\plugins\wfx\ftp
 
 mkdir  %DC_INSTALL_DIR%\doc
 rem Copy directories
-xcopy /E language %DC_INSTALL_DIR%\language\
-xcopy /E pixmaps  %DC_INSTALL_DIR%\pixmaps\
+xcopy /E language     %DC_INSTALL_DIR%\language\
+xcopy /E pixmaps      %DC_INSTALL_DIR%\pixmaps\
+xcopy /E highlighters %DC_INSTALL_DIR%\highlighters\
 rem Copy files
 copy doc\*.txt                      %DC_INSTALL_DIR%\doc\
 copy doublecmd.exe                  %DC_INSTALL_DIR%\
@@ -44,10 +46,11 @@ copy  plugins\wcx\deb\lib\deb.wcx         %DC_INSTALL_DIR%\plugins\wcx\deb\
 copy  plugins\wcx\rpm\lib\rpm.wcx         %DC_INSTALL_DIR%\plugins\wcx\rpm\
 copy  plugins\wcx\sevenzip\sevenzip.wcx   %DC_INSTALL_DIR%\plugins\wcx\sevenzip\
 copy  plugins\wcx\unrar\lib\unrar.wcx     %DC_INSTALL_DIR%\plugins\wcx\unrar\
-copy  plugins\wcx\zip\lib\zip.wcx         %DC_INSTALL_DIR%\plugins\wcx\zip\
+copy  plugins\wcx\zip\zip.wcx             %DC_INSTALL_DIR%\plugins\wcx\zip\
 rem WDX
 copy  plugins\wdx\rpm_wdx\lib\rpm_wdx.wdx %DC_INSTALL_DIR%\plugins\wdx\rpm_wdx\
 copy  plugins\wdx\deb_wdx\lib\deb_wdx.wdx %DC_INSTALL_DIR%\plugins\wdx\deb_wdx\
 copy  plugins\wdx\scripts\*               %DC_INSTALL_DIR%\plugins\wdx\scripts\
+copy  plugins\wdx\audioinfo\audioinfo.wdx %DC_INSTALL_DIR%\plugins\wdx\audioinfo\
 rem WFX
-copy  plugins\wfx\ftp\lib\ftp.wfx         %DC_INSTALL_DIR%\plugins\wfx\ftp\
+copy  plugins\wfx\ftp\ftp.wfx             %DC_INSTALL_DIR%\plugins\wfx\ftp\

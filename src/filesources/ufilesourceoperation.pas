@@ -79,6 +79,7 @@ type
              ) : TFileSourceOperationUIResponse of object;
   TAbortOperationFunction = procedure of object;
   TCheckOperationStateFunction = procedure of object;
+  TAppProcessMessagesFunction = function(CheckState: Boolean = False): Boolean of object;
 
   TFileSourceOperationClass = class of TFileSourceOperation;
   {en
@@ -335,6 +336,11 @@ type
        from the most repeated points.
     }
     procedure CheckOperationState;
+
+    {en
+       Same as CheckOperationState but does not throw exception.
+    }
+    function CheckOperationStateSafe: Boolean;
 
     function AppProcessMessages(CheckState: Boolean = False): Boolean;
 
@@ -768,6 +774,17 @@ begin
 
     // else: we're left with fsosRunning
   end;
+end;
+
+function TFileSourceOperation.CheckOperationStateSafe: Boolean;
+begin
+  try
+    CheckOperationState;
+  except
+    on E: EFileSourceOperationAborting do
+      Exit(False);
+  end;
+  Result:= True;
 end;
 
 function TFileSourceOperation.AppProcessMessages(CheckState: Boolean): Boolean;

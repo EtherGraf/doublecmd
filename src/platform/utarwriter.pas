@@ -3,7 +3,7 @@
    -------------------------------------------------------------------------
    Simple TAR archive writer
 
-   Copyright (C) 2011  Koblov Alexander (Alexx2000@mail.ru)
+   Copyright (C) 2011-2017 Alexander Koblov (alexx2000@mail.ru)
 
    This unit is based on libtar.pp from the Free Component Library (FCL)
 
@@ -17,9 +17,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 
-   You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software
-   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    You should have received a copy of the GNU General Public License
+    along with this program. If not, see <http://www.gnu.org/licenses/>.
 }
 
 unit uTarWriter;
@@ -136,7 +135,7 @@ implementation
 
 uses
   {$IF DEFINED(MSWINDOWS)}
-  Windows, DCFileAttributes, uMyWindows,
+  Windows, DCFileAttributes, DCWindows, uMyWindows,
   {$ELSEIF DEFINED(UNIX)}
   BaseUnix, FileUtil, uUsersGroups,
   {$ENDIF}
@@ -193,14 +192,13 @@ function GetFileInfo(const FileName: String; out FileInfo: TWin32FindDataW): Boo
 var
   Handle: System.THandle;
 begin
-  Result:= False;
-  Handle := FindFirstFileW(PWideChar(UTF8Decode(FileName)), FileInfo);
-  if Handle <> INVALID_HANDLE_VALUE then
-    begin
-      FileInfo.dwFileAttributes:= ExtractFileAttributes(FileInfo);
-      Windows.FindClose(Handle);
-      Result:= True;
-    end;
+  Handle := FindFirstFileW(PWideChar(UTF16LongName(FileName)), FileInfo);
+  Result := Handle <> INVALID_HANDLE_VALUE;
+  if Result then
+  begin
+    FileInfo.dwFileAttributes:= ExtractFileAttributes(FileInfo);
+    Windows.FindClose(Handle);
+  end;
 end;
 {$ELSEIF DEFINED(UNIX)}
 function GetFileInfo(const FileName: String; out FileInfo: BaseUnix.Stat): Boolean;
@@ -741,7 +739,16 @@ begin
         aFile := Files[CurrentFileIndex];
 
         if aFile.IsDirectory or aFile.IsLink then
-          AddFile(aFile.FullPath)
+        begin
+          if aFile.IsLink then
+          begin
+            Statistics.TotalBytes -= aFile.Size * Divider;
+            UpdateStatistics(Statistics);
+          end;
+
+          // Add file record only
+          AddFile(aFile.FullPath);
+        end
         else
           begin
             // Update progress

@@ -31,6 +31,7 @@ type
     FStatistics: TFileSourceMoveOperationStatistics; // local copy of statistics
 
     // Options.
+    FVerify,
     FReserveSpace,
     FCheckFreeSpace: Boolean;
     FSkipAllBigFiles: Boolean;
@@ -52,6 +53,7 @@ type
 
     class function GetOptionsUIClass: TFileSourceOperationOptionsUIClass; override;
 
+    property Verify: Boolean read FVerify write FVerify;
     property CheckFreeSpace: Boolean read FCheckFreeSpace write FCheckFreeSpace;
     property ReserveSpace: Boolean read FReserveSpace write FReserveSpace;
     property CopyAttributesOptions: TCopyAttributesOptions read FCopyAttributesOptions write FCopyAttributesOptions;
@@ -132,6 +134,7 @@ begin
   FOperationHelper := TFileSystemOperationHelper.Create(
                         @AskQuestion,
                         @RaiseAbortOperation,
+                        @AppProcessMessages,
                         @CheckOperationState,
                         @UpdateStatistics,
                         Thread,
@@ -139,6 +142,7 @@ begin
                         TargetPath,
                         FStatistics);
 
+  FOperationHelper.Verify := FVerify;
   FOperationHelper.RenameMask := RenameMask;
   FOperationHelper.ReserveSpace :=  FReserveSpace;
   FOperationHelper.CheckFreeSpace := CheckFreeSpace;

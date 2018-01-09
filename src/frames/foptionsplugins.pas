@@ -100,7 +100,10 @@ implementation
 
 uses
   LCLProc, Forms, Dialogs, StrUtils, uLng, uGlobs, uDCUtils, uDebug, uShowMsg,
-  uTypes, fTweakPlugin, dmCommonData, DCStrUtils, uDefaultPlugins;
+  uTypes, fTweakPlugin, dmCommonData, DCStrUtils, uDefaultPlugins, DynLibs;
+
+const
+  cNextLine = LineEnding + LineEnding;
 
 { TfrmOptionsPlugins }
 
@@ -260,6 +263,8 @@ end;
 
 procedure TfrmOptionsPlugins.stgPluginsBeforeSelection(Sender: TObject; aCol,
   aRow: Integer);
+var
+  AEnabled: Boolean = True;
 begin
   if stgPlugins.Cells[0, aRow] = '+' then
     btnEnablePlugin.Caption:= rsOptDisable
@@ -267,6 +272,14 @@ begin
     btnEnablePlugin.Caption:= rsOptEnable;
 
   btnEnablePlugin.Enabled:= (stgPlugins.Cells[0, aRow] <> '');
+  if pcPluginsTypes.ActivePage.Name = 'tsWDX' then
+  begin
+    aRow:= aRow - stgPlugins.FixedRows;
+    AEnabled:= not (tmpWDXPlugins.GetWdxModule(aRow) is TEmbeddedWDX);
+  end;
+  btnRemovePlugin.Enabled:= AEnabled;
+  btnTweakPlugin.Enabled:= AEnabled;
+  btnConfigPlugin.Enabled:= AEnabled;
 end;
 
 { DSX plugins }
@@ -638,7 +651,7 @@ begin
 
     if not tmpWLXPlugins.LoadModule(sPluginName) then
     begin
-      MessageDlg(Application.Title, rsMsgInvalidPlugin, mtError, [mbOK], 0, mbOK);
+      MessageDlg(Application.Title, rsMsgInvalidPlugin + cNextLine + GetLoadErrorStr, mtError, [mbOK], 0, mbOK);
       tmpWLXPlugins.DeleteItem(I);
       Exit;
     end;

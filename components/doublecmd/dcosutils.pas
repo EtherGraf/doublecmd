@@ -3,7 +3,7 @@
     -------------------------------------------------------------------------
     This unit contains platform dependent functions dealing with operating system.
 
-    Copyright (C) 2006-2015 Alexander Koblov (alexx2000@mail.ru)
+    Copyright (C) 2006-2017 Alexander Koblov (alexx2000@mail.ru)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -28,7 +28,12 @@ interface
 
 uses
   SysUtils, Classes, DynLibs, DCClassesUtf8, DCBasicTypes;
-    
+
+const
+  fmOpenSync    = $10000;
+  fmOpenDirect  = $20000;
+  fmOpenNoATime = $40000;
+
 type
   TFileMapRec = record
     FileHandle : System.THandle;
@@ -75,7 +80,7 @@ function FileIsExeLib(const sFileName : String) : Boolean;
    @param(bDropReadOnlyFlag Drop read only attribute if @true)
    @returns(The function returns @true if successful, @false otherwise)
 }
-function FileIsReadOnly(iAttr: TFileAttrs): Boolean;
+function FileIsReadOnly(iAttr: TFileAttrs): Boolean; inline;
 
 {en
    Returns path to a temporary name. It ensures that returned path doesn't exist,
@@ -112,10 +117,10 @@ procedure UnMapFile(var FileMapRec : TFileMapRec);
 function ConsoleToUTF8(const Str: AnsiString): String;
 
 { File handling functions}
-function mbFileOpen(const FileName: String; Mode: Word): System.THandle;
-function mbFileCreate(const FileName: String): System.THandle; overload;
-function mbFileCreate(const FileName: String; ShareMode: Longint): System.THandle; overload;
-function mbFileCreate(const FileName: String; ShareMode: Longint; Rights: Longint): System.THandle; overload;
+function mbFileOpen(const FileName: String; Mode: LongWord): System.THandle;
+function mbFileCreate(const FileName: String): System.THandle; overload; inline;
+function mbFileCreate(const FileName: String; Mode: LongWord): System.THandle; overload; inline;
+function mbFileCreate(const FileName: String; Mode, Rights: LongWord): System.THandle; overload;
 function mbFileAge(const FileName: String): DCBasicTypes.TFileTime;
 function mbFileSame(const FirstName, SecondName: String): Boolean;
 // On success returns True.
@@ -178,7 +183,8 @@ function mbGetEnvironmentString(Index : Integer) : String;
    them with the values defined for the current user
 }
 function mbExpandEnvironmentStrings(const FileName: String): String;
-function mbSysErrorMessage(ErrorCode: Integer): String;
+function mbSysErrorMessage: String; overload; inline;
+function mbSysErrorMessage(ErrorCode: Integer): String; overload;
 {en
    Get current module name
 }
@@ -186,11 +192,33 @@ function mbGetModuleName(Address: Pointer = nil): String;
 function mbLoadLibrary(const Name: String): TLibHandle;
 function SafeGetProcAddress(Lib: TLibHandle; const ProcName: AnsiString): Pointer;
 
+{en
+   Create a hard link to a file
+   @param(Path Name of file)
+   @param(LinkName Name of hard link)
+   @returns(The function returns @true if successful, @false otherwise)
+}
+function CreateHardLink(const Path, LinkName: String) : Boolean;
+{en
+   Create a symbolic link
+   @param(Path Name of file)
+   @param(LinkName Name of symbolic link)
+   @returns(The function returns @true if successful, @false otherwise)
+}
+function CreateSymLink(const Path, LinkName: string) : Boolean;
+{en
+   Read destination of symbolic link
+   @param(LinkName Name of symbolic link)
+   @returns(The file name/path the symbolic link name is pointing to.
+            The path may be relative to link's location.)
+}
+function ReadSymLink(const LinkName : String) : String;
+
 implementation
 
 uses
 {$IF DEFINED(MSWINDOWS)}
-  Windows, JwaWinNetWk, DCDateTimeUtils, DCWindows,
+  Windows, JwaWinNetWk, DCDateTimeUtils, DCWindows, DCNtfsLinks,
 {$ENDIF}
 {$IF DEFINED(UNIX)}
   BaseUnix, Unix, dl, DCUnix,
@@ -214,6 +242,7 @@ begin
 end;
 
 {$ENDIF}
+
 {$IF DEFINED(MSWINDOWS)}
 const
   AccessModes: array[0..2] of DWORD  = (
@@ -226,15 +255,34 @@ const
                FILE_SHARE_READ,
                FILE_SHARE_WRITE,
                FILE_SHARE_READ or FILE_SHARE_WRITE or FILE_SHARE_DELETE);
+  OpenFlags: array[0..3] of DWORD  = (
+                0,
+                FILE_FLAG_WRITE_THROUGH,
+                FILE_FLAG_NO_BUFFERING,
+                FILE_FLAG_WRITE_THROUGH or FILE_FLAG_NO_BUFFERING);
 
 var
   CurrentDirectory: String;
 {$ELSEIF DEFINED(UNIX)}
 const
-  AccessModes: array[0..2] of LongInt  = (
+
+{$IF NOT DECLARED(O_SYNC)}
+  O_SYNC   = 0;
+{$ENDIF}
+
+{$IF NOT DECLARED(O_DIRECT)}
+  O_DIRECT = 0;
+{$ENDIF}
+
+  AccessModes: array[0..2] of cInt  = (
                 O_RdOnly,
                 O_WrOnly,
                 O_RdWr);
+  OpenFlags: array[0..3] of cInt  = (
+                0,
+                O_SYNC,
+                O_DIRECT,
+                O_SYNC or O_DIRECT);
 {$ENDIF}
 
 (*Is Directory*)
@@ -274,20 +322,22 @@ var
 begin
   Result := False;
   if mbFileExists(sFileName) and (mbFileSize(sFileName) >= SizeOf(Sign)) then
-    begin
-      fsExeLib := TFileStreamEx.Create(sFileName, fmOpenRead or fmShareDenyNone);
-      try
-        {$IFDEF MSWINDOWS}
-        Sign := fsExeLib.ReadWord;
-        Result := (Sign = $5A4D);
-        {$ELSE}
-        Sign := fsExeLib.ReadDWord;
-        Result := (Sign = $464C457F);
-        {$ENDIF}
-      finally
-        fsExeLib.Free;
-      end;
+  try
+    fsExeLib := TFileStreamEx.Create(sFileName, fmOpenRead or fmShareDenyNone);
+    try
+      {$IFDEF MSWINDOWS}
+      Sign := fsExeLib.ReadWord;
+      Result := (Sign = $5A4D);
+      {$ELSE}
+      Sign := fsExeLib.ReadDWord;
+      Result := (Sign = $464C457F);
+      {$ENDIF}
+    finally
+      fsExeLib.Free;
     end;
+  except
+    Result := False;
+  end;
 end;
 
 function FileIsReadOnly(iAttr: TFileAttrs): Boolean;
@@ -451,7 +501,7 @@ begin
   with FileMapRec do
     begin
       MappedFile := nil;
-      FileHandle:= fpOpen(UTF8ToSys(sFileName), O_RDONLY);
+      FileHandle:= mbFileOpen(sFileName, fmOpenRead);
 
       if FileHandle = feInvalidHandle then Exit;
       if fpfstat(FileHandle, StatInfo) <> 0 then
@@ -537,58 +587,61 @@ begin
   {$ENDIF}
 end;
 
-function mbFileOpen(const FileName: String; Mode: Word): System.THandle;
+function mbFileOpen(const FileName: String; Mode: LongWord): System.THandle;
 {$IFDEF MSWINDOWS}
+const
+  ft: TFileTime = ( dwLowDateTime: $FFFFFFFF; dwHighDateTime: $FFFFFFFF; );
 begin
-  Result:= CreateFileW(PWideChar(UTF8Decode(FileName)), AccessModes[Mode and 3],
+  Result:= CreateFileW(PWideChar(UTF16LongName(FileName)),
+                       AccessModes[Mode and 3] or ((Mode and fmOpenNoATime) shr 10),
                        ShareModes[(Mode and $F0) shr 4], nil, OPEN_EXISTING,
-                       FILE_ATTRIBUTE_NORMAL, 0);
+                       FILE_ATTRIBUTE_NORMAL, OpenFlags[(Mode shr 16) and 3]);
+  if (Result <> feInvalidHandle) then begin
+    if (Mode and fmOpenNoATime <> 0) then SetFileTime(Result, nil, @ft, @ft);
+  end;
 end;
 {$ELSE}
 begin
-  Result:= fpOpen(UTF8ToSys(FileName), AccessModes[Mode and 3]);
+  repeat
+    Result:= fpOpen(UTF8ToSys(FileName), AccessModes[Mode and 3] or
+                    OpenFlags[(Mode shr 16) and 3] or O_CLOEXEC);
+  until (Result <> -1) or (fpgeterrno <> ESysEINTR);
+  if Result <> feInvalidHandle then
+  begin
+    FileCloseOnExec(Result);
+    Result:= FileLock(Result, Mode and $FF);
+  end;
 end;
 {$ENDIF}
 
 function mbFileCreate(const FileName: String): System.THandle;
-{$IFDEF MSWINDOWS}
 begin
-  Result := mbFileCreate(FileName, fmShareDenyWrite, 0);
+  Result:= mbFileCreate(FileName, fmShareDenyWrite);
 end;
-{$ELSE}
-begin
-  Result:= fpOpen(UTF8ToSys(FileName), O_Creat or O_RdWr or O_Trunc);
-end;
-{$ENDIF}
 
-function mbFileCreate(const FileName: String; ShareMode: Longint): System.THandle;
-{$IFDEF MSWINDOWS}
+function mbFileCreate(const FileName: String; Mode: LongWord): System.THandle;
 begin
-  Result:= mbFileCreate(FileName, ShareMode, 0);
+  Result:= mbFileCreate(FileName, Mode, 438); // 438 = 666 octal
 end;
-{$ELSE}
-begin
-  {$IF (FPC_VERSION > 2) or ((FPC_VERSION = 2) and (FPC_RELEASE >= 5))}
-  Result:= FileCreate(UTF8ToSys(FileName), ShareMode, 438); // 438 = 666 octal
-  {$ELSE}
-  Result:= FileCreate(UTF8ToSys(FileName), 438); // 438 = 666 octal
-  {$ENDIF}
-end;
-{$ENDIF}
 
-function mbFileCreate(const FileName: String; ShareMode: Longint; Rights: Longint): System.THandle;
+function mbFileCreate(const FileName: String; Mode, Rights: LongWord): System.THandle;
 {$IFDEF MSWINDOWS}
 begin
-  Result:= CreateFileW(PWideChar(UTF8Decode(FileName)), GENERIC_READ or GENERIC_WRITE,
-                       ShareModes[(ShareMode and $F0) shr 4], nil, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+  Result:= CreateFileW(PWideChar(UTF16LongName(FileName)), GENERIC_READ or GENERIC_WRITE,
+                       ShareModes[(Mode and $F0) shr 4], nil, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL,
+                       OpenFlags[(Mode shr 16) and 3]);
 end;
 {$ELSE}
 begin
-  {$IF (FPC_VERSION > 2) or ((FPC_VERSION = 2) and (FPC_RELEASE >= 5))}
-  Result:= FileCreate(UTF8ToSys(FileName), ShareMode, Rights);
-  {$ELSE}
-  Result:= FileCreate(UTF8ToSys(FileName), Rights);
-  {$ENDIF}
+  repeat
+    Result:= fpOpen(UTF8ToSys(FileName), O_Creat or O_RdWr or O_Trunc or
+                    OpenFlags[(Mode shr 16) and 3] or O_CLOEXEC, Rights);
+  until (Result <> -1) or (fpgeterrno <> ESysEINTR);
+  if Result <> feInvalidHandle then
+  begin
+    FileCloseOnExec(Result);
+    Result:= FileLock(Result, Mode and $FF);
+  end;
 end;
 {$ENDIF}
 
@@ -598,7 +651,7 @@ var
   Handle: System.THandle;
   FindData: TWin32FindDataW;
 begin
-  Handle := FindFirstFileW(PWideChar(UTF8Decode(FileName)), FindData);
+  Handle := FindFirstFileW(PWideChar(UTF16LongName(FileName)), FindData);
   if Handle <> INVALID_HANDLE_VALUE then
     begin
       Windows.FindClose(Handle);
@@ -627,7 +680,7 @@ var
   lpSecondFileInfo: TByHandleFileInformation;
 begin
   // Read first file info
-  Handle:= CreateFileW(PWideChar(UTF8Decode(FirstName)), FILE_READ_ATTRIBUTES,
+  Handle:= CreateFileW(PWideChar(UTF16LongName(FirstName)), FILE_READ_ATTRIBUTES,
                        FILE_SHARE_READ or FILE_SHARE_WRITE or FILE_SHARE_DELETE,
                        nil, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, 0);
   if Handle = INVALID_HANDLE_VALUE then Exit(False);
@@ -635,7 +688,7 @@ begin
   CloseHandle(Handle);
   if not Result then Exit;
   // Read second file info
-  Handle:= CreateFileW(PWideChar(UTF8Decode(SecondName)), FILE_READ_ATTRIBUTES,
+  Handle:= CreateFileW(PWideChar(UTF16LongName(SecondName)), FILE_READ_ATTRIBUTES,
                        FILE_SHARE_READ or FILE_SHARE_WRITE or FILE_SHARE_DELETE,
                        nil, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, 0);
   if Handle = INVALID_HANDLE_VALUE then Exit(False);
@@ -669,7 +722,7 @@ function mbFileGetTime(const FileName: String;
 var
   Handle: System.THandle;
 begin
-  Handle := CreateFileW(PWideChar(UTF8Decode(FileName)),
+  Handle := CreateFileW(PWideChar(UTF16LongName(FileName)),
                         FILE_READ_ATTRIBUTES,
                         FILE_SHARE_READ or FILE_SHARE_WRITE or FILE_SHARE_DELETE,
                         nil,
@@ -713,7 +766,7 @@ var
   PWinCreationTime: Windows.LPFILETIME = nil;
   PWinLastAccessTime: Windows.LPFILETIME = nil;
 begin
-  Handle := CreateFileW(PWideChar(UTF8Decode(FileName)),
+  Handle := CreateFileW(PWideChar(UTF16LongName(FileName)),
                         FILE_WRITE_ATTRIBUTES,
                         FILE_SHARE_READ or FILE_SHARE_WRITE or FILE_SHARE_DELETE,
                         nil,
@@ -768,7 +821,7 @@ function mbFileExists(const FileName: String) : Boolean;
 var
   Attr: DWORD;
 begin
-  Attr:= GetFileAttributesW(PWideChar(UTF8Decode(FileName)));
+  Attr:= GetFileAttributesW(PWideChar(UTF16LongName(FileName)));
   if Attr <> DWORD(-1) then
     Result:= (Attr and FILE_ATTRIBUTE_DIRECTORY) = 0
   else
@@ -802,7 +855,7 @@ begin
   if Mode = fmOpenRead then // If checking Read mode no sharing mode given
     Mode := Mode or fmShareDenyNone;
   dwShareMode := ShareModes[(Mode and $F0) shr 4];
-  hFile:= CreateFileW(PWideChar(UTF8Decode(FileName)), dwDesiredAccess, dwShareMode,
+  hFile:= CreateFileW(PWideChar(UTF16LongName(FileName)), dwDesiredAccess, dwShareMode,
                       nil, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, 0);
   Result := hFile <> INVALID_HANDLE_VALUE;
   if Result then
@@ -827,7 +880,7 @@ end;
 function mbFileGetAttr(const FileName: String): TFileAttrs;
 {$IFDEF MSWINDOWS}
 begin
-  Result := GetFileAttributesW(PWideChar(UTF8Decode(FileName)));
+  Result := GetFileAttributesW(PWideChar(UTF16LongName(FileName)));
 end;
 {$ELSE}
 var
@@ -843,7 +896,7 @@ end;
 function mbFileSetAttr(const FileName: String; Attr: TFileAttrs): LongInt;
 {$IFDEF MSWINDOWS}
 begin
-  if SetFileAttributesW(PWideChar(UTF8Decode(FileName)), Attr) then
+  if SetFileAttributesW(PWideChar(UTF16LongName(FileName)), Attr) then
     Result:= 0
   else
     Result:= GetLastError;
@@ -859,7 +912,7 @@ function mbFileGetAttr(const FileName: String; out Attr: TSearchRec): Boolean;
 var
   FileInfo: Windows.TWin32FileAttributeData;
 begin
-  Result:= GetFileAttributesExW(PWideChar(UTF8Decode(FileName)),
+  Result:= GetFileAttributesExW(PWideChar(UTF16LongName(FileName)),
                                 GetFileExInfoStandard, @FileInfo);
   if Result then
   begin
@@ -894,7 +947,7 @@ var
   iAttr: DWORD;
   wFileName: UnicodeString;
 begin
-  wFileName:= UTF8Decode(FileName);
+  wFileName:= UTF16LongName(FileName);
   iAttr := GetFileAttributesW(PWideChar(wFileName));
   if iAttr = DWORD(-1) then Exit(False);
   if ReadOnly then
@@ -917,11 +970,13 @@ end;
 function mbDeleteFile(const FileName: String): Boolean;
 {$IFDEF MSWINDOWS}
 begin
-  Result:= Windows.DeleteFileW(PWideChar(UTF8Decode(FileName)));
+  Result:= Windows.DeleteFileW(PWideChar(UTF16LongName(FileName)));
+  if not Result then Result:= (GetLastError = ERROR_FILE_NOT_FOUND);
 end;
 {$ELSE}
 begin
   Result:= fpUnLink(UTF8ToSys(FileName)) = 0;
+  if not Result then Result:= (fpgetErrNo = ESysENOENT);
 end;
 {$ENDIF}
 
@@ -931,8 +986,8 @@ var
   wOldName,
   wNewName: UnicodeString;
 begin
-  wOldName:= UTF8Decode(OldName);
-  wNewName:= UTF8Decode(NewName);
+  wNewName:= UTF16LongName(NewName);
+  wOldName:= UTF16LongName(OldName);
   Result:= MoveFileExW(PWChar(wOldName), PWChar(wNewName), MOVEFILE_REPLACE_EXISTING);
 end;
 {$ELSE}
@@ -1023,7 +1078,7 @@ var
   FindData: TWin32FindDataW;
 begin
   Result:= 0;
-  Handle := FindFirstFileW(PWideChar(UTF8Decode(FileName)), FindData);
+  Handle := FindFirstFileW(PWideChar(UTF16LongName(FileName)), FindData);
   if Handle <> INVALID_HANDLE_VALUE then
     begin
       Windows.FindClose(Handle);
@@ -1044,7 +1099,7 @@ begin
 end;
 {$ENDIF}
 
-function FileFlush(Handle: System.THandle): Boolean;
+function FileFlush(Handle: System.THandle): Boolean; inline;
 {$IFDEF MSWINDOWS}
 begin
   Result:= FlushFileBuffers(Handle);
@@ -1100,7 +1155,7 @@ begin
     NetResource.lpRemoteName:= PWideChar(wsNewDir);
     WNetAddConnection2W(NetResource, nil, nil, CONNECT_INTERACTIVE);
   end;
-  wsNewDir:= wsNewDir + DirectorySeparator + '*';
+  wsNewDir:= UTF16LongName(IncludeTrailingBackslash(NewDir)) + '*';
   Handle:= FindFirstFileW(PWideChar(wsNewDir), FindData);
   Result:= (Handle <> INVALID_HANDLE_VALUE) or (GetLastError = ERROR_FILE_NOT_FOUND);
   if (Handle <> INVALID_HANDLE_VALUE) then FindClose(Handle);
@@ -1117,7 +1172,7 @@ function mbDirectoryExists(const Directory: String) : Boolean;
 var
   Attr: DWORD;
 begin
-  Attr:= GetFileAttributesW(PWideChar(UTF8Decode(Directory)));
+  Attr:= GetFileAttributesW(PWideChar(UTF16LongName(Directory)));
   if Attr <> DWORD(-1) then
     Result:= (Attr and FILE_ATTRIBUTE_DIRECTORY) > 0
   else
@@ -1142,7 +1197,7 @@ end;
 function mbCreateDir(const NewDir: String): Boolean;
 {$IFDEF MSWINDOWS}
 begin
-  Result:= CreateDirectoryW(PWideChar(UTF8Decode(NewDir)), nil);
+  Result:= CreateDirectoryW(PWideChar(UTF16LongName(NewDir)), nil);
 end;
 {$ELSE}
 begin
@@ -1153,11 +1208,13 @@ end;
 function mbRemoveDir(const Dir: String): Boolean;
 {$IFDEF MSWINDOWS}
 begin
-  Result:= RemoveDirectoryW(PWideChar(UTF8Decode(Dir)));
+  Result:= RemoveDirectoryW(PWideChar(UTF16LongName(Dir)));
+  if not Result then Result:= (GetLastError = ERROR_FILE_NOT_FOUND);
 end;
 {$ELSE}
 begin
   Result:= fpRmDir(UTF8ToSys(Dir)) = 0;
+  if not Result then Result:= (fpgetErrNo = ESysENOENT);
 end;
 {$ENDIF}
 
@@ -1187,13 +1244,13 @@ begin
 
   if not Result then
   begin
-    FileHandle1 := CreateFileW(PWideChar(UTF8Decode(FileName1)), FILE_READ_ATTRIBUTES,
+    FileHandle1 := CreateFileW(PWideChar(UTF16LongName(FileName1)), FILE_READ_ATTRIBUTES,
         FILE_SHARE_READ or FILE_SHARE_WRITE or FILE_SHARE_DELETE,
         nil, OPEN_EXISTING, 0, 0);
 
     if FileHandle1 <> INVALID_HANDLE_VALUE then
     begin
-      FileHandle2 := CreateFileW(PWideChar(UTF8Decode(FileName2)), FILE_READ_ATTRIBUTES,
+      FileHandle2 := CreateFileW(PWideChar(UTF16LongName(FileName2)), FILE_READ_ATTRIBUTES,
           FILE_SHARE_READ or FILE_SHARE_WRITE or FILE_SHARE_DELETE,
           nil, OPEN_EXISTING, 0, 0);
 
@@ -1260,9 +1317,9 @@ var
   dwSize: DWORD;
   wsResult: UnicodeString;
 begin
-  SetLength(wsResult, MAX_PATH + 1);
-  dwSize:= ExpandEnvironmentStringsW(PWideChar(UTF8Decode(FileName)), PWideChar(wsResult), MAX_PATH);
-  if (dwSize = 0) or (dwSize > MAX_PATH) then
+  SetLength(wsResult, MaxSmallInt + 1);
+  dwSize:= ExpandEnvironmentStringsW(PWideChar(UTF8Decode(FileName)), PWideChar(wsResult), MaxSmallInt);
+  if (dwSize = 0) or (dwSize > MaxSmallInt) then
     Result:= FileName
   else begin
     SetLength(wsResult, dwSize - 1);
@@ -1290,9 +1347,17 @@ begin
 end;
 {$ENDIF}
 
+function mbSysErrorMessage: String;
+begin
+  Result := mbSysErrorMessage(GetLastOSError);
+end;
+
 function mbSysErrorMessage(ErrorCode: Integer): String;
 begin
-  Result := CeSysToUtf8(SysErrorMessage(ErrorCode));
+  Result := SysErrorMessage(ErrorCode);
+{$IF (FPC_FULLVERSION < 30004)}
+  Result := CeSysToUtf8(Result);
+{$ENDIF}
 end;
 
 function mbGetModuleName(Address: Pointer): String;
@@ -1343,5 +1408,52 @@ begin
   Result:= GetProcedureAddress(Lib, ProcName);
   if (Result = nil) then raise Exception.Create(ProcName);
 end;
+
+function CreateHardLink(const Path, LinkName: String) : Boolean;
+{$IFDEF MSWINDOWS}
+var
+  wsPath, wsLinkName: UnicodeString;
+begin
+  wsPath:= UTF16LongName(Path);
+  wsLinkName:= UTF16LongName(LinkName);
+  Result:= DCNtfsLinks.CreateHardlink(wsPath, wsLinkName);
+end;
+{$ELSE}
+begin
+  Result := (fplink(PAnsiChar(CeUtf8ToSys(Path)),PAnsiChar(CeUtf8ToSys(LinkName)))=0);
+end;
+{$ENDIF}
+
+function CreateSymLink(const Path, LinkName: string) : Boolean;
+{$IFDEF MSWINDOWS}
+var
+  wsPath, wsLinkName: UnicodeString;
+begin
+  wsPath:= UTF8Decode(Path);
+  wsLinkName:= UTF16LongName(LinkName);
+  Result:= DCNtfsLinks.CreateSymlink(wsPath, wsLinkName);
+end;
+{$ELSE}
+begin
+  Result := (fpsymlink(PAnsiChar(CeUtf8ToSys(Path)), PAnsiChar(CeUtf8ToSys(LinkName)))=0);
+end;
+{$ENDIF}
+
+function ReadSymLink(const LinkName : String) : String;
+{$IFDEF MSWINDOWS}
+var
+  wsLinkName, wsTarget: UnicodeString;
+begin
+  wsLinkName:= UTF16LongName(LinkName);
+  if DCNtfsLinks.ReadSymLink(wsLinkName, wsTarget) then
+    Result := UTF16ToUTF8(wsTarget)
+  else
+    Result := EmptyStr;
+end;
+{$ELSE}
+begin
+  Result := SysToUTF8(fpReadlink(UTF8ToSys(LinkName)));
+end;
+{$ENDIF}
 
 end.

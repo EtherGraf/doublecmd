@@ -27,6 +27,7 @@ type
     cbExcludeEmptyDirectories: TCheckBox;
     cbReserveSpace: TCheckBox;
     cbCopyPermissions: TCheckBox;
+    chkVerify: TCheckBox;
     cmbDirectoryExists: TComboBoxAutoWidth;
     cmbFileExists: TComboBoxAutoWidth;
     cmbSetPropertyError: TComboBoxAutoWidth;
@@ -110,6 +111,10 @@ constructor TFileSystemCopyMoveOperationOptionsUI.Create(AOwner: TComponent; AFi
 begin
   inherited;
 
+  {$IFDEF DARWIN}
+  chkVerify.Visible := False;
+  {$ENDIF}
+
   {$IFDEF MSWINDOWS}
   cbCopyOwnership.Visible := False;
   cbCopyPermissions.Visible := True;
@@ -119,8 +124,6 @@ begin
   ParseLineToList(rsFileOpDirectoryExistsOptions, cmbDirectoryExists.Items);
   ParseLineToList(rsFileOpSetPropertyErrorOptions, cmbSetPropertyError.Items);
 
-  if not gOverwriteFolder then cmbDirectoryExists.Items.Delete(1);
-
   // Load default options.
   case gOperationOptionFileExists of
     fsoofeNone          : cmbFileExists.ItemIndex := 0;
@@ -129,19 +132,11 @@ begin
     fsoofeSkip          : cmbFileExists.ItemIndex := 3;
   end;
 
-  if gOverwriteFolder then
-    case gOperationOptionDirectoryExists of
-      fsoodeNone     : cmbDirectoryExists.ItemIndex := 0;
-      fsoodeDelete   : cmbDirectoryExists.ItemIndex := 1;
-      fsoodeCopyInto : cmbDirectoryExists.ItemIndex := 2;
-      fsoodeSkip     : cmbDirectoryExists.ItemIndex := 3;
-    end
-  else
-    case gOperationOptionDirectoryExists of
-      fsoodeNone     : cmbDirectoryExists.ItemIndex := 0;
-      fsoodeCopyInto : cmbDirectoryExists.ItemIndex := 1;
-      fsoodeSkip     : cmbDirectoryExists.ItemIndex := 2;
-    end;
+  case gOperationOptionDirectoryExists of
+    fsoodeNone     : cmbDirectoryExists.ItemIndex := 0;
+    fsoodeCopyInto : cmbDirectoryExists.ItemIndex := 1;
+    fsoodeSkip     : cmbDirectoryExists.ItemIndex := 2;
+  end;
 
   case gOperationOptionSetPropertyError of
     fsoospeNone         : cmbSetPropertyError.ItemIndex := 0;
@@ -161,9 +156,11 @@ begin
     fsooslNone       : cbFollowLinks.State := cbGrayed;
   end;
 
+  chkVerify.Checked := gOperationOptionVerify;
   cbCorrectLinks.Checked := gOperationOptionCorrectLinks;
   cbReserveSpace.Checked := gOperationOptionReserveSpace;
   cbCheckFreeSpace.Checked := gOperationOptionCheckFreeSpace;
+  cbExcludeEmptyDirectories.Checked := gOperationOptionExcludeEmptyDirectories;
 end;
 
 destructor TFileSystemCopyMoveOperationOptionsUI.Destroy;
@@ -180,25 +177,18 @@ begin
     2: gOperationOptionFileExists := fsoofeOverwriteOlder;
     3: gOperationOptionFileExists := fsoofeSkip;
   end;
-  if gOverwriteFolder then
-    case cmbDirectoryExists.ItemIndex of
-      0: gOperationOptionDirectoryExists := fsoodeNone;
-      1: gOperationOptionDirectoryExists := fsoodeDelete;
-      2: gOperationOptionDirectoryExists := fsoodeCopyInto;
-      3: gOperationOptionDirectoryExists := fsoodeSkip;
-    end
-  else
-    case cmbDirectoryExists.ItemIndex of
-      0: gOperationOptionDirectoryExists := fsoodeNone;
-      1: gOperationOptionDirectoryExists := fsoodeCopyInto;
-      2: gOperationOptionDirectoryExists := fsoodeSkip;
-    end;
+  case cmbDirectoryExists.ItemIndex of
+    0: gOperationOptionDirectoryExists := fsoodeNone;
+    1: gOperationOptionDirectoryExists := fsoodeCopyInto;
+    2: gOperationOptionDirectoryExists := fsoodeSkip;
+  end;
   case cmbSetPropertyError.ItemIndex of
     0: gOperationOptionSetPropertyError := fsoospeNone;
     1: gOperationOptionSetPropertyError := fsoospeDontSet;
     2: gOperationOptionSetPropertyError := fsoospeIgnoreErrors;
   end;
 
+  gOperationOptionVerify          :=  chkVerify.Checked;
   gOperationOptionCopyAttributes  := cbCopyAttributes.Checked;
   gOperationOptionCopyTime        := cbCopyTime.Checked;
   gOperationOptionCopyOwnership   := cbCopyOwnership.Checked;
@@ -213,6 +203,7 @@ begin
   gOperationOptionCorrectLinks := cbCorrectLinks.Checked;
   gOperationOptionReserveSpace := cbReserveSpace.Checked;
   gOperationOptionCheckFreeSpace := cbCheckFreeSpace.Checked;
+  gOperationOptionExcludeEmptyDirectories := cbExcludeEmptyDirectories.Checked;
 end;
 
 procedure TFileSystemCopyMoveOperationOptionsUI.SetOperationOptions(Operation: TObject);
@@ -235,19 +226,11 @@ begin
       2: FileExistsOption := fsoofeOverwriteOlder;
       3: FileExistsOption := fsoofeSkip;
     end;
-    if gOverwriteFolder then
-      case cmbDirectoryExists.ItemIndex of
-        0: DirExistsOption := fsoodeNone;
-        1: DirExistsOption := fsoodeDelete;
-        2: DirExistsOption := fsoodeCopyInto;
-        3: DirExistsOption := fsoodeSkip;
-      end
-    else
-      case cmbDirectoryExists.ItemIndex of
-        0: DirExistsOption := fsoodeNone;
-        1: DirExistsOption := fsoodeCopyInto;
-        2: DirExistsOption := fsoodeSkip;
-      end;
+    case cmbDirectoryExists.ItemIndex of
+      0: DirExistsOption := fsoodeNone;
+      1: DirExistsOption := fsoodeCopyInto;
+      2: DirExistsOption := fsoodeSkip;
+    end;
     case cmbSetPropertyError.ItemIndex of
       0: SetPropertyError := fsoospeNone;
       1: SetPropertyError := fsoospeDontSet;
@@ -268,6 +251,7 @@ begin
     CorrectSymLinks := cbCorrectLinks.Checked;
     CheckFreeSpace := cbCheckFreeSpace.Checked;
     ReserveSpace := cbReserveSpace.Checked;
+    Verify := chkVerify.Checked;
     if Assigned(FTemplate) then
     begin
       SearchTemplate := FTemplate;
@@ -289,19 +273,11 @@ begin
       2: FileExistsOption := fsoofeOverwriteOlder;
       3: FileExistsOption := fsoofeSkip;
     end;
-    if gOverwriteFolder then
-      case cmbDirectoryExists.ItemIndex of
-        0: DirExistsOption := fsoodeNone;
-        1: DirExistsOption := fsoodeDelete;
-        2: DirExistsOption := fsoodeCopyInto;
-        3: DirExistsOption := fsoodeSkip;
-      end
-    else
-      case cmbDirectoryExists.ItemIndex of
-        0: DirExistsOption := fsoodeNone;
-        1: DirExistsOption := fsoodeCopyInto;
-        2: DirExistsOption := fsoodeSkip;
-      end;
+    case cmbDirectoryExists.ItemIndex of
+      0: DirExistsOption := fsoodeNone;
+      1: DirExistsOption := fsoodeCopyInto;
+      2: DirExistsOption := fsoodeSkip;
+    end;
     case cmbSetPropertyError.ItemIndex of
       0: SetPropertyError := fsoospeNone;
       1: SetPropertyError := fsoospeDontSet;
@@ -310,6 +286,7 @@ begin
     CorrectSymLinks := cbCorrectLinks.Checked;
     CheckFreeSpace := cbCheckFreeSpace.Checked;
     ReserveSpace := cbReserveSpace.Checked;
+    Verify := chkVerify.Checked;
     Options := CopyAttributesOptions;
     SetCopyOption(Options, caoCopyAttributes, cbCopyAttributes.Checked);
     SetCopyOption(Options, caoCopyTime, cbCopyTime.Checked);

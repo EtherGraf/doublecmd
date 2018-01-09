@@ -8,12 +8,13 @@ object frmSyncDirsDlg: TfrmSyncDirsDlg
   ClientWidth = 691
   KeyPreview = True
   OnClose = FormClose
+  OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnKeyDown = FormKeyDown
   Position = poScreenCenter
   SessionProperties = 'Height;Left;Top;Width;WindowState'
   ShowInTaskBar = stAlways
-  LCLVersion = '1.2.4.0'
+  LCLVersion = '1.6.0.4'
   object edPath1: TEdit
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Control = Owner
@@ -144,6 +145,7 @@ object frmSyncDirsDlg: TfrmSyncDirsDlg
         Caption = 'only selected'
         Enabled = False
         TabOrder = 1
+        Visible = False
       end
       object Label1: TLabel
         AnchorSideLeft.Control = chkOnlySelected
@@ -157,6 +159,7 @@ object frmSyncDirsDlg: TfrmSyncDirsDlg
         Caption = '(in main window)'
         Enabled = False
         ParentColor = False
+        Visible = False
       end
     end
     object LeftPanel2: TPanel

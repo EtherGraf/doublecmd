@@ -56,6 +56,7 @@ mkdir -p $DC_INSTALL_DIR/plugins/wdx
 mkdir -p $DC_INSTALL_DIR/plugins/wdx/scripts
 mkdir -p $DC_INSTALL_DIR/plugins/wdx/rpm_wdx
 mkdir -p $DC_INSTALL_DIR/plugins/wdx/deb_wdx
+mkdir -p $DC_INSTALL_DIR/plugins/wdx/audioinfo
 # WFX plugins directories
 mkdir -p $DC_INSTALL_DIR/plugins/wfx
 mkdir -p $DC_INSTALL_DIR/plugins/wfx/ftp
@@ -81,13 +82,14 @@ install -m 644 plugins/wcx/cpio/lib/cpio.wcx        $DC_INSTALL_DIR/plugins/wcx/
 install -m 644 plugins/wcx/deb/lib/deb.wcx          $DC_INSTALL_DIR/plugins/wcx/deb/
 install -m 644 plugins/wcx/rpm/lib/rpm.wcx          $DC_INSTALL_DIR/plugins/wcx/rpm/
 install -m 644 plugins/wcx/unrar/lib/unrar.wcx      $DC_INSTALL_DIR/plugins/wcx/unrar/
-install -m 644 plugins/wcx/zip/lib/zip.wcx          $DC_INSTALL_DIR/plugins/wcx/zip/
+install -m 644 plugins/wcx/zip/zip.wcx              $DC_INSTALL_DIR/plugins/wcx/zip/
 # WDX
 install -m 644 plugins/wdx/rpm_wdx/lib/rpm_wdx.wdx  $DC_INSTALL_DIR/plugins/wdx/rpm_wdx/
 install -m 644 plugins/wdx/deb_wdx/lib/deb_wdx.wdx  $DC_INSTALL_DIR/plugins/wdx/deb_wdx/
 install -m 644 plugins/wdx/scripts/*                $DC_INSTALL_DIR/plugins/wdx/scripts/
+install -m 644 plugins/wdx/audioinfo/audioinfo.wdx  $DC_INSTALL_DIR/plugins/wdx/audioinfo/
 # WFX
-install -m 644 plugins/wfx/ftp/lib/ftp.wfx          $DC_INSTALL_DIR/plugins/wfx/ftp/
+install -m 644 plugins/wfx/ftp/ftp.wfx              $DC_INSTALL_DIR/plugins/wfx/ftp/
 install -m 644 plugins/wfx/samba/lib/samba.wfx      $DC_INSTALL_DIR/plugins/wfx/samba/
 # WLX
 install -m 644 plugins/wlx/WlxMplayer/lib/wlxmplayer.wlx  $DC_INSTALL_DIR/plugins/wlx/wlxmplayer/
@@ -119,14 +121,19 @@ if [ -z $CK_PORTABLE ]
     # Copy pixmaps
     cp -r pixmaps $DC_INSTALL_PREFIX/usr/share/doublecmd
     ln -sf ../../share/doublecmd/pixmaps $DC_INSTALL_DIR/pixmaps
+    # Copy highlighters
+    cp -r highlighters $DC_INSTALL_PREFIX/usr/share/doublecmd
+    ln -sf ../../share/doublecmd/highlighters $DC_INSTALL_DIR/highlighters
     # Create symlink and desktop files
     install -d $DC_INSTALL_PREFIX/usr/bin
     install -d $DC_INSTALL_PREFIX/usr/share/pixmaps
     install -d $DC_INSTALL_PREFIX/usr/share/applications
+    install -d $DC_INSTALL_PREFIX/usr/share/icons/hicolor/scalable/apps
     ln -sf  ../lib$LIB_SUFFIX/doublecmd/doublecmd $DC_INSTALL_PREFIX/usr/bin/doublecmd
     install -m 644 doublecmd.png $DC_INSTALL_PREFIX/usr/share/pixmaps/doublecmd.png
-    install -m 644 install/linux/doublecmd.xpm $DC_INSTALL_PREFIX/usr/share/pixmaps/doublecmd.xpm
     install -m 644 install/linux/doublecmd.desktop $DC_INSTALL_PREFIX/usr/share/applications/doublecmd.desktop
+    ln -sf ../../../../doublecmd/pixmaps/mainicon/alt/dcfinal.svg \
+           $DC_INSTALL_PREFIX/usr/share/icons/hicolor/scalable/apps/doublecmd.svg
   else
     # Copy documentation
     mkdir -p $DC_INSTALL_DIR/doc
@@ -134,8 +141,9 @@ if [ -z $CK_PORTABLE ]
     # Copy script for execute portable version
     cp -a doublecmd.sh $DC_INSTALL_DIR/
     # Copy directories
-    cp -r language $DC_INSTALL_DIR/
-    cp -r pixmaps  $DC_INSTALL_DIR/
+    cp -r language     $DC_INSTALL_DIR/
+    cp -r pixmaps      $DC_INSTALL_DIR/
+    cp -r highlighters $DC_INSTALL_DIR/
     # Copy scripts
     install -d         $DC_INSTALL_DIR/scripts
     cp -a scripts/*.py $DC_INSTALL_DIR/scripts/

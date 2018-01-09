@@ -3,7 +3,7 @@
    -------------------------------------------------------------------------
    Localization core unit
 
-   Copyright (C) 2007-2016 Alexander Koblov (alexx2000@mail.ru)
+   Copyright (C) 2007-2017 Alexander Koblov (alexx2000@mail.ru)
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@ resourcestring
   // File operations.
   rsMsgNotDelete = 'Can not delete file %s';
   rsMsgCannotDeleteDirectory = 'Cannot delete directory %s';
+  rsMsgCannotOverwriteDirectory = 'Cannot overwrite directory "%s" with non-directory "%s"';
   rsMsgErrDirExists = 'Directory %s exists!';
   rsMsgErrRename = 'Cannot rename file %s to %s';
   rsMsgErrCannotCopyFile = 'Cannot copy file %s to %s';
@@ -39,16 +40,20 @@ resourcestring
   rsMsgFileExistsFileInfo = '%s bytes, %s';
   rsMsgFileExistsRwrt = 'File %s exists, overwrite?';
   rsMsgFileChangedSave = 'File %s changed, save?';
-  rsMsgFolderExistsRwrt = 'Folder %s exists, overwrite?';
+  rsMsgFolderExistsRwrt = 'Folder %s exists, merge?';
   rsMsgFileReadOnly = 'File %s is marked as read-only/hidden/system. Delete it?';
   rsMsgNewFile = 'New file';
   rsMsgDelFlDr = 'Delete %d selected files/directories?';
   rsMsgDelSel = 'Delete selected "%s"?';
+  rsMsgObjectNotExists = 'Object does not exist!';
   // 12.05.2009 - another message, when deleting to trash
   rsMsgDelFlDrT = 'Delete %d selected files/directories into trash can?';
   rsMsgDelSelT = 'Delete selected "%s" into trash can?';
   rsMsgDelToTrashForce = 'Can not delete "%s" to trash! Delete directly?';
   rsMsgFileNotFound = 'File "%s" not found.';
+  // ---
+  rsMsgVerify = 'VERIFICATION:';
+  rsMsgVerifyWrong = 'The target file is corrupted, checksum mismatch!';
   // ---
   rsMsgWipeFlDr = 'Wipe %d selected files/directories?';
   rsMsgWipeSel = 'Wipe selected "%s"?';
@@ -128,6 +133,8 @@ resourcestring
   rsMsgErrCreateFileDirectoryExists = 'There already exists a directory named "%s".';
   rsMsgDeletePartiallyCopied = 'Delete the partially copied file ?';
   rsMsgInvalidCommandLine = 'Error in command line';
+  rsMsgCofirmUserParam = 'Confirmation of parameter';
+  rsMsgAskQuoteOrNot = 'Do you want to enclose between quotes?';
   rsMsgInvalidQuoting = 'Invalid quoting';
   rsMsgErrorInContextMenuCommand = 'Error in context menu command';
   rsMsgErrorLoadingConfiguration = 'Error when loading configuration';
@@ -148,6 +155,7 @@ resourcestring
   rsMsgProblemExecutingCommand = 'Problem executing command (%s)';
   rsMsgCopyBackward = 'The file %s has changed. Do you want to copy it backward?';
   rsMsgCouldNotCopyBackward = 'Could not copy backward - do you want to keep the changed file?';
+  rsMsgFilePathOverMaxPath = 'The target name length (%d) is more than %d characters!' + #13 + '%s' + #13 + 'Most programs will not be able to access a file/directory with such a long name!';
 
   //Hot Dir related
   rsMsgHotDirWhatToDelete = 'Do you want to delete all elements inside the sub-menu [%s]?'+#$0A+'Answering NO will delete only menu delimiters but will keep element inside sub-menu.';
@@ -160,12 +168,12 @@ resourcestring
   rsMsgHotDirDeleteAllEntries = 'Are you sure you want to remove all entries of your Directory Hotlist? (There is no "undo" to this action!)';
   rsMsgHotDirName = 'Hotdir name';
   rsMsgHotDirPath = 'Hotdir path';
-  rsMsgHotDirJustPath = 'Path';
+  rsMsgHotDirJustPath = '&Path:';
   rsMsgHotDirTarget = 'Hotdir target';
   rsMsgHotDirSubMenuName = 'Submenu name';
-  rsMsgHotDirSimpleName = 'Name:';
+  rsMsgHotDirSimpleName = '&Name:';
   rsMsgHotDirSimpleSeparator = '(separator)';
-  rsMsgHotDirSimpleMenu = 'Menu name:';
+  rsMsgHotDirSimpleMenu = 'Menu &name:';
   rsMsgHotDirSimpleEndOfMenu = '(end of sub menu)';
   rsMsgHotDirSimpleCommand = 'Command:';
   rsMsgHotDirCommandName = 'Do command';
@@ -248,6 +256,7 @@ resourcestring
   rsDefaultImportedTCToolbarHint = 'Imported TC toolbar';
   rsDefaultImportedDCToolbarHint = 'Imported DC toolbar';
   rsFilenameExportedTCBarPrefix = 'Exported_from_DC';
+  rsNoEquivalentInternalCommand = 'No internal equivalent command';
 
   // for context menu
   rsMnuActions = 'Actions';
@@ -267,6 +276,10 @@ resourcestring
   // for main menu
   rsMnuMapNetworkDrive = 'Map Network Drive...';
   rsMnuDisconnectNetworkDrive = 'Disconnect Network Drive...';
+  rsMnuCopyNetNamesToClip = 'Copy names with UNC path';
+  // for content plugins menu
+  rsMnuContentDefault = '<Default>';
+  rsMnuContentOctal = 'Octal';
   // wcx module messages
   rsMsgSelLocNextVol = 'Please select location of next volume';
   rsMsgNextVolUnpack = 'Next volume will be unpacked';
@@ -299,8 +312,8 @@ resourcestring
   rsDlgButtonAppend = 'A&ppend';
   rsDlgButtonResume = '&Resume';
   rsDlgButtonRename = 'R&ename';
-  rsDlgButtonCopyInto = 'Copy &Into';
-  rsDlgButtonCopyIntoAll = 'Copy Into &All';
+  rsDlgButtonCopyInto = '&Merge';
+  rsDlgButtonCopyIntoAll = 'Mer&ge All';
   rsDlgButtonOverwrite = '&Overwrite';
   rsDlgButtonOverwriteAll = 'Overwrite &All';
   rsDlgButtonOverwriteOlder = 'Overwrite All Ol&der';
@@ -309,11 +322,13 @@ resourcestring
   rsDlgButtonAutoRenameSource = 'A&uto-rename source files';
   rsDlgButtonSkip = '&Skip';
   rsDlgButtonSkipAll = 'S&kip All';
+  rsDlgButtonIgnore = 'Ig&nore';
   rsDlgButtonIgnoreAll = 'I&gnore All';
   rsDlgButtonAll = 'A&ll';
   rsDlgButtonRetry = 'Re&try';
   rsDlgButtonAbort = 'Ab&ort';
   rsDlgButtonOther = 'Ot&her';
+  rsDlgButtonRetryAdmin = 'As Ad&ministrator';
 
   rsDlgButtonContinue = '&Continue';
   rsDlgButtonExitProgram = 'E&xit program';
@@ -354,8 +369,8 @@ resourcestring
   rsDlgSpeedTime = 'Speed %s/s, time remaining %s';
 
   // File operations
+  rsFileOpDirectoryExistsOptions = 'Ask;Merge;Skip';
   rsFileOpFileExistsOptions = 'Ask;Overwrite;Overwrite Older;Skip';
-  rsFileOpDirectoryExistsOptions = 'Ask;Overwrite;Copy into;Skip';
   rsFileOpSetPropertyErrorOptions = 'Ask;Don''t set anymore;Ignore errors';
 
   // Viewer
@@ -456,6 +471,14 @@ resourcestring
   rsFindSaveTemplateCaption = 'Save search template';
   rsFindSaveTemplateTitle = 'Template name:';
   rsSearchTemplateUnnamed = '<unnamed template>';
+  rsListOfFindfilesWindows = 'List of "Find files" windows';
+  rsSelectYouFindFilesWindow = 'Select your window';
+  rsNoFindFilesWindowYet = 'Sorry, no "Find files" window yet...';
+  rsNoOtherFindFilesWindowToClose = 'Sorry, no other "Find files" window to close and free from memory...';
+  rsNewSearchClearFilterOptions = 'Keep;Clear;Prompt';
+  rsClearFiltersOrNot = 'Do you want to clear filters for this new search?';
+  rsSearchWithDSXPluginInProgress = 'A file search using DSX plugin is already in progress.'+#$0A+'We need that one to be completed before to launch a new one.';
+  rsSearchWithWDXPluginInProgress = 'A file search using WDX plugin is already in progress.'+#$0A+'We need that one to be completed before to launch a new one.';
 
   rsTimeUnitSecond = 'Second(s)';
   rsTimeUnitMinute = 'Minute(s)';
@@ -484,6 +507,8 @@ resourcestring
   rsSplitMsgManyParts = 'The number of parts is more than 100! Continue?';
   rsSplitPreDefinedSizes = 'Automatic;1457664B - 3.5" High Density 1.44M;1213952B - 5.25" High Density 1.2M;730112B - 3.5" Double Density 720K;362496B - 5.25" Double Density 360K;98078KB - ZIP 100MB;650MB - CD 650MB;700MB - CD 700MB;4482MB - DVD+R';
   // MultiRename dialog
+  rsMulRenWarningDuplicate = 'Warning, duplicate names!';
+  rsMulRenAutoRename = 'Do auto-rename to "name (1).ext", "name (2).ext" etc.?';
   rsMulRenWrongLinesNumber = 'File contains wrong number of lines: %d, should be %d!';
   rsMulRenFileNameStyleList = 'No change;UPPERCASE;lowercase;First char uppercase;' +
                               'First Char Of Every Word Uppercase;';
@@ -554,6 +579,7 @@ resourcestring
   rsOptionsEditorDirectoryHotlist = 'Directory Hotlist';
   rsOptionsEditorFavoriteTabs = 'Favorite Tabs';
   rsOptionsEditorOptionsChanged = 'Options have changed in "%s"'+#$0A+#$0A+'Do you want to save modifications?';
+  rsOptionsEditorFileSearch = 'File search';
   //-------------------------------
   rsOptConfigSortOrder = 'Classic, legacy order;Alphabetic order (but language still first)';
   rsOptDifferFramePosition = 'Active frame panel on left, inactive on right (legacy);Left frame panel on left, right on right';
@@ -615,6 +641,17 @@ resourcestring
   rsHotkeyCategoryDiffer = 'Differ';
   rsHotkeyCategoryCopyMoveDialog = 'Copy/Move Dialog';
   rsHotkeyCategoryEditCommentDialog = 'Edit Comment Dialog';
+  rsHotkeySortOrder = 'By command name;By shortcut key (grouped);By shortcut key (one per row)';
+  rsHotKeyNoSCEnter='No shortcut with "ENTER"';
+  rsHotKeyFileSaveModified = '"%s" setup has been modified.'+#$0A+'Do you want to save it now?';
+  rsHotKeyFileNewName = 'New name';
+  rsHotKeyFileInputNewName = 'Input your new name';
+  rsHotKeyFileAlreadyExists = 'A setup with that name already exists.'+#$0A+'Do you want to overwrite it?';
+  rsHotKeyFileCopyOf = 'Copy of %s';
+  rsHotKeyFileConfirmErasure = 'Are you sure you want to erase setup "%s"?';
+  rsHotKeyFileMustKeepOne = 'You must keep at least one shortcut file.';
+  rsHotKeyFileConfirmDefault = 'Are you sure you want to restore default?';
+
   rsCmdCategoryListInOrder='All;Active Panel;Left Panel;Right Panel;File Operations;Configuration;Network;Miscellaneous;Parallel Port;Print;Mark;Security;Clipboard;FTP;Navigation;Help;Window;Command Line;Tools;View;User;Tabs;Sorting;Log';
   rsCmdKindOfSort='Legacy sorted;A-Z sorted';
   rsMsgThisIsNowInClipboard = '"%s" is now in the clipboard';
@@ -626,6 +663,7 @@ resourcestring
   rsSimpleWordWorkDir = 'WorkDir';
   rsSimpleWordResult = 'Result';
   rsSimpleWordColumnSingular = 'Column';
+  rsSimpleWordLetter = 'Letter';
 
   // Plugins
   rsOptPluginsActive = 'Active';
@@ -645,7 +683,7 @@ resourcestring
   // Keyboard
   rsOptLetters = 'None;Command Line;Quick Search;Quick Filter';
   // Directory hotlist
-  rsOptAddFromMainPanel = 'Add at beginning;Add at the end;Smart add';
+  rsOptAddFromMainPanel = 'Add at &beginning;Add at the end;Smart add';
   //File Associations
   rsMsgTitleExtNotInFileType = 'Extension of selected file is not in any recognized file types';
   rsMsgSekectFileType = 'Select to which file type to add extension "%s"';
@@ -667,7 +705,7 @@ resourcestring
   rsVarOtherExamples = 'Other example of what''s possible';
 
   rsVarOnlyFilename = 'Only filename';
-  rsVarPath = 'Path, with ending delimiter';
+  rsVarPath = 'Path, without ending delimiter';
   rsVarFullPath = 'Complete filename (path+filename)';
   rsVarFilenameNoExt = 'Just filename, no extension';
   rsVarOnlyExtension = 'Only file extension';
@@ -724,6 +762,7 @@ resourcestring
   rsMsgTCConfigNotFound = 'Error! Cannot find the TC configuration file:'+#$0A+'%s';
   rsMsgTCExecutableNotFound = 'Error! Cannot find the TC configuration executable:'+#$0A+'%s';
   rsMsgTCisRunning = 'Error! TC is still running but it should be closed for this operation.'+#$0A+'Close it and press OK or press CANCEL to abort.';
+  rsMsgAllDCIntCmds = 'All Double Commander internal commands';
 
   //Columns Menu
   rsMenuConfigureCustomColumns= 'Configure custom columns';

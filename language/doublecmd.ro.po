@@ -1,7 +1,7 @@
-# Maximilian Machedon <maximilian.machedon@gmail.com>, 2015.
+# Maximilian Machedon <maximilian.machedon@gmail.com>, 2017.
 msgid ""
 msgstr ""
-"Project-Id-Version: Double Commander 0.7.0\n"
+"Project-Id-Version: Double Commander 0.8.0 alpha\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-01-17 23:08+0300\n"
 "PO-Revision-Date: 2015-12-01 15:48+0300\n"
@@ -53,7 +53,7 @@ msgstr "Copiază posesor (&w)"
 
 #: tfilesystemcopymoveoperationoptionsui.cbcopypermissions.caption
 msgid "Copy &permissions"
-msgstr ""
+msgstr "Copiază &permisiunile"
 
 #: tfilesystemcopymoveoperationoptionsui.cbcopytime.caption
 msgctxt "tfilesystemcopymoveoperationoptionsui.cbcopytime.caption"
@@ -80,6 +80,10 @@ msgstr "Urmărește &legăturile"
 #: tfilesystemcopymoveoperationoptionsui.cbreservespace.caption
 msgid "&Reserve space"
 msgstr "&Rezervă spațiu"
+
+#: tfilesystemcopymoveoperationoptionsui.chkverify.caption
+msgid "&Verify"
+msgstr "&Verifică"
 
 #: tfilesystemcopymoveoperationoptionsui.cmbsetpropertyerror.hint
 msgid "What to do when cannot set file time, attributes, etc."
@@ -211,7 +215,7 @@ msgstr "SGID"
 
 #: tfrmattributesedit.cbsparse.caption
 msgid "S&parse"
-msgstr "Rezervă (&p)"
+msgstr "Dis&persat"
 
 #: tfrmattributesedit.cbsticky.caption
 msgctxt "TFRMATTRIBUTESEDIT.CBSTICKY.CAPTION"
@@ -283,6 +287,26 @@ msgctxt "TFRMATTRIBUTESEDIT.LBLWRITE.CAPTION"
 msgid "Write"
 msgstr "Scrie"
 
+#: tfrmbenchmark.caption
+msgid "Benchmark"
+msgstr ""
+
+#: tfrmbenchmark.lblbenchmarksize.caption
+msgid "Benchmark data size: %d MB"
+msgstr ""
+
+#: tfrmbenchmark.stgresult.columns[0].title.caption
+msgid "Hash"
+msgstr ""
+
+#: tfrmbenchmark.stgresult.columns[1].title.caption
+msgid "Time (ms)"
+msgstr ""
+
+#: tfrmbenchmark.stgresult.columns[2].title.caption
+msgid "Speed (MB/s)"
+msgstr ""
+
 #: tfrmchecksumcalc.caption
 msgctxt "TFRMCHECKSUMCALC.CAPTION"
 msgid "Calculate checksum..."
@@ -306,8 +330,6 @@ msgid "&Close"
 msgstr "În&chide"
 
 #: tfrmchecksumverify.caption
-#, fuzzy
-#| msgid "Verify check sum..."
 msgctxt "TFRMCHECKSUMVERIFY.CAPTION"
 msgid "Verify checksum..."
 msgstr "Verifică sumă de control..."
@@ -367,37 +389,31 @@ msgid "Copy file(s)"
 msgstr "Copiază fișier(e)"
 
 #: tfrmcopydlg.mnunewqueue.caption
-#, fuzzy
 msgctxt "tfrmcopydlg.mnunewqueue.caption"
 msgid "New queue"
 msgstr "Coadă nouă"
 
 #: tfrmcopydlg.mnuqueue1.caption
-#, fuzzy
 msgctxt "tfrmcopydlg.mnuqueue1.caption"
 msgid "Queue 1"
 msgstr "Coada 1"
 
 #: tfrmcopydlg.mnuqueue2.caption
-#, fuzzy
 msgctxt "tfrmcopydlg.mnuqueue2.caption"
 msgid "Queue 2"
 msgstr "Coada 2"
 
 #: tfrmcopydlg.mnuqueue3.caption
-#, fuzzy
 msgctxt "tfrmcopydlg.mnuqueue3.caption"
 msgid "Queue 3"
 msgstr "Coada 3"
 
 #: tfrmcopydlg.mnuqueue4.caption
-#, fuzzy
 msgctxt "tfrmcopydlg.mnuqueue4.caption"
 msgid "Queue 4"
 msgstr "Coada 4"
 
 #: tfrmcopydlg.mnuqueue5.caption
-#, fuzzy
 msgctxt "tfrmcopydlg.mnuqueue5.caption"
 msgid "Queue 5"
 msgstr "Coada 5"
@@ -789,6 +805,10 @@ msgstr "&OK"
 msgid "Remove last shortcut from sequence"
 msgstr "Înlătură ultima scurtătură din secvență"
 
+#: tfrmedithotkey.btnselectfromlist.hint
+msgid "Select shortcut from list of remaining free available keys"
+msgstr ""
+
 #: tfrmedithotkey.cghkcontrols.caption
 msgctxt "TFRMEDITHOTKEY.CGHKCONTROLS.CAPTION"
 msgid "Only for these controls"
@@ -852,8 +872,6 @@ msgid "Delete"
 msgstr "Șterge"
 
 #: tfrmeditor.acteditfind.caption
-#, fuzzy
-#| msgid "&Find "
 msgctxt "tfrmeditor.acteditfind.caption"
 msgid "&Find"
 msgstr "Găsește (&f)"
@@ -1011,8 +1029,6 @@ msgid "Save"
 msgstr "Salvează"
 
 #: tfrmeditor.actfilesaveas.caption
-#, fuzzy
-#| msgid "Save &As.."
 msgid "Save &As..."
 msgstr "Salvare C&a.."
 
@@ -1039,7 +1055,6 @@ msgid "&Help"
 msgstr "Ajutor (&h)"
 
 #: tfrmeditor.menuitem1.caption
-#, fuzzy
 msgctxt "tfrmeditor.menuitem1.caption"
 msgid "-"
 msgstr "-"
@@ -1111,13 +1126,13 @@ msgctxt "TFRMEDITOR.N5.CAPTION"
 msgid "-"
 msgstr "-"
 
-#: tfrmeditsearchreplace.btncancel.caption
-msgctxt "TFRMEDITSEARCHREPLACE.BTNCANCEL.CAPTION"
+#: tfrmeditsearchreplace.buttonpanel.cancelbutton.caption
+msgctxt "tfrmeditsearchreplace.buttonpanel.cancelbutton.caption"
 msgid "&Cancel"
 msgstr "Revo&care"
 
-#: tfrmeditsearchreplace.btnok.caption
-msgctxt "TFRMEDITSEARCHREPLACE.BTNOK.CAPTION"
+#: tfrmeditsearchreplace.buttonpanel.okbutton.caption
+msgctxt "tfrmeditsearchreplace.buttonpanel.okbutton.caption"
 msgid "&OK"
 msgstr "&OK"
 
@@ -1286,6 +1301,10 @@ msgctxt "TFRMFILEPROPERTIES.CBSUID.CAPTION"
 msgid "SUID"
 msgstr "SUID"
 
+#: tfrmfileproperties.chkexecutable.caption
+msgid "Allow &executing file as program"
+msgstr ""
+
 #: tfrmfileproperties.gbowner.caption
 msgctxt "TFRMFILEPROPERTIES.GBOWNER.CAPTION"
 msgid "Owner"
@@ -1335,6 +1354,10 @@ msgctxt "TFRMFILEPROPERTIES.LBLEXEC.CAPTION"
 msgid "Execute"
 msgstr "Execută"
 
+#: tfrmfileproperties.lblexecutable.caption
+msgid "Execute:"
+msgstr ""
+
 #: tfrmfileproperties.lblfile.caption
 msgctxt "TFRMFILEPROPERTIES.LBLFILE.CAPTION"
 msgid "File name"
@@ -1344,11 +1367,6 @@ msgstr "Nume fișier"
 msgctxt "TFRMFILEPROPERTIES.LBLFILENAME.CAPTION"
 msgid "???"
 msgstr "???"
-
-#: tfrmfileproperties.lblfilenamestr.caption
-msgctxt "TFRMFILEPROPERTIES.LBLFILENAMESTR.CAPTION"
-msgid "Name:"
-msgstr "Nume:"
 
 #: tfrmfileproperties.lblfilestr.caption
 msgctxt "TFRMFILEPROPERTIES.LBLFILESTR.CAPTION"
@@ -1445,10 +1463,28 @@ msgctxt "TFRMFILEPROPERTIES.LBLWRITE.CAPTION"
 msgid "Write"
 msgstr "Scrie"
 
+#: tfrmfileproperties.sgimage.columns[0].title.caption
+#, fuzzy
+msgctxt "tfrmfileproperties.sgimage.columns[0].title.caption"
+msgid "Name"
+msgstr "Nume"
+
+#: tfrmfileproperties.sgimage.columns[1].title.caption
+#, fuzzy
+msgctxt "tfrmfileproperties.sgimage.columns[1].title.caption"
+msgid "Value"
+msgstr "Valoare"
+
 #: tfrmfileproperties.tsattributes.caption
 msgctxt "TFRMFILEPROPERTIES.TSATTRIBUTES.CAPTION"
 msgid "Attributes"
 msgstr "Atribute"
+
+#: tfrmfileproperties.tsplugins.caption
+#, fuzzy
+msgctxt "tfrmfileproperties.tsplugins.caption"
+msgid "Plugins"
+msgstr "Module"
 
 #: tfrmfileproperties.tsproperties.caption
 msgctxt "TFRMFILEPROPERTIES.TSPROPERTIES.CAPTION"
@@ -1456,45 +1492,60 @@ msgid "Properties"
 msgstr "Proprietăți"
 
 #: tfrmfinddlg.actcancel.caption
-#, fuzzy
 msgctxt "tfrmfinddlg.actcancel.caption"
-msgid "Cancel"
-msgstr "Renunță"
+msgid "C&ancel"
+msgstr "Revoc&are"
 
 #: tfrmfinddlg.actcancelclose.caption
 msgid "Cancel search and close window"
-msgstr ""
+msgstr "În&chide"
 
 #: tfrmfinddlg.actclose.caption
-#, fuzzy
 msgctxt "tfrmfinddlg.actclose.caption"
-msgid "Close"
+msgid "&Close"
 msgstr "Închide"
+
+#: tfrmfinddlg.actconfigfilesearchhotkeys.caption
+msgctxt "tfrmfinddlg.actconfigfilesearchhotkeys.caption"
+msgid "Configuration of hot keys"
+msgstr ""
 
 #: tfrmfinddlg.actedit.caption
 msgctxt "tfrmfinddlg.actedit.caption"
-msgid "Edit"
-msgstr ""
+msgid "&Edit"
+msgstr "&Editează"
 
 #: tfrmfinddlg.actfeedtolistbox.caption
-msgid "Feed to listbox"
+msgid "Feed to &listbox"
+msgstr "Aprovizionează caseta cu &liste"
+
+#: tfrmfinddlg.actfreefrommem.caption
+msgid "Cancel search, close and free from memory"
+msgstr ""
+
+#: tfrmfinddlg.actfreefrommemallothers.caption
+msgid "For all other \"Find files\", cancel, close and free from memory"
 msgstr ""
 
 #: tfrmfinddlg.actgotofile.caption
-msgid "Go to file"
-msgstr ""
+msgid "&Go to file"
+msgstr "Du-te la fișier (&g)"
 
 #: tfrmfinddlg.actintellifocus.caption
 msgctxt "tfrmfinddlg.actintellifocus.caption"
 msgid "Find Data"
-msgstr ""
+msgstr "Găsește Date"
 
 #: tfrmfinddlg.actlastsearch.caption
-msgid "Last search"
-msgstr ""
+msgid "&Last search"
+msgstr "U&ltima căutare"
 
 #: tfrmfinddlg.actnewsearch.caption
-msgid "New search"
+msgid "&New search"
+msgstr "Căutare &nouă"
+
+#: tfrmfinddlg.actnewsearchclearfilters.caption
+msgid "New search (clear filters)"
 msgstr ""
 
 #: tfrmfinddlg.actpageadvanced.caption
@@ -1505,8 +1556,16 @@ msgstr ""
 msgid "Go to page \"Load/Save\""
 msgstr ""
 
+#: tfrmfinddlg.actpagenext.caption
+msgid "Switch to Nex&t Page"
+msgstr ""
+
 #: tfrmfinddlg.actpageplugins.caption
 msgid "Go to page \"Plugins\""
+msgstr ""
+
+#: tfrmfinddlg.actpageprev.caption
+msgid "Switch to &Previous Page"
 msgstr ""
 
 #: tfrmfinddlg.actpageresults.caption
@@ -1519,13 +1578,13 @@ msgstr ""
 
 #: tfrmfinddlg.actstart.caption
 msgctxt "tfrmfinddlg.actstart.caption"
-msgid "Start"
-msgstr ""
+msgid "&Start"
+msgstr "Pornește (&s)"
 
 #: tfrmfinddlg.actview.caption
 msgctxt "tfrmfinddlg.actview.caption"
-msgid "View"
-msgstr ""
+msgid "&View"
+msgstr "&Vizualizare"
 
 #: tfrmfinddlg.btnaddattribute.caption
 msgctxt "tfrmfinddlg.btnaddattribute.caption"
@@ -1536,29 +1595,6 @@ msgstr "&Adaugă"
 msgctxt "TFRMFINDDLG.BTNATTRSHELP.CAPTION"
 msgid "&Help"
 msgstr "Ajutor (&h)"
-
-#: tfrmfinddlg.btnclose.caption
-msgctxt "TFRMFINDDLG.BTNCLOSE.CAPTION"
-msgid "&Close"
-msgstr "În&chide"
-
-#: tfrmfinddlg.btnedit.caption
-msgctxt "TFRMFINDDLG.BTNEDIT.CAPTION"
-msgid "&Edit"
-msgstr "&Editează"
-
-#: tfrmfinddlg.btngotopath.caption
-msgid "&Go to file"
-msgstr "Du-te la fișier (&g)"
-
-#: tfrmfinddlg.btnlastsearch.caption
-msgctxt "TFRMFINDDLG.BTNLASTSEARCH.CAPTION"
-msgid "&Last search"
-msgstr "U&ltima căutare"
-
-#: tfrmfinddlg.btnnewsearch.caption
-msgid "&New search"
-msgstr "Căutare &nouă"
 
 #: tfrmfinddlg.btnsavetemplate.caption
 msgctxt "TFRMFINDDLG.BTNSAVETEMPLATE.CAPTION"
@@ -1586,28 +1622,9 @@ msgstr "Sal&vează cu \"Pornește în director\""
 msgid "If saved then \"Start in directory\" will be restored when loading template. Use it if you want to fix searching to a certain directory"
 msgstr "Dacă e salvat atunci \"Pornește în director\" va fi restaurat când se încarcă șablonul. Utilizați dacă doriți să fixați căutarea la un director anume"
 
-#: tfrmfinddlg.btnstart.caption
-msgctxt "tfrmfinddlg.btnstart.caption"
-msgid "&Start"
-msgstr "Pornește (&s)"
-
-#: tfrmfinddlg.btnstop.caption
-msgctxt "TFRMFINDDLG.BTNSTOP.CAPTION"
-msgid "C&ancel"
-msgstr "Revoc&are"
-
 #: tfrmfinddlg.btnusetemplate.caption
 msgid "Use template"
 msgstr "Utilizează șablonul"
-
-#: tfrmfinddlg.btnview.caption
-msgctxt "TFRMFINDDLG.BTNVIEW.CAPTION"
-msgid "&View"
-msgstr "&Vizualizare"
-
-#: tfrmfinddlg.btnworkwithfound.caption
-msgid "Feed to &listbox"
-msgstr "Aprovizionează caseta cu &liste"
 
 #: tfrmfinddlg.caption
 msgctxt "TFRMFINDDLG.CAPTION"
@@ -1706,11 +1723,6 @@ msgstr "Introduceți numele de directoare ce ar trebui excluse de la căutare se
 msgid "Enter files names separated with \";\""
 msgstr "Introduceți numele de fișiere separate cu \";\""
 
-#: tfrmfinddlg.cmbfindfilemask.text
-msgctxt "TFRMFINDDLG.CMBFINDFILEMASK.TEXT"
-msgid "*"
-msgstr "*"
-
 #: tfrmfinddlg.gbdirectories.caption
 msgctxt "TFRMFINDDLG.GBDIRECTORIES.CAPTION"
 msgid "Directories"
@@ -1760,13 +1772,40 @@ msgstr "Caută su&bdosarele:"
 msgid "&Previous searches:"
 msgstr "Căutări &precedente:"
 
+#: tfrmfinddlg.miaction.caption
+msgid "&Action"
+msgstr ""
+
+#: tfrmfinddlg.mifreefrommemallothers.caption
+msgid "For all others, cancel, close and free from memory"
+msgstr ""
+
 #: tfrmfinddlg.miopeninnewtab.caption
 msgid "Open In New Tab(s)"
 msgstr ""
 
+#: tfrmfinddlg.mioptions.caption
+msgctxt "tfrmfinddlg.mioptions.caption"
+msgid "Options"
+msgstr "Opțiuni"
+
 #: tfrmfinddlg.miremovefromllist.caption
 msgid "Remove from list"
 msgstr "Înlătură din listă"
+
+#: tfrmfinddlg.miresult.caption
+msgid "&Result"
+msgstr ""
+
+#: tfrmfinddlg.miseparator1.caption
+msgctxt "tfrmfinddlg.miseparator1.caption"
+msgid "-"
+msgstr "-"
+
+#: tfrmfinddlg.miseparator2.caption
+msgctxt "tfrmfinddlg.miseparator2.caption"
+msgid "-"
+msgstr "-"
 
 #: tfrmfinddlg.mishowallfound.caption
 msgid "Show all found items"
@@ -1779,6 +1818,11 @@ msgstr ""
 #: tfrmfinddlg.mishowinviewer.caption
 msgid "Show In Viewer"
 msgstr "Arată în Vizualizator"
+
+#: tfrmfinddlg.miviewtab.caption
+msgctxt "tfrmfinddlg.miviewtab.caption"
+msgid "&View"
+msgstr "&Vizualizează"
 
 #: tfrmfinddlg.tsadvanced.caption
 msgid "Advanced"
@@ -1902,13 +1946,11 @@ msgid "Down"
 msgstr "În jos"
 
 #: tfrmlinker.spbtnrem.caption
-#, fuzzy
 msgctxt "tfrmlinker.spbtnrem.caption"
 msgid "&Remove"
-msgstr "Înlătu&ră"
+msgstr "Ște&rge"
 
 #: tfrmlinker.spbtnrem.hint
-#, fuzzy
 msgctxt "tfrmlinker.spbtnrem.hint"
 msgid "Delete"
 msgstr "Şterge"
@@ -1932,6 +1974,10 @@ msgstr "Despre (&a)"
 msgid "Add file name to command line"
 msgstr "Adaugă numele de fișiere liniei de comandă"
 
+#: tfrmmain.actaddnewsearch.caption
+msgid "New search instance..."
+msgstr ""
+
 #: tfrmmain.actaddpathandfilenametocmdline.caption
 msgid "Add path and file name to command line"
 msgstr "Adaugă cale și nume de fișier liniei de comandă"
@@ -1941,8 +1987,6 @@ msgid "Copy path to command line"
 msgstr "Copiază calea la linia de comandă"
 
 #: tfrmmain.actbriefview.caption
-#, fuzzy
-#| msgid "Brief"
 msgctxt "tfrmmain.actbriefview.caption"
 msgid "Brief view"
 msgstr "Pe scurt"
@@ -2054,6 +2098,19 @@ msgstr ""
 msgid "Configuration of folder tabs"
 msgstr ""
 
+#: tfrmmain.actconfighotkeys.caption
+msgctxt "tfrmmain.actconfighotkeys.caption"
+msgid "Configuration of hot keys"
+msgstr ""
+
+#: tfrmmain.actconfigsavesettings.caption
+msgid "Save Settings"
+msgstr ""
+
+#: tfrmmain.actconfigsearches.caption
+msgid "Configuration of searches"
+msgstr ""
+
 #: tfrmmain.actconfigtoolbars.caption
 msgid "Toolbar..."
 msgstr ""
@@ -2130,6 +2187,10 @@ msgctxt "TFRMMAIN.ACTDELETE.CAPTION"
 msgid "Delete"
 msgstr "Șterge"
 
+#: tfrmmain.actdeletesearches.caption
+msgid "For all searches, cancel, close and free memory"
+msgstr ""
+
 #: tfrmmain.actdirhistory.caption
 msgctxt "TFRMMAIN.ACTDIRHISTORY.CAPTION"
 msgid "Directory history"
@@ -2164,6 +2225,10 @@ msgstr "Editează calea deasupra fișierului listă"
 msgid "Swap &Panels"
 msgstr "Comută &Panourile"
 
+#: tfrmmain.actexecutescript.caption
+msgid "Execute Script"
+msgstr ""
+
 #: tfrmmain.actexit.caption
 msgctxt "TFRMMAIN.ACTEXIT.CAPTION"
 msgid "E&xit"
@@ -2174,10 +2239,8 @@ msgid "&Extract Files..."
 msgstr "D&ezarhivare fișiere..."
 
 #: tfrmmain.actfileassoc.caption
-#, fuzzy
-#| msgid "File &Associations..."
 msgid "Configuration of File &Associations"
-msgstr "&Asocieri fișiere..."
+msgstr "Configurarea &asocierilor de fișiere..."
 
 #: tfrmmain.actfilelinker.caption
 msgid "Com&bine Files..."
@@ -2199,6 +2262,14 @@ msgstr "Vizualizare plată (&f)"
 #: tfrmmain.actfocuscmdline.caption
 msgid "Focus command line"
 msgstr "Evidențiază linia de comandă"
+
+#: tfrmmain.actfocusswap.caption
+msgid "Swap focus"
+msgstr ""
+
+#: tfrmmain.actfocusswap.hint
+msgid "Switch between left and right file list"
+msgstr ""
 
 #: tfrmmain.actgotofirstfile.caption
 msgid "Place cursor on first file in list"
@@ -2296,6 +2367,18 @@ msgstr "Creează &dosar"
 #: tfrmmain.actmarkcurrentextension.caption
 msgid "Select All with the Same E&xtension"
 msgstr "Selectează Toate cu aceeași E&xtensie"
+
+#: tfrmmain.actmarkcurrentname.caption
+msgid "Select all files with same name"
+msgstr ""
+
+#: tfrmmain.actmarkcurrentnameext.caption
+msgid "Select all files with same name and extension"
+msgstr ""
+
+#: tfrmmain.actmarkcurrentpath.caption
+msgid "Select all in same path"
+msgstr ""
 
 #: tfrmmain.actmarkinvert.caption
 msgid "&Invert Selection"
@@ -2665,6 +2748,18 @@ msgstr ""
 msgid "Unselect All with the Same Ex&tension"
 msgstr "Deselectează Toate cu Aceeași Ex&tensie"
 
+#: tfrmmain.actunmarkcurrentname.caption
+msgid "Unselect all files with same name"
+msgstr ""
+
+#: tfrmmain.actunmarkcurrentnameext.caption
+msgid "Unselect all files with same name and extension"
+msgstr ""
+
+#: tfrmmain.actunmarkcurrentpath.caption
+msgid "Unselect all in same path"
+msgstr ""
+
 #: tfrmmain.actview.caption
 msgctxt "tfrmmain.actview.caption"
 msgid "View"
@@ -2684,6 +2779,10 @@ msgstr "Du-te la intrarea precedentă în istoric"
 
 #: tfrmmain.actviewlogfile.caption
 msgid "View log file"
+msgstr ""
+
+#: tfrmmain.actviewsearches.caption
+msgid "View current search instances"
 msgstr ""
 
 #: tfrmmain.actvisithomepage.caption
@@ -2724,8 +2823,6 @@ msgid "*"
 msgstr "*"
 
 #: tfrmmain.btnleftdirectoryhotlist.hint
-#, fuzzy
-#| msgid "Directory hotlist"
 msgctxt "TFRMMAIN.BTNLEFTDIRECTORYHOTLIST.HINT"
 msgid "Directory Hotlist"
 msgstr "Listă dosare"
@@ -2775,7 +2872,6 @@ msgid "*"
 msgstr "*"
 
 #: tfrmmain.btnrightdirectoryhotlist.hint
-#, fuzzy
 msgctxt "tfrmmain.btnrightdirectoryhotlist.hint"
 msgid "Directory Hotlist"
 msgstr "Listă dosare"
@@ -2867,13 +2963,11 @@ msgid "-"
 msgstr "-"
 
 #: tfrmmain.miline10.caption
-#, fuzzy
 msgctxt "tfrmmain.miline10.caption"
 msgid "-"
 msgstr "-"
 
 #: tfrmmain.miline11.caption
-#, fuzzy
 msgctxt "tfrmmain.miline11.caption"
 msgid "-"
 msgstr "-"
@@ -2929,7 +3023,6 @@ msgid "-"
 msgstr "-"
 
 #: tfrmmain.miline21.caption
-#, fuzzy
 msgctxt "tfrmmain.miline21.caption"
 msgid "-"
 msgstr "-"
@@ -2940,7 +3033,6 @@ msgid "-"
 msgstr "-"
 
 #: tfrmmain.miline23.caption
-#, fuzzy
 msgctxt "tfrmmain.miline23.caption"
 msgid "-"
 msgstr "-"
@@ -2956,7 +3048,6 @@ msgid "-"
 msgstr "-"
 
 #: tfrmmain.miline26.caption
-#, fuzzy
 msgctxt "tfrmmain.miline26.caption"
 msgid "-"
 msgstr "-"
@@ -2987,7 +3078,6 @@ msgid "-"
 msgstr "-"
 
 #: tfrmmain.miline39.caption
-#, fuzzy
 msgctxt "tfrmmain.miline39.caption"
 msgid "-"
 msgstr "-"
@@ -2998,7 +3088,6 @@ msgid "-"
 msgstr "-"
 
 #: tfrmmain.miline40.caption
-#, fuzzy
 msgctxt "tfrmmain.miline40.caption"
 msgid "-"
 msgstr "-"
@@ -3015,6 +3104,11 @@ msgstr "-"
 
 #: tfrmmain.miline50.caption
 msgctxt "TFRMMAIN.MILINE50.CAPTION"
+msgid "-"
+msgstr "-"
+
+#: tfrmmain.miline55.caption
+msgctxt "tfrmmain.miline55.caption"
 msgid "-"
 msgstr "-"
 
@@ -3138,11 +3232,9 @@ msgid "&Show"
 msgstr "Arată (&s)"
 
 #: tfrmmain.mnutaboptions.caption
-#, fuzzy
-#| msgid "&Options"
 msgctxt "TFRMMAIN.MNUTABOPTIONS.CAPTION"
 msgid "Tab &Options"
-msgstr "&Opțiuni"
+msgstr "&Opțiuni tab"
 
 #: tfrmmain.mnutabs.caption
 msgid "&Tabs"
@@ -3183,13 +3275,11 @@ msgid "-"
 msgstr "-"
 
 #: tfrmmaincommandsdlg.btncancel.caption
-#, fuzzy
 msgctxt "tfrmmaincommandsdlg.btncancel.caption"
 msgid "&Cancel"
 msgstr "Revo&care"
 
 #: tfrmmaincommandsdlg.btnok.caption
-#, fuzzy
 msgctxt "tfrmmaincommandsdlg.btnok.caption"
 msgid "&OK"
 msgstr "&OK"
@@ -3246,7 +3336,6 @@ msgid "Category"
 msgstr ""
 
 #: tfrmmaincommandsdlg.lblselectedcommandhelp.caption
-#, fuzzy
 msgctxt "tfrmmaincommandsdlg.lblselectedcommandhelp.caption"
 msgid "Help"
 msgstr "Ajutor"
@@ -3256,10 +3345,19 @@ msgid "Hint"
 msgstr ""
 
 #: tfrmmaincommandsdlg.lblselectedcommandhotkey.caption
-#, fuzzy
 msgctxt "tfrmmaincommandsdlg.lblselectedcommandhotkey.caption"
 msgid "Hotkey"
-msgstr "Taste rapide"
+msgstr "Tastă rapidă"
+
+#: tfrmmaskinputdlg.btnaddattribute.caption
+msgctxt "tfrmmaskinputdlg.btnaddattribute.caption"
+msgid "&Add"
+msgstr "&Adaugă"
+
+#: tfrmmaskinputdlg.btnattrshelp.caption
+msgctxt "tfrmmaskinputdlg.btnattrshelp.caption"
+msgid "&Help"
+msgstr "Ajutor (&h)"
 
 #: tfrmmaskinputdlg.btncancel.caption
 msgctxt "TFRMMASKINPUTDLG.BTNCANCEL.CAPTION"
@@ -3277,15 +3375,19 @@ msgstr "&OK"
 
 #: tfrmmaskinputdlg.chkcasesensitive.caption
 msgid "Case sensitive"
-msgstr ""
+msgstr "Sensibil la Majuscule"
 
 #: tfrmmaskinputdlg.chkignoreaccentsandligatures.caption
 msgid "Ignore accents and ligatures"
 msgstr ""
 
+#: tfrmmaskinputdlg.lblattributes.caption
+msgid "Attri&butes:"
+msgstr ""
+
 #: tfrmmaskinputdlg.lblprompt.caption
 msgid "Input Mask:"
-msgstr ""
+msgstr "Introduceți masca:"
 
 #: tfrmmaskinputdlg.lblsearchtemplate.caption
 msgid "O&r select predefined selection type:"
@@ -3395,6 +3497,7 @@ msgid "PNM"
 msgstr "PNM"
 
 #: tfrmmodview.teheight.text
+msgctxt "tfrmmodview.teheight.text"
 msgid "Height"
 msgstr "Înălțime"
 
@@ -3422,7 +3525,6 @@ msgid "&Delete"
 msgstr "Șterge (&d)"
 
 #: tfrmmultirename.btnedit.caption
-#, fuzzy
 msgctxt "tfrmmultirename.btnedit.caption"
 msgid "&Edit"
 msgstr "&Editează"
@@ -3695,7 +3797,6 @@ msgid "File Path"
 msgstr "Calea Fișierului"
 
 #: tfrmmultirenamewait.caption
-#, fuzzy
 msgctxt "tfrmmultirenamewait.caption"
 msgid "Double Commander"
 msgstr "Double Commander"
@@ -3806,7 +3907,6 @@ msgid "&Rename"
 msgstr "&Redenumește"
 
 #: tfrmoptionsarchivers.btnrelativearchiver.hint
-#, fuzzy
 msgctxt "tfrmoptionsarchivers.btnrelativearchiver.hint"
 msgid "Some functions to select appropriate path"
 msgstr "Unele funcții pentru a selecta calea potrivită"
@@ -3975,6 +4075,10 @@ msgstr "Lățimea coloanelor fixe"
 msgid "Cut &text to column width"
 msgstr "Taie &textul la mărimea coloanei"
 
+#: tfrmoptionscolumnsview.cbextendcellwidth.caption
+msgid "&Extend cell width if text is not fitting into column"
+msgstr ""
+
 #: tfrmoptionscolumnsview.cbgridhorzline.caption
 msgid "&Horizontal lines"
 msgstr "Linii orizontale (&h)"
@@ -4030,6 +4134,12 @@ msgstr "Sal&vează configurația"
 msgid "Searc&h/Replace history"
 msgstr "Istoricul (&h) Caută/Înlocuiește"
 
+#: tfrmoptionsconfiguration.gbdirectories.caption
+#, fuzzy
+msgctxt "tfrmoptionsconfiguration.gbdirectories.caption"
+msgid "Directories"
+msgstr "Dosare"
+
 #: tfrmoptionsconfiguration.gblocconfigfiles.caption
 msgid "Location of configuration files"
 msgstr "Locația fișierelor de configurare"
@@ -4046,6 +4156,14 @@ msgstr "Ordinea de sortare a ordinii de configurare în arborele stâng"
 msgid "Set on command line"
 msgstr "Setează în linia de comandă"
 
+#: tfrmoptionsconfiguration.lbliconthemes.caption
+msgid "Icon themes:"
+msgstr ""
+
+#: tfrmoptionsconfiguration.lblthumbcache.caption
+msgid "Thumbnails cache:"
+msgstr ""
+
 #: tfrmoptionsconfiguration.rbprogramdir.caption
 msgid "P&rogram directory (portable version)"
 msgstr "Dosarul p&rogramului (versiunea portabilă)"
@@ -4055,7 +4173,6 @@ msgid "&User home directory"
 msgstr "Dosarul acasă al &utilizatorului"
 
 #: tfrmoptionscustomcolumns.btnallallowovercolor.caption
-#, fuzzy
 msgctxt "tfrmoptionscustomcolumns.btnallallowovercolor.caption"
 msgid "All"
 msgstr "Toate"
@@ -4066,7 +4183,6 @@ msgid "Apply modification to all columns"
 msgstr ""
 
 #: tfrmoptionscustomcolumns.btnallbackcolor.caption
-#, fuzzy
 msgctxt "tfrmoptionscustomcolumns.btnallbackcolor.caption"
 msgid "All"
 msgstr "Toate"
@@ -4077,7 +4193,6 @@ msgid "Apply modification to all columns"
 msgstr ""
 
 #: tfrmoptionscustomcolumns.btnallbackcolor2.caption
-#, fuzzy
 msgctxt "tfrmoptionscustomcolumns.btnallbackcolor2.caption"
 msgid "All"
 msgstr "Toate"
@@ -4088,7 +4203,6 @@ msgid "Apply modification to all columns"
 msgstr ""
 
 #: tfrmoptionscustomcolumns.btnallcursorcolor.caption
-#, fuzzy
 msgctxt "tfrmoptionscustomcolumns.btnallcursorcolor.caption"
 msgid "All"
 msgstr "Toate"
@@ -4099,7 +4213,6 @@ msgid "Apply modification to all columns"
 msgstr ""
 
 #: tfrmoptionscustomcolumns.btnallcursortext.caption
-#, fuzzy
 msgctxt "tfrmoptionscustomcolumns.btnallcursortext.caption"
 msgid "All"
 msgstr "Toate"
@@ -4110,7 +4223,6 @@ msgid "Apply modification to all columns"
 msgstr ""
 
 #: tfrmoptionscustomcolumns.btnallfont.caption
-#, fuzzy
 msgctxt "tfrmoptionscustomcolumns.btnallfont.caption"
 msgid "All"
 msgstr "Toate"
@@ -4121,7 +4233,6 @@ msgid "Apply modification to all columns"
 msgstr ""
 
 #: tfrmoptionscustomcolumns.btnallforecolor.caption
-#, fuzzy
 msgctxt "tfrmoptionscustomcolumns.btnallforecolor.caption"
 msgid "All"
 msgstr "Toate"
@@ -4132,7 +4243,6 @@ msgid "Apply modification to all columns"
 msgstr ""
 
 #: tfrmoptionscustomcolumns.btnallinactivecursorcolor.caption
-#, fuzzy
 msgctxt "tfrmoptionscustomcolumns.btnallinactivecursorcolor.caption"
 msgid "All"
 msgstr "Toate"
@@ -4143,7 +4253,6 @@ msgid "Apply modification to all columns"
 msgstr ""
 
 #: tfrmoptionscustomcolumns.btnallinactivemarkcolor.caption
-#, fuzzy
 msgctxt "tfrmoptionscustomcolumns.btnallinactivemarkcolor.caption"
 msgid "All"
 msgstr "Toate"
@@ -4154,7 +4263,6 @@ msgid "Apply modification to all columns"
 msgstr ""
 
 #: tfrmoptionscustomcolumns.btnallmarkcolor.caption
-#, fuzzy
 msgctxt "tfrmoptionscustomcolumns.btnallmarkcolor.caption"
 msgid "All"
 msgstr "Toate"
@@ -4165,7 +4273,6 @@ msgid "Apply modification to all columns"
 msgstr ""
 
 #: tfrmoptionscustomcolumns.btnalluseinactiveselcolor.caption
-#, fuzzy
 msgctxt "tfrmoptionscustomcolumns.btnalluseinactiveselcolor.caption"
 msgid "All"
 msgstr "Toate"
@@ -4176,7 +4283,6 @@ msgid "Apply modification to all columns"
 msgstr ""
 
 #: tfrmoptionscustomcolumns.btnalluseinvertedselection.caption
-#, fuzzy
 msgctxt "tfrmoptionscustomcolumns.btnalluseinvertedselection.caption"
 msgid "All"
 msgstr "Toate"
@@ -4187,49 +4293,41 @@ msgid "Apply modification to all columns"
 msgstr ""
 
 #: tfrmoptionscustomcolumns.btnbackcolor.caption
-#, fuzzy
 msgctxt "tfrmoptionscustomcolumns.btnbackcolor.caption"
 msgid ">>"
 msgstr ">>"
 
 #: tfrmoptionscustomcolumns.btnbackcolor2.caption
-#, fuzzy
 msgctxt "tfrmoptionscustomcolumns.btnbackcolor2.caption"
 msgid ">>"
 msgstr ">>"
 
 #: tfrmoptionscustomcolumns.btncursorbordercolor.caption
-#, fuzzy
 msgctxt "tfrmoptionscustomcolumns.btncursorbordercolor.caption"
 msgid ">>"
 msgstr ">>"
 
 #: tfrmoptionscustomcolumns.btncursorcolor.caption
-#, fuzzy
 msgctxt "tfrmoptionscustomcolumns.btncursorcolor.caption"
 msgid ">>"
 msgstr ">>"
 
 #: tfrmoptionscustomcolumns.btncursortext.caption
-#, fuzzy
 msgctxt "tfrmoptionscustomcolumns.btncursortext.caption"
 msgid ">>"
 msgstr ">>"
 
 #: tfrmoptionscustomcolumns.btndeleteconfigcolumns.caption
-#, fuzzy
 msgctxt "tfrmoptionscustomcolumns.btndeleteconfigcolumns.caption"
 msgid "&Delete"
 msgstr "Șterge (&d)"
 
 #: tfrmoptionscustomcolumns.btnfont.caption
-#, fuzzy
 msgctxt "tfrmoptionscustomcolumns.btnfont.caption"
 msgid "..."
 msgstr "..."
 
 #: tfrmoptionscustomcolumns.btnforecolor.caption
-#, fuzzy
 msgctxt "tfrmoptionscustomcolumns.btnforecolor.caption"
 msgid ">>"
 msgstr ">>"
@@ -4244,25 +4342,21 @@ msgid "Reset to default"
 msgstr ""
 
 #: tfrmoptionscustomcolumns.btninactivecursorcolor.caption
-#, fuzzy
 msgctxt "tfrmoptionscustomcolumns.btninactivecursorcolor.caption"
 msgid ">>"
 msgstr ">>"
 
 #: tfrmoptionscustomcolumns.btninactivemarkcolor.caption
-#, fuzzy
 msgctxt "tfrmoptionscustomcolumns.btninactivemarkcolor.caption"
 msgid ">>"
 msgstr ">>"
 
 #: tfrmoptionscustomcolumns.btnmarkcolor.caption
-#, fuzzy
 msgctxt "tfrmoptionscustomcolumns.btnmarkcolor.caption"
 msgid ">>"
 msgstr ">>"
 
 #: tfrmoptionscustomcolumns.btnnewconfig.caption
-#, fuzzy
 msgctxt "tfrmoptionscustomcolumns.btnnewconfig.caption"
 msgid "New"
 msgstr "Nou"
@@ -4276,13 +4370,11 @@ msgid "Previous"
 msgstr ""
 
 #: tfrmoptionscustomcolumns.btnrenameconfigcolumns.caption
-#, fuzzy
 msgctxt "tfrmoptionscustomcolumns.btnrenameconfigcolumns.caption"
 msgid "Rename"
 msgstr "Redenumește"
 
 #: tfrmoptionscustomcolumns.btnresetallowovercolor.caption
-#, fuzzy
 msgctxt "tfrmoptionscustomcolumns.btnresetallowovercolor.caption"
 msgid "R"
 msgstr "R"
@@ -4293,7 +4385,6 @@ msgid "Reset to default"
 msgstr ""
 
 #: tfrmoptionscustomcolumns.btnresetbackcolor.caption
-#, fuzzy
 msgctxt "tfrmoptionscustomcolumns.btnresetbackcolor.caption"
 msgid "R"
 msgstr "R"
@@ -4304,7 +4395,6 @@ msgid "Reset to default"
 msgstr ""
 
 #: tfrmoptionscustomcolumns.btnresetbackcolor2.caption
-#, fuzzy
 msgctxt "tfrmoptionscustomcolumns.btnresetbackcolor2.caption"
 msgid "R"
 msgstr "R"
@@ -4315,7 +4405,6 @@ msgid "Reset to default"
 msgstr ""
 
 #: tfrmoptionscustomcolumns.btnresetcursorborder.caption
-#, fuzzy
 msgctxt "tfrmoptionscustomcolumns.btnresetcursorborder.caption"
 msgid "R"
 msgstr "R"
@@ -4326,7 +4415,6 @@ msgid "Reset to default"
 msgstr ""
 
 #: tfrmoptionscustomcolumns.btnresetcursorcolor.caption
-#, fuzzy
 msgctxt "tfrmoptionscustomcolumns.btnresetcursorcolor.caption"
 msgid "R"
 msgstr "R"
@@ -4337,7 +4425,6 @@ msgid "Reset to default"
 msgstr ""
 
 #: tfrmoptionscustomcolumns.btnresetcursortext.caption
-#, fuzzy
 msgctxt "tfrmoptionscustomcolumns.btnresetcursortext.caption"
 msgid "R"
 msgstr "R"
@@ -4348,7 +4435,6 @@ msgid "Reset to default"
 msgstr ""
 
 #: tfrmoptionscustomcolumns.btnresetfont.caption
-#, fuzzy
 msgctxt "tfrmoptionscustomcolumns.btnresetfont.caption"
 msgid "R"
 msgstr "R"
@@ -4359,7 +4445,6 @@ msgid "Reset to default"
 msgstr ""
 
 #: tfrmoptionscustomcolumns.btnresetforecolor.caption
-#, fuzzy
 msgctxt "tfrmoptionscustomcolumns.btnresetforecolor.caption"
 msgid "R"
 msgstr "R"
@@ -4370,7 +4455,6 @@ msgid "Reset to default"
 msgstr ""
 
 #: tfrmoptionscustomcolumns.btnresetframecursor.caption
-#, fuzzy
 msgctxt "tfrmoptionscustomcolumns.btnresetframecursor.caption"
 msgid "R"
 msgstr "R"
@@ -4381,7 +4465,6 @@ msgid "Reset to default"
 msgstr ""
 
 #: tfrmoptionscustomcolumns.btnresetinactivecursorcolor.caption
-#, fuzzy
 msgctxt "tfrmoptionscustomcolumns.btnresetinactivecursorcolor.caption"
 msgid "R"
 msgstr "R"
@@ -4392,7 +4475,6 @@ msgid "Reset to default"
 msgstr ""
 
 #: tfrmoptionscustomcolumns.btnresetinactivemarkcolor.caption
-#, fuzzy
 msgctxt "tfrmoptionscustomcolumns.btnresetinactivemarkcolor.caption"
 msgid "R"
 msgstr "R"
@@ -4403,7 +4485,6 @@ msgid "Reset to default"
 msgstr ""
 
 #: tfrmoptionscustomcolumns.btnresetmarkcolor.caption
-#, fuzzy
 msgctxt "tfrmoptionscustomcolumns.btnresetmarkcolor.caption"
 msgid "R"
 msgstr "R"
@@ -4414,7 +4495,6 @@ msgid "Reset to default"
 msgstr ""
 
 #: tfrmoptionscustomcolumns.btnresetuseinactiveselcolor.caption
-#, fuzzy
 msgctxt "tfrmoptionscustomcolumns.btnresetuseinactiveselcolor.caption"
 msgid "R"
 msgstr "R"
@@ -4425,7 +4505,6 @@ msgid "Reset to default"
 msgstr ""
 
 #: tfrmoptionscustomcolumns.btnresetuseinvertedselection.caption
-#, fuzzy
 msgctxt "tfrmoptionscustomcolumns.btnresetuseinvertedselection.caption"
 msgid "R"
 msgstr "R"
@@ -4436,19 +4515,16 @@ msgid "Reset to default"
 msgstr ""
 
 #: tfrmoptionscustomcolumns.btnsaveasconfigcolumns.caption
-#, fuzzy
 msgctxt "tfrmoptionscustomcolumns.btnsaveasconfigcolumns.caption"
 msgid "Save as"
 msgstr "Salvează ca"
 
 #: tfrmoptionscustomcolumns.btnsaveconfigcolumns.caption
-#, fuzzy
 msgctxt "tfrmoptionscustomcolumns.btnsaveconfigcolumns.caption"
 msgid "Save"
 msgstr "Salvează"
 
 #: tfrmoptionscustomcolumns.cballowovercolor.caption
-#, fuzzy
 msgctxt "tfrmoptionscustomcolumns.cballowovercolor.caption"
 msgid "Allow Overcolor"
 msgstr "Permite Supraculoare"
@@ -4458,13 +4534,11 @@ msgid "When clicking to change something, change for all columns"
 msgstr ""
 
 #: tfrmoptionscustomcolumns.cbconfigcolumns.text
-#, fuzzy
 msgctxt "tfrmoptionscustomcolumns.cbconfigcolumns.text"
 msgid "General"
 msgstr "Generale"
 
 #: tfrmoptionscustomcolumns.cbcursorborder.caption
-#, fuzzy
 msgctxt "tfrmoptionscustomcolumns.cbcursorborder.caption"
 msgid "Cursor border"
 msgstr "Margine cursor"
@@ -4486,53 +4560,44 @@ msgid "Use custom font and color for this view"
 msgstr ""
 
 #: tfrmoptionscustomcolumns.lblbackcolor.caption
-#, fuzzy
 msgctxt "tfrmoptionscustomcolumns.lblbackcolor.caption"
 msgid "BackGround:"
 msgstr "Fundal:"
 
 #: tfrmoptionscustomcolumns.lblbackcolor2.caption
-#, fuzzy
 msgctxt "tfrmoptionscustomcolumns.lblbackcolor2.caption"
 msgid "Background 2:"
 msgstr "Fundal 2:"
 
 #: tfrmoptionscustomcolumns.lblconfigcolumns.caption
-#, fuzzy
-#| msgid "Con&figure columns for file system:"
 msgid "Con&figure columns view:"
-msgstr "Con&figurează coloane pentru sistemul de fișiere:"
+msgstr "Con&figurează afișarea pe coloane:"
 
 #: tfrmoptionscustomcolumns.lblcurrentcolumn.caption
 msgid "[Current Column Name]"
 msgstr ""
 
 #: tfrmoptionscustomcolumns.lblcursorcolor.caption
-#, fuzzy
 msgctxt "tfrmoptionscustomcolumns.lblcursorcolor.caption"
 msgid "Cursor Color:"
 msgstr "Culoare cursor:"
 
 #: tfrmoptionscustomcolumns.lblcursortext.caption
-#, fuzzy
 msgctxt "tfrmoptionscustomcolumns.lblcursortext.caption"
 msgid "Cursor Text:"
-msgstr "Cursor text:"
+msgstr "Text cursor:"
 
 #: tfrmoptionscustomcolumns.lblfontname.caption
-#, fuzzy
 msgctxt "tfrmoptionscustomcolumns.lblfontname.caption"
 msgid "Font:"
 msgstr "Font:"
 
 #: tfrmoptionscustomcolumns.lblfontsize.caption
-#, fuzzy
 msgctxt "tfrmoptionscustomcolumns.lblfontsize.caption"
 msgid "Size:"
 msgstr "Mărime:"
 
 #: tfrmoptionscustomcolumns.lblforecolor.caption
-#, fuzzy
 msgctxt "tfrmoptionscustomcolumns.lblforecolor.caption"
 msgid "Text Color:"
 msgstr "Culoare text:"
@@ -4548,10 +4613,9 @@ msgid "Inactive Mark Color:"
 msgstr ""
 
 #: tfrmoptionscustomcolumns.lblmarkcolor.caption
-#, fuzzy
 msgctxt "tfrmoptionscustomcolumns.lblmarkcolor.caption"
 msgid "Mark Color:"
-msgstr "Culoare Marcaj:"
+msgstr "Culoare marcaj:"
 
 #: tfrmoptionscustomcolumns.lblpreviewtop.caption
 msgctxt "tfrmoptionscustomcolumns.lblpreviewtop.caption"
@@ -4563,7 +4627,6 @@ msgid "Settings for column:"
 msgstr ""
 
 #: tfrmoptionscustomcolumns.miaddcolumn.caption
-#, fuzzy
 msgctxt "tfrmoptionscustomcolumns.miaddcolumn.caption"
 msgid "Add column"
 msgstr "Adaugă o coloană"
@@ -4572,43 +4635,205 @@ msgstr "Adaugă o coloană"
 msgid "Position of frame panel after the comparison:"
 msgstr "Poziția panoului cadru după comparare:"
 
+#: tfrmoptionsdirectoryhotlist.actaddactiveframedir.caption
+msgid "Add directory of the &active frame"
+msgstr ""
+
+#: tfrmoptionsdirectoryhotlist.actaddbothframedir.caption
+msgid "Add &directories of the active && inactive frames"
+msgstr ""
+
+#: tfrmoptionsdirectoryhotlist.actaddbrowseddir.caption
+msgid "Add directory I will bro&wse to"
+msgstr ""
+
+#: tfrmoptionsdirectoryhotlist.actaddcopyofentry.caption
+msgctxt "tfrmoptionsdirectoryhotlist.actaddcopyofentry.caption"
+msgid "Add a copy of the selected entry"
+msgstr "Adaugă o copie a elementului selectat"
+
+#: tfrmoptionsdirectoryhotlist.actaddselectionsfromframe.caption
+msgid "Add current &selected or active directories of active frame"
+msgstr ""
+
+#: tfrmoptionsdirectoryhotlist.actaddseparator.caption
+msgctxt "tfrmoptionsdirectoryhotlist.actaddseparator.caption"
+msgid "Add a separator"
+msgstr "Adaugă un separator"
+
+#: tfrmoptionsdirectoryhotlist.actaddsubmenu.caption
+msgid "Add a sub menu"
+msgstr ""
+
+#: tfrmoptionsdirectoryhotlist.actaddtypeddir.caption
+msgctxt "tfrmoptionsdirectoryhotlist.actaddtypeddir.caption"
+msgid "Add directory I will type"
+msgstr "Adaugă dosarul pe care îl voi tasta"
+
+#: tfrmoptionsdirectoryhotlist.actcollapseall.caption
+msgctxt "tfrmoptionsdirectoryhotlist.actcollapseall.caption"
+msgid "Collapse all"
+msgstr "Restrânge toate"
+
+#: tfrmoptionsdirectoryhotlist.actcollapseitem.caption
+msgid "Collapse item"
+msgstr ""
+
+#: tfrmoptionsdirectoryhotlist.actcut.caption
+msgid "Cut selection of entries"
+msgstr ""
+
+#: tfrmoptionsdirectoryhotlist.actdeleteall.caption
+msgid "Delete all!"
+msgstr ""
+
+#: tfrmoptionsdirectoryhotlist.actdeleteselecteditem.caption
+#, fuzzy
+msgctxt "tfrmoptionsdirectoryhotlist.actdeleteselecteditem.caption"
+msgid "Delete selected item"
+msgstr "Șterge elementul selectat"
+
+#: tfrmoptionsdirectoryhotlist.actdeletesubmenuandelem.caption
+msgid "Delete sub-menu and all its elements"
+msgstr ""
+
+#: tfrmoptionsdirectoryhotlist.actdeletesubmenukeepelem.caption
+msgid "Delete just sub-menu but keep elements"
+msgstr ""
+
+#: tfrmoptionsdirectoryhotlist.actexpanditem.caption
+msgid "Expand item"
+msgstr ""
+
+#: tfrmoptionsdirectoryhotlist.actfocustreewindow.caption
+msgid "Focus tree window"
+msgstr ""
+
+#: tfrmoptionsdirectoryhotlist.actgotofirstitem.caption
+msgid "Goto first item"
+msgstr ""
+
+#: tfrmoptionsdirectoryhotlist.actgotolastitem.caption
+msgid "Goto last item"
+msgstr ""
+
+#: tfrmoptionsdirectoryhotlist.actgotonextitem.caption
+msgid "Go to next item"
+msgstr ""
+
+#: tfrmoptionsdirectoryhotlist.actgotopreviousitem.caption
+msgid "Go to previous item"
+msgstr ""
+
+#: tfrmoptionsdirectoryhotlist.actinsertactiveframedir.caption
+msgid "Insert directory of the &active frame"
+msgstr ""
+
+#: tfrmoptionsdirectoryhotlist.actinsertbothframedir.caption
+msgid "Insert &directories of the active && inactive frames"
+msgstr ""
+
+#: tfrmoptionsdirectoryhotlist.actinsertbrowseddir.caption
+msgid "Insert directory I will bro&wse to"
+msgstr ""
+
+#: tfrmoptionsdirectoryhotlist.actinsertcopyofentry.caption
+msgid "Insert a copy of the selected entry"
+msgstr ""
+
+#: tfrmoptionsdirectoryhotlist.actinsertselectionsfromframe.caption
+msgid "Insert current &selected or active directories of active frame"
+msgstr ""
+
+#: tfrmoptionsdirectoryhotlist.actinsertseparator.caption
+msgid "Insert a separator"
+msgstr ""
+
+#: tfrmoptionsdirectoryhotlist.actinsertsubmenu.caption
+msgid "Insert sub menu"
+msgstr ""
+
+#: tfrmoptionsdirectoryhotlist.actinserttypeddir.caption
+#, fuzzy
+msgctxt "tfrmoptionsdirectoryhotlist.actinserttypeddir.caption"
+msgid "Insert directory I will type"
+msgstr "Inserează dosarul pe care îl voi tasta"
+
+#: tfrmoptionsdirectoryhotlist.actmovetonext.caption
+msgid "Move to next"
+msgstr ""
+
+#: tfrmoptionsdirectoryhotlist.actmovetoprevious.caption
+msgid "Move to previous"
+msgstr ""
+
+#: tfrmoptionsdirectoryhotlist.actopenallbranches.caption
+#, fuzzy
+msgctxt "tfrmoptionsdirectoryhotlist.actopenallbranches.caption"
+msgid "Open all branches"
+msgstr "Deschide toate ramurile"
+
+#: tfrmoptionsdirectoryhotlist.actpaste.caption
+msgid "Paste what was cut"
+msgstr ""
+
+#: tfrmoptionsdirectoryhotlist.actsearchandreplaceinpath.caption
+msgid "Search && replace in &path"
+msgstr ""
+
+#: tfrmoptionsdirectoryhotlist.actsearchandreplaceinpathandtarget.caption
+msgid "Search && replace in both path and target"
+msgstr ""
+
+#: tfrmoptionsdirectoryhotlist.actsearchandreplaceintargetpath.caption
+msgid "Search && replace in &target path"
+msgstr ""
+
+#: tfrmoptionsdirectoryhotlist.acttweakpath.caption
+msgid "Tweak path"
+msgstr ""
+
+#: tfrmoptionsdirectoryhotlist.acttweaktargetpath.caption
+msgid "Tweak target path"
+msgstr ""
+
 #: tfrmoptionsdirectoryhotlist.btnadd.caption
 msgctxt "tfrmoptionsdirectoryhotlist.btnadd.caption"
-msgid "Add..."
+msgid "A&dd..."
 msgstr "Adaugă..."
 
 #: tfrmoptionsdirectoryhotlist.btnbackup.caption
 msgctxt "tfrmoptionsdirectoryhotlist.btnbackup.caption"
-msgid "Backup..."
+msgid "Bac&kup..."
 msgstr "Copie de rezervă..."
 
 #: tfrmoptionsdirectoryhotlist.btndelete.caption
 msgctxt "tfrmoptionsdirectoryhotlist.btndelete.caption"
-msgid "Delete..."
+msgid "De&lete..."
 msgstr "Șterge..."
 
 #: tfrmoptionsdirectoryhotlist.btnexport.caption
 msgctxt "tfrmoptionsdirectoryhotlist.btnexport.caption"
-msgid "Export..."
+msgid "E&xport..."
 msgstr "Exportă..."
 
 #: tfrmoptionsdirectoryhotlist.btnhelp.caption
 msgctxt "tfrmoptionsdirectoryhotlist.btnhelp.caption"
-msgid "Help"
+msgid "&Help"
 msgstr "Ajutor"
 
 #: tfrmoptionsdirectoryhotlist.btnimport.caption
 msgctxt "tfrmoptionsdirectoryhotlist.btnimport.caption"
-msgid "Import..."
+msgid "Impo&rt..."
 msgstr "Importă..."
 
 #: tfrmoptionsdirectoryhotlist.btninsert.caption
 msgctxt "tfrmoptionsdirectoryhotlist.btninsert.caption"
-msgid "Insert..."
+msgid "&Insert..."
 msgstr "Inserează..."
 
 #: tfrmoptionsdirectoryhotlist.btnmiscellaneous.caption
-msgid "Miscellaneous..."
+msgid "&Miscellaneous..."
 msgstr "Diverse..."
 
 #: tfrmoptionsdirectoryhotlist.btnrelativepath.hint
@@ -4623,24 +4848,24 @@ msgstr "Unele funcții pentru a selecta ținta potrivită"
 
 #: tfrmoptionsdirectoryhotlist.btnsort.caption
 msgctxt "tfrmoptionsdirectoryhotlist.btnsort.caption"
-msgid "Sort..."
+msgid "&Sort..."
 msgstr "Sortează..."
 
 #: tfrmoptionsdirectoryhotlist.cbaddtarget.caption
-msgid "When adding directory, add also target"
+msgid "&When adding directory, add also target"
 msgstr "Când se adaugă un dosar, adaugă și ținta"
 
 #: tfrmoptionsdirectoryhotlist.cbfullexpandtree.caption
 msgctxt "tfrmoptionsdirectoryhotlist.cbfullexpandtree.caption"
-msgid "Always expand tree"
+msgid "Alwa&ys expand tree"
 msgstr "Extinde întotdeauna arborele"
 
 #: tfrmoptionsdirectoryhotlist.cbshowonlyvalidenv.caption
-msgid "Show only valid environment variables"
+msgid "Show only &valid environment variables"
 msgstr "Arată numai variabilele de mediu valide"
 
 #: tfrmoptionsdirectoryhotlist.cbshowpathinpopup.caption
-msgid "In popup, show [path also]"
+msgid "In pop&up, show [path also]"
 msgstr "Arată [și calea] în popup"
 
 #: tfrmoptionsdirectoryhotlist.cbsorthotdirpath.text
@@ -4674,140 +4899,46 @@ msgstr "Cale:"
 
 #: tfrmoptionsdirectoryhotlist.lbledithotdirtarget.editlabel.caption
 msgctxt "tfrmoptionsdirectoryhotlist.lbledithotdirtarget.editlabel.caption"
-msgid "Target:"
+msgid "&Target:"
 msgstr "Țintă:"
-
-#: tfrmoptionsdirectoryhotlist.miactiveframedirectory.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miactiveframedirectory.caption"
-msgid "directory of the active frame"
-msgstr "dosarul cadrului activ"
-
-#: tfrmoptionsdirectoryhotlist.miactiveinactiveframedirectory.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miactiveinactiveframedirectory.caption"
-msgid "directories of the active && inactive frames"
-msgstr "dosarele cadrelor active și inactive"
-
-#: tfrmoptionsdirectoryhotlist.miaddcommand.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miaddcommand.caption"
-msgid "a command"
-msgstr "o comandă"
-
-#: tfrmoptionsdirectoryhotlist.miaddcommand2.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miaddcommand2.caption"
-msgid "Add a command"
-msgstr "Adaugă o comandă"
-
-#: tfrmoptionsdirectoryhotlist.miaddcopyofselected.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miaddcopyofselected.caption"
-msgid "a copy of the selected entry"
-msgstr "o copie a elementului selectat"
-
-#: tfrmoptionsdirectoryhotlist.miaddcopyofselected2.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miaddcopyofselected2.caption"
-msgid "Add a copy of the selected entry"
-msgstr "Adaugă o copie a elementului selectat"
-
-#: tfrmoptionsdirectoryhotlist.miaddseparator.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miaddseparator.caption"
-msgid "a separator"
-msgstr "un separator"
-
-#: tfrmoptionsdirectoryhotlist.miaddseparator2.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miaddseparator2.caption"
-msgid "Add a separator"
-msgstr "Adaugă un separator"
-
-#: tfrmoptionsdirectoryhotlist.miaddsubmenu.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miaddsubmenu.caption"
-msgid "sub-menu"
-msgstr "sub-meniu"
-
-#: tfrmoptionsdirectoryhotlist.miaddsubmenu2.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miaddsubmenu2.caption"
-msgid "Add sub-menu"
-msgstr "Adaugă sub-meniu"
-
-#: tfrmoptionsdirectoryhotlist.mibrowsetodirectory.caption
-msgctxt "tfrmoptionsdirectoryhotlist.mibrowsetodirectory.caption"
-msgid "directory I will browse to"
-msgstr "dosarul la care voi naviga"
-
-#: tfrmoptionsdirectoryhotlist.micollapseall.caption
-msgctxt "tfrmoptionsdirectoryhotlist.micollapseall.caption"
-msgid "Collapse all"
-msgstr "Restrânge toate"
 
 #: tfrmoptionsdirectoryhotlist.micurrentlevelofitemonly.caption
 msgctxt "tfrmoptionsdirectoryhotlist.micurrentlevelofitemonly.caption"
-msgid "...current level of item(s) selected only"
+msgid "...current le&vel of item(s) selected only"
 msgstr "...numai nivelul curent al intrării/intrărilor selectat(e)"
-
-#: tfrmoptionsdirectoryhotlist.micurrentselectedoractivedirectories.caption
-msgid "current selected or active directories of active frame"
-msgstr "dosarele selectate în mod curent sau active în cadrul activ"
-
-#: tfrmoptionsdirectoryhotlist.micutselection.caption
-msgctxt "tfrmoptionsdirectoryhotlist.micutselection.caption"
-msgid "Cut"
-msgstr "Tăiere"
-
-#: tfrmoptionsdirectoryhotlist.mideleteallhotdirs.caption
-msgctxt "tfrmoptionsdirectoryhotlist.mideleteallhotdirs.caption"
-msgid "delete all!"
-msgstr "șterge toate!"
-
-#: tfrmoptionsdirectoryhotlist.mideletecompletesubmenu.caption
-msgctxt "tfrmoptionsdirectoryhotlist.mideletecompletesubmenu.caption"
-msgid "sub-menu and all its elements"
-msgstr "sub-meniul și toate elementele sale"
-
-#: tfrmoptionsdirectoryhotlist.mideletejustsubmenu.caption
-msgctxt "tfrmoptionsdirectoryhotlist.mideletejustsubmenu.caption"
-msgid "just sub-menu but keep elements"
-msgstr "doar sub-meniul dar păstrează elementele"
-
-#: tfrmoptionsdirectoryhotlist.mideleteselectedentry.caption
-msgctxt "tfrmoptionsdirectoryhotlist.mideleteselectedentry.caption"
-msgid "selected item"
-msgstr "elementul selectat"
-
-#: tfrmoptionsdirectoryhotlist.mideleteselectedentry2.caption
-msgctxt "tfrmoptionsdirectoryhotlist.mideleteselectedentry2.caption"
-msgid "Delete selected item"
-msgstr "Șterge elementul selectat"
 
 #: tfrmoptionsdirectoryhotlist.midetectifpathexist.caption
 msgctxt "tfrmoptionsdirectoryhotlist.midetectifpathexist.caption"
-msgid "Scan all hotdir's path to validate the ones that actually exist"
+msgid "Scan all &hotdir's path to validate the ones that actually exist"
 msgstr "Scanează toată calea dosarului pentru a le valida pe cele care chiar există"
 
 #: tfrmoptionsdirectoryhotlist.midetectifpathtargetexist.caption
 msgctxt "tfrmoptionsdirectoryhotlist.midetectifpathtargetexist.caption"
-msgid "Scan all hotdir's path && target to validate the ones that actually exist"
+msgid "&Scan all hotdir's path && target to validate the ones that actually exist"
 msgstr "Scanează toată calea dosarului și a țintei pentru a le valida pe cele care chiar există"
 
 #: tfrmoptionsdirectoryhotlist.miexporttohotlistfile.caption
-msgid "to a Directory Hotlist file (.hotlist)"
+msgid "to a Directory &Hotlist file (.hotlist)"
 msgstr "către o un fișier listare dosar (.hotlist)"
 
 #: tfrmoptionsdirectoryhotlist.miexporttototalcommanderk.caption
 msgctxt "tfrmoptionsdirectoryhotlist.miexporttototalcommanderk.caption"
-msgid "to a \"wincmd.ini\" of TC (keep existing)"
+msgid "to a \"wincmd.ini\" of TC (&keep existing)"
 msgstr "către un \"wincmd.ini\" al TC (păstrează pe cel existent)"
 
 #: tfrmoptionsdirectoryhotlist.miexporttototalcommandernk.caption
 msgctxt "tfrmoptionsdirectoryhotlist.miexporttototalcommandernk.caption"
-msgid "to a \"wincmd.ini\" of TC (erase existing)"
+msgid "to a \"wincmd.ini\" of TC (&erase existing)"
 msgstr "către un \"wincmd.ini\" al TC (șterge pe cel existent)"
 
 #: tfrmoptionsdirectoryhotlist.migotoconfiguretcinfo1.caption
 msgctxt "tfrmoptionsdirectoryhotlist.migotoconfiguretcinfo1.caption"
-msgid "Go to configure TC related info"
+msgid "Go to &configure TC related info"
 msgstr "Mergi la configurarea informațiilor legate de TC"
 
 #: tfrmoptionsdirectoryhotlist.migotoconfiguretcinfo2.caption
 msgctxt "tfrmoptionsdirectoryhotlist.migotoconfiguretcinfo2.caption"
-msgid "Go to configure TC related info"
+msgid "Go to &configure TC related info"
 msgstr "Mergi la configurarea informațiilor legate de TC"
 
 #: tfrmoptionsdirectoryhotlist.mihotdirtestmenu.caption
@@ -4815,159 +4946,65 @@ msgid "HotDirTestMenu"
 msgstr "HotDirTestMenu"
 
 #: tfrmoptionsdirectoryhotlist.miimportfromhotlistfile.caption
-msgid "from a Directory Hotlist file (.hotlist)"
+msgid "from a Directory &Hotlist file (.hotlist)"
 msgstr "dintr-un fișier listare dosar (.hotlist)"
 
 #: tfrmoptionsdirectoryhotlist.miimporttotalcommander.caption
-msgid "from \"wincmd.ini\" of TC"
+msgid "from \"&wincmd.ini\" of TC"
 msgstr "din \"wincmd.ini\" al TC"
 
-#: tfrmoptionsdirectoryhotlist.miopenallbranches.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miopenallbranches.caption"
-msgid "Open all branches"
-msgstr "Deschide toate ramurile"
-
-#: tfrmoptionsdirectoryhotlist.mipasteselection.caption
-msgctxt "tfrmoptionsdirectoryhotlist.mipasteselection.caption"
-msgid "Paste"
-msgstr "Lipește"
+#: tfrmoptionsdirectoryhotlist.minavigate.caption
+msgid "&Navigate..."
+msgstr ""
 
 #: tfrmoptionsdirectoryhotlist.mirestorebackuphotlist.caption
-msgid "Restore a backup of Directory Hotlist"
+msgid "&Restore a backup of Directory Hotlist"
 msgstr "Restaurează o copie de rezervă a listării dosarului"
 
 #: tfrmoptionsdirectoryhotlist.misavebackuphotlist.caption
-msgid "Save a backup of current Directory Hotlist"
+msgid "&Save a backup of current Directory Hotlist"
 msgstr "Salvează o copie de rezervă a listării dosarului curentă"
 
 #: tfrmoptionsdirectoryhotlist.misearchandreplace.caption
 msgctxt "tfrmoptionsdirectoryhotlist.misearchandreplace.caption"
-msgid "Search and replace..."
+msgid "Search and &replace..."
 msgstr "Caută și înlocuiește..."
-
-#: tfrmoptionsdirectoryhotlist.misearchandreplaceinpath.caption
-msgid "in path..."
-msgstr "în calea..."
-
-#: tfrmoptionsdirectoryhotlist.misearchandreplaceintargetpath.caption
-msgid "in target path..."
-msgstr "în calea țintă..."
-
-#: tfrmoptionsdirectoryhotlist.misearchinreplaceinbothpaths.caption
-msgid "in path and target path..."
-msgstr "în cale și în calea țintă..."
-
-#: tfrmoptionsdirectoryhotlist.miseparator1.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miseparator1.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionsdirectoryhotlist.miseparator10.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miseparator10.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionsdirectoryhotlist.miseparator11.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miseparator11.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionsdirectoryhotlist.miseparator12.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miseparator12.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionsdirectoryhotlist.miseparator13.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miseparator13.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionsdirectoryhotlist.miseparator2.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miseparator2.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionsdirectoryhotlist.miseparator3.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miseparator3.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionsdirectoryhotlist.miseparator4.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miseparator4.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionsdirectoryhotlist.miseparator5.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miseparator5.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionsdirectoryhotlist.miseparator6.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miseparator6.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionsdirectoryhotlist.miseparator7.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miseparator7.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionsdirectoryhotlist.miseparator8.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miseparator8.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionsdirectoryhotlist.miseparator9.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miseparator9.caption"
-msgid "-"
-msgstr "-"
 
 #: tfrmoptionsdirectoryhotlist.misorteverything.caption
 msgctxt "tfrmoptionsdirectoryhotlist.misorteverything.caption"
-msgid "...everything, from A to Z!"
+msgid "...everything, from A to &Z!"
 msgstr "...totul, de la A la Z!"
 
 #: tfrmoptionsdirectoryhotlist.misortsinglegroup.caption
 msgctxt "tfrmoptionsdirectoryhotlist.misortsinglegroup.caption"
-msgid "...single group of item(s) only"
+msgid "...single &group of item(s) only"
 msgstr "...numai un grup de elemente"
-
-#: tfrmoptionsdirectoryhotlist.misortsinglegroup2.caption
-msgctxt "tfrmoptionsdirectoryhotlist.misortsinglegroup2.caption"
-msgid "Sort single group of item(s) only"
-msgstr "Sortează un singur grup de elemente"
 
 #: tfrmoptionsdirectoryhotlist.misortsinglesubmenu.caption
 msgctxt "tfrmoptionsdirectoryhotlist.misortsinglesubmenu.caption"
-msgid "...content of submenu(s) selected, no sublevel"
+msgid "...&content of submenu(s) selected, no sublevel"
 msgstr "...conținutul submeniului/submeniurilor selectate, fără sub-nivel"
 
 #: tfrmoptionsdirectoryhotlist.misortsubmenuandsublevel.caption
 msgctxt "tfrmoptionsdirectoryhotlist.misortsubmenuandsublevel.caption"
-msgid "...content of submenu(s) selected and all sublevels"
+msgid "...content of submenu(s) selected and &all sublevels"
 msgstr "...conținutul submeniului/submeniurilor și tuturor sub-nivelurilor"
 
 #: tfrmoptionsdirectoryhotlist.mitestresultinghotlistmenu.caption
 msgctxt "tfrmoptionsdirectoryhotlist.mitestresultinghotlistmenu.caption"
-msgid "Test resulting menu"
+msgid "Test resultin&g menu"
 msgstr "Testează meniul ce rezultă"
 
-#: tfrmoptionsdirectoryhotlist.mitypethedirectory.caption
-msgctxt "tfrmoptionsdirectoryhotlist.mitypethedirectory.caption"
-msgid "directory I will type"
-msgstr "dosarul pe care îl voi tasta"
+#: tfrmoptionsdirectoryhotlist.mitweakpath.caption
+msgid "Tweak &path"
+msgstr ""
 
-#: tfrmoptionsdirectoryhotlist.mitypethedirectory2.caption
-msgctxt "tfrmoptionsdirectoryhotlist.mitypethedirectory2.caption"
-msgid "Add directory I will type"
-msgstr "Adaugă dosarul pe care îl voi tasta"
-
-#: tfrmoptionsdirectoryhotlist.mitypethedirectory3.caption
-msgid "Insert directory I will type"
-msgstr "Inserează dosarul pe care îl voi tasta"
+#: tfrmoptionsdirectoryhotlist.mitweaktargetpath.caption
+msgid "Tweak &target path"
+msgstr ""
 
 #: tfrmoptionsdirectoryhotlist.rgwheretoadd.caption
-msgid "Addition from main panel:"
+msgid "Addition from main panel"
 msgstr "Adăugare din cadrul principal:"
 
 #: tfrmoptionsdragdrop.cbdraganddropaskformateachtime.caption
@@ -5152,13 +5189,11 @@ msgid "O&n"
 msgstr "Por&nit"
 
 #: tfrmoptionsfavoritetabs.btnadd.caption
-#, fuzzy
 msgctxt "tfrmoptionsfavoritetabs.btnadd.caption"
 msgid "Add..."
 msgstr "Adaugă..."
 
 #: tfrmoptionsfavoritetabs.btndelete.caption
-#, fuzzy
 msgctxt "tfrmoptionsfavoritetabs.btndelete.caption"
 msgid "Delete..."
 msgstr "Șterge..."
@@ -5168,19 +5203,16 @@ msgid "Import/Export"
 msgstr ""
 
 #: tfrmoptionsfavoritetabs.btninsert.caption
-#, fuzzy
 msgctxt "tfrmoptionsfavoritetabs.btninsert.caption"
 msgid "Insert..."
 msgstr "Inserează..."
 
 #: tfrmoptionsfavoritetabs.btnrename.caption
-#, fuzzy
 msgctxt "tfrmoptionsfavoritetabs.btnrename.caption"
 msgid "Rename"
 msgstr "Redenumește"
 
 #: tfrmoptionsfavoritetabs.btnsort.caption
-#, fuzzy
 msgctxt "tfrmoptionsfavoritetabs.btnsort.caption"
 msgid "Sort..."
 msgstr "Sortează..."
@@ -5191,13 +5223,11 @@ msgid "None"
 msgstr ""
 
 #: tfrmoptionsfavoritetabs.cbfullexpandtree.caption
-#, fuzzy
 msgctxt "tfrmoptionsfavoritetabs.cbfullexpandtree.caption"
 msgid "Always expand tree"
 msgstr "Extinde întotdeauna arborele"
 
 #: tfrmoptionsfavoritetabs.cbsavedirhistory.text
-#, fuzzy
 msgctxt "tfrmoptionsfavoritetabs.cbsavedirhistory.text"
 msgid "No"
 msgstr "Nu"
@@ -5217,7 +5247,6 @@ msgid "Favorite Tabs list (reorder by drag && drop)"
 msgstr ""
 
 #: tfrmoptionsfavoritetabs.gbfavoritetabsotheroptions.caption
-#, fuzzy
 msgctxt "tfrmoptionsfavoritetabs.gbfavoritetabsotheroptions.caption"
 msgid "Other options"
 msgstr "Alte opțiuni"
@@ -5243,19 +5272,16 @@ msgid "Tabs saved on right to be restored to:"
 msgstr ""
 
 #: tfrmoptionsfavoritetabs.menuitem1.caption
-#, fuzzy
 msgctxt "tfrmoptionsfavoritetabs.menuitem1.caption"
 msgid "-"
 msgstr "-"
 
 #: tfrmoptionsfavoritetabs.menuitem2.caption
-#, fuzzy
 msgctxt "tfrmoptionsfavoritetabs.menuitem2.caption"
 msgid "-"
 msgstr "-"
 
 #: tfrmoptionsfavoritetabs.miaddseparator.caption
-#, fuzzy
 msgctxt "tfrmoptionsfavoritetabs.miaddseparator.caption"
 msgid "a separator"
 msgstr "un separator"
@@ -5265,61 +5291,51 @@ msgid "Add separator"
 msgstr ""
 
 #: tfrmoptionsfavoritetabs.miaddsubmenu.caption
-#, fuzzy
 msgctxt "tfrmoptionsfavoritetabs.miaddsubmenu.caption"
 msgid "sub-menu"
 msgstr "sub-meniu"
 
 #: tfrmoptionsfavoritetabs.miaddsubmenu2.caption
-#, fuzzy
 msgctxt "tfrmoptionsfavoritetabs.miaddsubmenu2.caption"
 msgid "Add sub-menu"
 msgstr "Adaugă sub-meniu"
 
 #: tfrmoptionsfavoritetabs.micollapseall.caption
-#, fuzzy
 msgctxt "tfrmoptionsfavoritetabs.micollapseall.caption"
 msgid "Collapse all"
 msgstr "Restrânge toate"
 
 #: tfrmoptionsfavoritetabs.micurrentlevelofitemonly.caption
-#, fuzzy
 msgctxt "tfrmoptionsfavoritetabs.micurrentlevelofitemonly.caption"
 msgid "...current level of item(s) selected only"
 msgstr "...numai nivelul curent al intrării/intrărilor selectat(e)"
 
 #: tfrmoptionsfavoritetabs.micutselection.caption
-#, fuzzy
 msgctxt "tfrmoptionsfavoritetabs.micutselection.caption"
 msgid "Cut"
 msgstr "Taie"
 
 #: tfrmoptionsfavoritetabs.mideleteallfavoritetabs.caption
-#, fuzzy
 msgctxt "tfrmoptionsfavoritetabs.mideleteallfavoritetabs.caption"
 msgid "delete all!"
 msgstr "șterge toate!"
 
 #: tfrmoptionsfavoritetabs.mideletecompletesubmenu.caption
-#, fuzzy
 msgctxt "tfrmoptionsfavoritetabs.mideletecompletesubmenu.caption"
 msgid "sub-menu and all its elements"
 msgstr "sub-meniul și toate elementele sale"
 
 #: tfrmoptionsfavoritetabs.mideletejustsubmenu.caption
-#, fuzzy
 msgctxt "tfrmoptionsfavoritetabs.mideletejustsubmenu.caption"
 msgid "just sub-menu but keep elements"
 msgstr "doar sub-meniul dar păstrează elementele"
 
 #: tfrmoptionsfavoritetabs.mideleteselectedentry.caption
-#, fuzzy
 msgctxt "tfrmoptionsfavoritetabs.mideleteselectedentry.caption"
 msgid "selected item"
 msgstr "elementul selectat"
 
 #: tfrmoptionsfavoritetabs.mideleteselectedentry2.caption
-#, fuzzy
 msgctxt "tfrmoptionsfavoritetabs.mideleteselectedentry2.caption"
 msgid "Delete selected item"
 msgstr "Șterge elementul selectat"
@@ -5359,103 +5375,86 @@ msgid "Insert sub-menu"
 msgstr ""
 
 #: tfrmoptionsfavoritetabs.miopenallbranches.caption
-#, fuzzy
 msgctxt "tfrmoptionsfavoritetabs.miopenallbranches.caption"
 msgid "Open all branches"
 msgstr "Deschide toate ramurile"
 
 #: tfrmoptionsfavoritetabs.mipasteselection.caption
-#, fuzzy
 msgctxt "tfrmoptionsfavoritetabs.mipasteselection.caption"
 msgid "Paste"
 msgstr "Lipește"
 
 #: tfrmoptionsfavoritetabs.mirename.caption
-#, fuzzy
 msgctxt "tfrmoptionsfavoritetabs.mirename.caption"
 msgid "Rename"
 msgstr "Redenumește"
 
 #: tfrmoptionsfavoritetabs.miseparator1.caption
-#, fuzzy
 msgctxt "tfrmoptionsfavoritetabs.miseparator1.caption"
 msgid "-"
 msgstr "-"
 
 #: tfrmoptionsfavoritetabs.miseparator10.caption
-#, fuzzy
 msgctxt "tfrmoptionsfavoritetabs.miseparator10.caption"
 msgid "-"
 msgstr "-"
 
 #: tfrmoptionsfavoritetabs.miseparator11.caption
-#, fuzzy
 msgctxt "tfrmoptionsfavoritetabs.miseparator11.caption"
 msgid "-"
 msgstr "-"
 
 #: tfrmoptionsfavoritetabs.miseparator2.caption
-#, fuzzy
 msgctxt "tfrmoptionsfavoritetabs.miseparator2.caption"
 msgid "-"
 msgstr "-"
 
 #: tfrmoptionsfavoritetabs.miseparator3.caption
-#, fuzzy
 msgctxt "tfrmoptionsfavoritetabs.miseparator3.caption"
 msgid "-"
 msgstr "-"
 
 #: tfrmoptionsfavoritetabs.miseparator7.caption
-#, fuzzy
 msgctxt "tfrmoptionsfavoritetabs.miseparator7.caption"
 msgid "-"
 msgstr "-"
 
 #: tfrmoptionsfavoritetabs.miseparator8.caption
-#, fuzzy
 msgctxt "tfrmoptionsfavoritetabs.miseparator8.caption"
 msgid "-"
 msgstr "-"
 
 #: tfrmoptionsfavoritetabs.miseparator9.caption
-#, fuzzy
 msgctxt "tfrmoptionsfavoritetabs.miseparator9.caption"
 msgid "-"
 msgstr "-"
 
 #: tfrmoptionsfavoritetabs.misorteverything.caption
-#, fuzzy
 msgctxt "tfrmoptionsfavoritetabs.misorteverything.caption"
 msgid "...everything, from A to Z!"
 msgstr "...totul, de la A la Z!"
 
 #: tfrmoptionsfavoritetabs.misortsinglegroup.caption
-#, fuzzy
 msgctxt "tfrmoptionsfavoritetabs.misortsinglegroup.caption"
 msgid "...single group of item(s) only"
 msgstr "...numai un grup de elemente"
 
 #: tfrmoptionsfavoritetabs.misortsinglegroup2.caption
-#, fuzzy
 msgctxt "tfrmoptionsfavoritetabs.misortsinglegroup2.caption"
 msgid "Sort single group of item(s) only"
 msgstr "Sortează un singur grup de elemente"
 
 #: tfrmoptionsfavoritetabs.misortsinglesubmenu.caption
-#, fuzzy
 msgctxt "tfrmoptionsfavoritetabs.misortsinglesubmenu.caption"
 msgid "...content of submenu(s) selected, no sublevel"
 msgstr "...conținutul submeniului/submeniurilor selectate, fără sub-nivel"
 
 #: tfrmoptionsfavoritetabs.misortsubmenuandsublevel.caption
-#, fuzzy
 msgctxt "tfrmoptionsfavoritetabs.misortsubmenuandsublevel.caption"
 msgid "...content of submenu(s) selected and all sublevels"
 msgstr "...conținutul submeniului/submeniurilor și tuturor sub-nivelurilor"
 
 #: tfrmoptionsfavoritetabs.mitestresultingfavoritetabsmenu.caption
-#, fuzzy
 msgctxt "tfrmoptionsfavoritetabs.mitestresultingfavoritetabsmenu.caption"
 msgid "Test resulting menu"
 msgstr "Testează meniul ce rezultă"
@@ -5485,7 +5484,6 @@ msgid "&Down"
 msgstr "În jos (&d)"
 
 #: tfrmoptionsfileassoc.btneditext.caption
-#, fuzzy
 msgctxt "tfrmoptionsfileassoc.btneditext.caption"
 msgid "Edit"
 msgstr "Editează"
@@ -5582,11 +5580,9 @@ msgid "File types may be sorted by drag & drop"
 msgstr ""
 
 #: tfrmoptionsfileassoc.lblaction.caption
-#, fuzzy
-#| msgid "Action:"
 msgctxt "tfrmoptionsfileassoc.lblaction.caption"
 msgid "Action name:"
-msgstr "Acțiune:"
+msgstr "Numele acțiunii:"
 
 #: tfrmoptionsfileassoc.lblcommand.caption
 msgctxt "tfrmoptionsfileassoc.lblcommand.caption"
@@ -5594,19 +5590,16 @@ msgid "&Command:"
 msgstr "&Comandă:"
 
 #: tfrmoptionsfileassoc.lblexternalparameters.caption
-#, fuzzy
 msgctxt "tfrmoptionsfileassoc.lblexternalparameters.caption"
 msgid "Parameter&s:"
 msgstr "Parametri(&s):"
 
 #: tfrmoptionsfileassoc.lblstartpath.caption
-#, fuzzy
 msgctxt "tfrmoptionsfileassoc.lblstartpath.caption"
 msgid "Start pat&h:"
 msgstr "Cale de pornire (&h):"
 
 #: tfrmoptionsfileassoc.menuitem1.caption
-#, fuzzy
 msgctxt "tfrmoptionsfileassoc.menuitem1.caption"
 msgid "-"
 msgstr "-"
@@ -5656,7 +5649,6 @@ msgid "Open with..."
 msgstr ""
 
 #: tfrmoptionsfileassoc.miseparator.caption
-#, fuzzy
 msgctxt "tfrmoptionsfileassoc.miseparator.caption"
 msgid "-"
 msgstr "-"
@@ -5726,7 +5718,6 @@ msgid "Extended options items:"
 msgstr ""
 
 #: tfrmoptionsfileoperations.bvlconfirmations.caption
-#, fuzzy
 msgctxt "tfrmoptionsfileoperations.bvlconfirmations.caption"
 msgid "Show confirmation window for:"
 msgstr "Arată fereastra de confirmare pentru:"
@@ -5756,10 +5747,6 @@ msgstr "Elimină eticheta doar citi&re"
 msgid "&Move operation"
 msgstr "Operație de &mutare"
 
-#: tfrmoptionsfileoperations.cbpartialnamesearch.caption
-msgid "&Search for part of file name"
-msgstr "Caută (&s) după parte din numele fișierului"
-
 #: tfrmoptionsfileoperations.cbprocesscomments.caption
 msgid "&Process comments with files/folders"
 msgstr "&Procesează comentariile cu fișiere/dosare"
@@ -5776,18 +5763,9 @@ msgstr "Arată panoul de selecție al filei în fereastra de dialog (&w)"
 msgid "S&kip file operations errors and write them to log window"
 msgstr "Sari peste erorile din operațiile cu fișiere și scrie-le în fereastra jurnal (&k)"
 
-#: tfrmoptionsfileoperations.dbtextsearch.caption
-msgid "Text search in files"
-msgstr ""
-
 #: tfrmoptionsfileoperations.gbexecutingoperations.caption
 msgid "Executing operations"
 msgstr "Operații în executare"
-
-#: tfrmoptionsfileoperations.gbfilesearch.caption
-msgctxt "tfrmoptionsfileoperations.gbfilesearch.caption"
-msgid "File search"
-msgstr "Căutare de fișiere"
 
 #: tfrmoptionsfileoperations.gbuserinterface.caption
 msgid "User interface"
@@ -5805,12 +5783,7 @@ msgstr ""
 msgid "Show operations progress &initially in"
 msgstr "Afișează progresul operațiilor &inițial în"
 
-#: tfrmoptionsfileoperations.lblsearchdefaulttemplate.caption
-msgid "Default search template:"
-msgstr ""
-
 #: tfrmoptionsfileoperations.lbltypeofduplicatedrename.caption
-#, fuzzy
 msgctxt "tfrmoptionsfileoperations.lbltypeofduplicatedrename.caption"
 msgid "Duplicated name auto-rename style:"
 msgstr "Stilul de auto-redenumire a numelor duplicate:"
@@ -5818,14 +5791,6 @@ msgstr "Stilul de auto-redenumire a numelor duplicate:"
 #: tfrmoptionsfileoperations.lblwipepassnumber.caption
 msgid "&Number of wipe passes:"
 msgstr "&Număr de treceri pentru ștergere definitivă:"
-
-#: tfrmoptionsfileoperations.rbusemmapinsearch.caption
-msgid "Use memory mapping for search te&xt in files"
-msgstr "Utilizează maparea memoriei pentru căutarea te&xtului în fișiere"
-
-#: tfrmoptionsfileoperations.rbusestreaminsearch.caption
-msgid "&Use stream for search text in files"
-msgstr "&Utilizează fluxarea pentru căutarea textului în fișiere"
 
 #: tfrmoptionsfilepanelscolors.btnbackcolor.caption
 msgctxt "TFRMOPTIONSFILEPANELSCOLORS.BTNBACKCOLOR.CAPTION"
@@ -5838,7 +5803,6 @@ msgid ">>"
 msgstr ">>"
 
 #: tfrmoptionsfilepanelscolors.btncursorbordercolor.caption
-#, fuzzy
 msgctxt "tfrmoptionsfilepanelscolors.btncursorbordercolor.caption"
 msgid ">>"
 msgstr ">>"
@@ -5859,13 +5823,11 @@ msgid ">>"
 msgstr ">>"
 
 #: tfrmoptionsfilepanelscolors.btninactivecursorcolor.caption
-#, fuzzy
 msgctxt "tfrmoptionsfilepanelscolors.btninactivecursorcolor.caption"
 msgid ">>"
 msgstr ">>"
 
 #: tfrmoptionsfilepanelscolors.btninactivemarkcolor.caption
-#, fuzzy
 msgctxt "tfrmoptionsfilepanelscolors.btninactivemarkcolor.caption"
 msgid ">>"
 msgstr ">>"
@@ -5890,7 +5852,6 @@ msgid "Reset to DC default"
 msgstr ""
 
 #: tfrmoptionsfilepanelscolors.cballowovercolor.caption
-#, fuzzy
 msgctxt "tfrmoptionsfilepanelscolors.cballowovercolor.caption"
 msgid "Allow Overcolor"
 msgstr "Permite Supraculoare"
@@ -5912,7 +5873,6 @@ msgid "U&se Inverted Selection"
 msgstr "Utilizează &Selecție Inversată"
 
 #: tfrmoptionsfilepanelscolors.cbusecursorborder.caption
-#, fuzzy
 msgctxt "tfrmoptionsfilepanelscolors.cbusecursorborder.caption"
 msgid "Cursor border"
 msgstr "Margine cursor"
@@ -5977,6 +5937,57 @@ msgctxt "TFRMOPTIONSFILEPANELSCOLORS.LBLTEXTCOLOR.CAPTION"
 msgid "T&ext Color:"
 msgstr "Culoare T&ext:"
 
+#: tfrmoptionsfilesearch.cbinitiallyclearfilemask.caption
+msgid "When launching file search, clear file mask filter"
+msgstr ""
+
+#: tfrmoptionsfilesearch.cbpartialnamesearch.caption
+msgid "&Search for part of file name"
+msgstr "Caută (&s) după parte din numele fișierului"
+
+#: tfrmoptionsfilesearch.cbshowmenubarinfindfiles.caption
+msgid "Show menu bar in \"Find files\""
+msgstr ""
+
+#: tfrmoptionsfilesearch.dbtextsearch.caption
+msgid "Text search in files"
+msgstr ""
+
+#: tfrmoptionsfilesearch.gbfilesearch.caption
+msgctxt "tfrmoptionsfilesearch.gbfilesearch.caption"
+msgid "File search"
+msgstr "Căutare de fișiere"
+
+#: tfrmoptionsfilesearch.lblnewsearchfilters.caption
+msgid "Current filters with \"New search\" button:"
+msgstr ""
+
+#: tfrmoptionsfilesearch.lblsearchdefaulttemplate.caption
+msgid "Default search template:"
+msgstr ""
+
+#: tfrmoptionsfilesearch.rbusemmapinsearch.caption
+msgid "Use memory mapping for search te&xt in files"
+msgstr "Utilizează maparea memoriei pentru căutarea te&xtului în fișiere"
+
+#: tfrmoptionsfilesearch.rbusestreaminsearch.caption
+msgid "&Use stream for search text in files"
+msgstr "&Utilizează fluxarea pentru căutarea textului în fișiere"
+
+#: tfrmoptionsfilesviews.btnaddattribute.caption
+msgctxt "tfrmoptionsfilesviews.btnaddattribute.caption"
+msgid "&Add"
+msgstr "&Adaugă"
+
+#: tfrmoptionsfilesviews.btnattrshelp.caption
+msgctxt "tfrmoptionsfilesviews.btnattrshelp.caption"
+msgid "&Help"
+msgstr "Ajutor (&h)"
+
+#: tfrmoptionsfilesviews.cbdblclicktoparent.caption
+msgid "Enable changing to &parent folder when double-clicking on empty part of file view"
+msgstr ""
+
 #: tfrmoptionsfilesviews.cbdelayloadingtabs.caption
 msgid "Do&n't load file list until a tab is activated"
 msgstr "&Nu încărca lista de fișiere până când o filă este activă"
@@ -6012,13 +6023,32 @@ msgstr "Arată fișierele ascunse și de sistem (&y)"
 msgid "&When selecting files with <SPACEBAR>, move down to next file (as with <INSERT>)"
 msgstr "Când (&w) se selectează fișiere cu <SPACEBAR>, mergi în jos la următorul fișier (ca și cu <INSERT>)"
 
+#: tfrmoptionsfilesviews.chkmarkmaskfilterwindows.caption
+msgctxt "tfrmoptionsfilesviews.chkmarkmaskfilterwindows.caption"
+msgid "Windows style filter when marking files (\"*.*\" also select files without extension, etc.)"
+msgstr ""
+
+#: tfrmoptionsfilesviews.chkmarkmaskshowattribute.caption
+msgctxt "tfrmoptionsfilesviews.chkmarkmaskshowattribute.caption"
+msgid "Use an independent attribute filter in mask input dialog each time"
+msgstr ""
+
 #: tfrmoptionsfilesviews.gbformatting.caption
 msgid "Formatting"
 msgstr "Formatare"
 
+#: tfrmoptionsfilesviews.gbmarking.caption
+msgid "Marking/Unmarking entries"
+msgstr ""
+
 #: tfrmoptionsfilesviews.gbsorting.caption
 msgid "Sorting"
 msgstr "Sortare"
+
+#: tfrmoptionsfilesviews.lbattributemask.caption
+msgctxt "tfrmoptionsfilesviews.lbattributemask.caption"
+msgid "Default attribute mask value to use:"
+msgstr ""
 
 #: tfrmoptionsfilesviews.lblcasesensitivity.caption
 msgid "Case s&ensitivity:"
@@ -6100,13 +6130,11 @@ msgid "Category &name:"
 msgstr "&Nume categorie:"
 
 #: tfrmoptionsfonts.btnpatheditfnt.caption
-#, fuzzy
 msgctxt "tfrmoptionsfonts.btnpatheditfnt.caption"
 msgid "..."
 msgstr "..."
 
 #: tfrmoptionsfonts.btnsearchresultsfnt.caption
-#, fuzzy
 msgctxt "tfrmoptionsfonts.btnsearchresultsfnt.caption"
 msgid "..."
 msgstr "..."
@@ -6178,18 +6206,67 @@ msgctxt "TFRMOPTIONSFONTS.LBLVIEWERFONT.CAPTION"
 msgid "&Viewer font"
 msgstr "Font &vizualizator"
 
-#: tfrmoptionshotkeys.btnaddhotkey.caption
+#: tfrmoptionshotkeys.actaddhotkey.caption
+msgctxt "tfrmoptionshotkeys.actaddhotkey.caption"
 msgid "Add &hotkey"
 msgstr "Adaugă tastă rapidă (&h)"
 
-#: tfrmoptionshotkeys.btndeletehotkey.caption
+#: tfrmoptionshotkeys.actcopy.caption
+msgctxt "tfrmoptionshotkeys.actcopy.caption"
+msgid "Copy"
+msgstr "Copiază"
+
+#: tfrmoptionshotkeys.actdelete.caption
+msgctxt "tfrmoptionshotkeys.actdelete.caption"
+msgid "Delete"
+msgstr "Șterge"
+
+#: tfrmoptionshotkeys.actdeletehotkey.caption
+msgctxt "tfrmoptionshotkeys.actdeletehotkey.caption"
 msgid "&Delete hotkey"
 msgstr "Șterge tastă rapi&dă"
 
-#: tfrmoptionshotkeys.btnedithotkey.caption
-msgctxt "TFRMOPTIONSHOTKEYS.BTNEDITHOTKEY.CAPTION"
+#: tfrmoptionshotkeys.actedithotkey.caption
+msgctxt "tfrmoptionshotkeys.actedithotkey.caption"
 msgid "&Edit hotkey"
 msgstr "&Editează tastă rapidă"
+
+#: tfrmoptionshotkeys.actnextcategory.caption
+msgid "Next category"
+msgstr ""
+
+#: tfrmoptionshotkeys.actpopupfilerelatedmenu.caption
+msgid "Make popup the file related menu"
+msgstr ""
+
+#: tfrmoptionshotkeys.actpreviouscategory.caption
+msgid "Previous category"
+msgstr ""
+
+#: tfrmoptionshotkeys.actrename.caption
+msgctxt "tfrmoptionshotkeys.actrename.caption"
+msgid "Rename"
+msgstr "Redenumește"
+
+#: tfrmoptionshotkeys.actrestoredefault.caption
+msgid "Restore DC default"
+msgstr ""
+
+#: tfrmoptionshotkeys.actsavenow.caption
+msgid "Save now"
+msgstr ""
+
+#: tfrmoptionshotkeys.actsortbycommand.caption
+msgid "Sort by command name"
+msgstr ""
+
+#: tfrmoptionshotkeys.actsortbyhotkeysgrouped.caption
+msgid "Sort by hotkeys (grouped)"
+msgstr ""
+
+#: tfrmoptionshotkeys.actsortbyhotkeysoneperline.caption
+msgid "Sort by hotkeys (one per row)"
+msgstr ""
 
 #: tfrmoptionshotkeys.lbfilter.caption
 msgctxt "TFRMOPTIONSHOTKEYS.LBFILTER.CAPTION"
@@ -6211,38 +6288,27 @@ msgctxt "TFRMOPTIONSHOTKEYS.LBLSCFILES.CAPTION"
 msgid "&Shortcut files:"
 msgstr "Fișiere &scurtătură:"
 
-#: tfrmoptionshotkeys.stgcommands.columns[0].title.caption
-#, fuzzy
-msgctxt "tfrmoptionshotkeys.stgcommands.columns[0].title.caption"
+#: tfrmoptionshotkeys.lblsortorder.caption
+msgid "So&rt order:"
+msgstr ""
+
+#: tfrmoptionshotkeys.micategories.caption
+msgid "Categories"
+msgstr ""
+
+#: tfrmoptionshotkeys.micommands.caption
+msgctxt "tfrmoptionshotkeys.micommands.caption"
 msgid "Command"
 msgstr "Comandă"
 
-#: tfrmoptionshotkeys.stgcommands.columns[1].title.caption
-#, fuzzy
-msgctxt "tfrmoptionshotkeys.stgcommands.columns[1].title.caption"
-msgid "Hotkeys"
-msgstr "Taste rapide"
+#: tfrmoptionshotkeys.miseparator1.caption
+msgctxt "tfrmoptionshotkeys.miseparator1.caption"
+msgid "-"
+msgstr "-"
 
-#: tfrmoptionshotkeys.stgcommands.columns[2].title.caption
-#, fuzzy
-msgctxt "tfrmoptionshotkeys.stgcommands.columns[2].title.caption"
-msgid "Description"
-msgstr "Descriere"
-
-#: tfrmoptionshotkeys.stghotkeys.columns[0].title.caption
-msgctxt "TFRMOPTIONSHOTKEYS.STGHOTKEYS.COLUMNS[0].TITLE.CAPTION"
-msgid "Hotkey"
-msgstr "Tastă rapidă"
-
-#: tfrmoptionshotkeys.stghotkeys.columns[1].title.caption
-msgctxt "TFRMOPTIONSHOTKEYS.STGHOTKEYS.COLUMNS[1].TITLE.CAPTION"
-msgid "Parameters"
-msgstr "Parametri"
-
-#: tfrmoptionshotkeys.stghotkeys.columns[2].title.caption
-msgctxt "TFRMOPTIONSHOTKEYS.STGHOTKEYS.COLUMNS[2].TITLE.CAPTION"
-msgid "Controls"
-msgstr "Controale"
+#: tfrmoptionshotkeys.misortorder.caption
+msgid "Sort order"
+msgstr ""
 
 #: tfrmoptionsicons.cbiconsexclude.caption
 msgctxt "TFRMOPTIONSICONS.CBICONSEXCLUDE.CAPTION"
@@ -6258,33 +6324,44 @@ msgctxt "TFRMOPTIONSICONS.CBICONSINMENUSSIZE.TEXT"
 msgid "16x16"
 msgstr "16x16"
 
+#: tfrmoptionsicons.cbiconsonbuttons.caption
+msgid "Show icons on buttons"
+msgstr ""
+
 #: tfrmoptionsicons.cbiconsshowoverlay.caption
 msgctxt "TFRMOPTIONSICONS.CBICONSSHOWOVERLAY.CAPTION"
 msgid "Show o&verlay icons, e.g. for links"
 msgstr "Arată iconițe suprapuse, de exemplu pentru legături (&v)"
 
-#: tfrmoptionsicons.cbiconssize.text
-msgctxt "TFRMOPTIONSICONS.CBICONSSIZE.TEXT"
-msgid "16x16"
-msgstr "16x16"
-
 #: tfrmoptionsicons.gbdisablespecialicons.caption
 msgid "Disable special icons"
 msgstr "Dezactivează iconițele speciale"
-
-#: tfrmoptionsicons.gbiconsinmenus.caption
-msgid "Icons in menus"
-msgstr "Iconițe în meniuri"
 
 #: tfrmoptionsicons.gbiconssize.caption
 msgctxt "TFRMOPTIONSICONS.GBICONSSIZE.CAPTION"
 msgid " Icon size "
 msgstr " Mărime iconiță "
 
+#: tfrmoptionsicons.gbicontheme.caption
+msgid "Icon theme"
+msgstr ""
+
+#: tfrmoptionsicons.gbshowicons.caption
+msgid "Show icons"
+msgstr ""
+
 #: tfrmoptionsicons.gbshowiconsmode.caption
 msgctxt "TFRMOPTIONSICONS.GBSHOWICONSMODE.CAPTION"
 msgid " Show icons to the left of the filename "
 msgstr " Arată iconițe la dreapta numelui de fișier "
+
+#: tfrmoptionsicons.lbldiskpanel.caption
+msgid "Disk panel:"
+msgstr ""
+
+#: tfrmoptionsicons.lblfilepanel.caption
+msgid "File panel:"
+msgstr ""
 
 #: tfrmoptionsicons.rbiconsshowall.caption
 msgctxt "TFRMOPTIONSICONS.RBICONSSHOWALL.CAPTION"
@@ -6317,7 +6394,6 @@ msgid "Add selected names with &full path"
 msgstr "Adaugă numele selectate cu calea completă (&f)"
 
 #: tfrmoptionsignorelist.btnrelativesavein.hint
-#, fuzzy
 msgctxt "tfrmoptionsignorelist.btnrelativesavein.hint"
 msgid "Some functions to select appropriate path"
 msgstr "Unele funcții pentru a selecta calea potrivită"
@@ -6425,11 +6501,9 @@ msgid "Show &main menu"
 msgstr "Afișează &meniul principal"
 
 #: tfrmoptionslayout.cbshowmaintoolbar.caption
-#, fuzzy
-#| msgid "Show &button bar"
 msgctxt "TFRMOPTIONSLAYOUT.CBSHOWMAINTOOLBAR.CAPTION"
 msgid "Show tool&bar"
-msgstr "Arată bara de &butoane"
+msgstr "Arată &bara de unelte"
 
 #: tfrmoptionslayout.cbshowshortdrivefreespace.caption
 msgid "Show short free space &label"
@@ -6466,7 +6540,6 @@ msgid " Screen layout "
 msgstr " Aranjament ecran "
 
 #: tfrmoptionslog.btnrelativelogfile.hint
-#, fuzzy
 msgctxt "tfrmoptionslog.btnrelativelogfile.hint"
 msgid "Some functions to select appropriate path"
 msgstr "Unele funcții pentru a selecta calea potrivită"
@@ -6552,19 +6625,16 @@ msgid ">>"
 msgstr ">>"
 
 #: tfrmoptionsmisc.btnrelativeoutputpathfortoolbar.hint
-#, fuzzy
 msgctxt "tfrmoptionsmisc.btnrelativeoutputpathfortoolbar.hint"
 msgid "Some functions to select appropriate path"
 msgstr "Unele funcții pentru a selecta calea potrivită"
 
 #: tfrmoptionsmisc.btnrelativetcconfigfile.hint
-#, fuzzy
 msgctxt "tfrmoptionsmisc.btnrelativetcconfigfile.hint"
 msgid "Some functions to select appropriate path"
 msgstr "Unele funcții pentru a selecta calea potrivită"
 
 #: tfrmoptionsmisc.btnrelativetcexecutablefile.hint
-#, fuzzy
 msgctxt "tfrmoptionsmisc.btnrelativetcexecutablefile.hint"
 msgid "Some functions to select appropriate path"
 msgstr "Unele funcții pentru a selecta calea potrivită"
@@ -6586,10 +6656,6 @@ msgstr ""
 #: tfrmoptionsmisc.chkgotoroot.caption
 msgid "Always &go to the root of a drive when changing drives"
 msgstr "Mer&gi întotdeauna la rădăcina discului când schimbi dispozitivele"
-
-#: tfrmoptionsmisc.chkmarkmaskfilterwindows.caption
-msgid "Windows style filter when marking files (\"*.*\" also select files without extension, etc.)"
-msgstr ""
 
 #: tfrmoptionsmisc.chkshowwarningmessages.caption
 msgctxt "TFRMOPTIONSMISC.CHKSHOWWARNINGMESSAGES.CAPTION"
@@ -6884,7 +6950,6 @@ msgid "None"
 msgstr ""
 
 #: tfrmoptionstabsextra.cbdefaultsavedirhistory.text
-#, fuzzy
 msgctxt "tfrmoptionstabsextra.cbdefaultsavedirhistory.text"
 msgid "No"
 msgstr "Nu"
@@ -7080,7 +7145,6 @@ msgid "Parameter&s:"
 msgstr "Parametri(&s):"
 
 #: tfrmoptionstoolbar.lblhelponinternalcommand.caption
-#, fuzzy
 msgctxt "tfrmoptionstoolbar.lblhelponinternalcommand.caption"
 msgid "Help"
 msgstr "Ajutor"
@@ -7137,13 +7201,11 @@ msgid "for a sub-tool bar"
 msgstr ""
 
 #: tfrmoptionstoolbar.mibackup.caption
-#, fuzzy
 msgctxt "tfrmoptionstoolbar.mibackup.caption"
 msgid "Backup..."
 msgstr "Copie de rezervă..."
 
 #: tfrmoptionstoolbar.miexport.caption
-#, fuzzy
 msgctxt "tfrmoptionstoolbar.miexport.caption"
 msgid "Export..."
 msgstr "Exportă..."
@@ -7168,13 +7230,11 @@ msgid "to a TC .BAR file (erase existing)"
 msgstr ""
 
 #: tfrmoptionstoolbar.miexportcurrenttotcinikeep.caption
-#, fuzzy
 msgctxt "tfrmoptionstoolbar.miexportcurrenttotcinikeep.caption"
 msgid "to a \"wincmd.ini\" of TC (keep existing)"
 msgstr "către un \"wincmd.ini\" al TC (păstrează pe cel existent)"
 
 #: tfrmoptionstoolbar.miexportcurrenttotcininokeep.caption
-#, fuzzy
 msgctxt "tfrmoptionstoolbar.miexportcurrenttotcininokeep.caption"
 msgid "to a \"wincmd.ini\" of TC (erase existing)"
 msgstr "către un \"wincmd.ini\" al TC (șterge pe cel existent)"
@@ -7223,13 +7283,11 @@ msgid "to a TC .BAR file (erase existing)"
 msgstr ""
 
 #: tfrmoptionstoolbar.miexporttoptotcinikeep.caption
-#, fuzzy
 msgctxt "tfrmoptionstoolbar.miexporttoptotcinikeep.caption"
 msgid "to a \"wincmd.ini\" of TC (keep existing)"
 msgstr "către un \"wincmd.ini\" al TC (păstrează pe cel existent)"
 
 #: tfrmoptionstoolbar.miexporttoptotcininokeep.caption
-#, fuzzy
 msgctxt "tfrmoptionstoolbar.miexporttoptotcininokeep.caption"
 msgid "to a \"wincmd.ini\" of TC (erase existing)"
 msgstr "către un \"wincmd.ini\" al TC (șterge pe cel existent)"
@@ -7255,7 +7313,6 @@ msgid "just prior current selection"
 msgstr ""
 
 #: tfrmoptionstoolbar.miimport.caption
-#, fuzzy
 msgctxt "tfrmoptionstoolbar.miimport.caption"
 msgid "Import..."
 msgstr "Importă..."
@@ -7402,7 +7459,6 @@ msgid "just prior current selection"
 msgstr ""
 
 #: tfrmoptionstoolbar.misearchandreplace.caption
-#, fuzzy
 msgctxt "tfrmoptionstoolbar.misearchandreplace.caption"
 msgid "Search and replace..."
 msgstr "Caută și înlocuiește..."
@@ -7527,7 +7583,6 @@ msgid "Button type"
 msgstr "Tip de buton"
 
 #: tfrmoptionstoolbase.btnrelativetoolpath.hint
-#, fuzzy
 msgctxt "tfrmoptionstoolbase.btnrelativetoolpath.hint"
 msgid "Some functions to select appropriate path"
 msgstr "Unele funcții pentru a selecta calea potrivită"
@@ -7578,11 +7633,9 @@ msgid "Template..."
 msgstr "Șablon..."
 
 #: tfrmoptionstooltips.chkshowtooltip.caption
-#, fuzzy
-#| msgid "Show tool tip"
 msgctxt "tfrmoptionstooltips.chkshowtooltip.caption"
 msgid "&Show tooltip for files in the file panel"
-msgstr "Arată indiciu"
+msgstr "Arată (&s) indiciu pentru fișierele din panoul de fișiere"
 
 #: tfrmoptionstooltips.gbcustomfields.caption
 msgctxt "TFRMOPTIONSTOOLTIPS.GBCUSTOMFIELDS.CAPTION"
@@ -7675,73 +7728,61 @@ msgid "With History:"
 msgstr ""
 
 #: tfrmoptionstreeviewmenucolor.btnbackgroundcolor.caption
-#, fuzzy
 msgctxt "tfrmoptionstreeviewmenucolor.btnbackgroundcolor.caption"
 msgid ">>"
 msgstr ">>"
 
 #: tfrmoptionstreeviewmenucolor.btncursorcolor.caption
-#, fuzzy
 msgctxt "tfrmoptionstreeviewmenucolor.btncursorcolor.caption"
 msgid ">>"
 msgstr ">>"
 
 #: tfrmoptionstreeviewmenucolor.btnfoundtextcolor.caption
-#, fuzzy
 msgctxt "tfrmoptionstreeviewmenucolor.btnfoundtextcolor.caption"
 msgid ">>"
 msgstr ">>"
 
 #: tfrmoptionstreeviewmenucolor.btnfoundtextundercursor.caption
-#, fuzzy
 msgctxt "tfrmoptionstreeviewmenucolor.btnfoundtextundercursor.caption"
 msgid ">>"
 msgstr ">>"
 
 #: tfrmoptionstreeviewmenucolor.btnnormaltextcolor.caption
-#, fuzzy
 msgctxt "tfrmoptionstreeviewmenucolor.btnnormaltextcolor.caption"
 msgid ">>"
 msgstr ">>"
 
 #: tfrmoptionstreeviewmenucolor.btnnormaltextundercursor.caption
-#, fuzzy
 msgctxt "tfrmoptionstreeviewmenucolor.btnnormaltextundercursor.caption"
 msgid ">>"
 msgstr ">>"
 
 #: tfrmoptionstreeviewmenucolor.btnsecondarytextcolor.caption
-#, fuzzy
 msgctxt "tfrmoptionstreeviewmenucolor.btnsecondarytextcolor.caption"
 msgid ">>"
 msgstr ">>"
 
 #: tfrmoptionstreeviewmenucolor.btnsecondarytextundercursor.caption
-#, fuzzy
 msgctxt "tfrmoptionstreeviewmenucolor.btnsecondarytextundercursor.caption"
 msgid ">>"
 msgstr ">>"
 
 #: tfrmoptionstreeviewmenucolor.btnshortcutcolor.caption
-#, fuzzy
 msgctxt "tfrmoptionstreeviewmenucolor.btnshortcutcolor.caption"
 msgid ">>"
 msgstr ">>"
 
 #: tfrmoptionstreeviewmenucolor.btnshortcutundercursor.caption
-#, fuzzy
 msgctxt "tfrmoptionstreeviewmenucolor.btnshortcutundercursor.caption"
 msgid ">>"
 msgstr ">>"
 
 #: tfrmoptionstreeviewmenucolor.btnunselectabletextcolor.caption
-#, fuzzy
 msgctxt "tfrmoptionstreeviewmenucolor.btnunselectabletextcolor.caption"
 msgid ">>"
 msgstr ">>"
 
 #: tfrmoptionstreeviewmenucolor.btnunselectableundercursor.caption
-#, fuzzy
 msgctxt "tfrmoptionstreeviewmenucolor.btnunselectableundercursor.caption"
 msgid ">>"
 msgstr ">>"
@@ -7760,7 +7801,7 @@ msgstr ""
 
 #: tfrmoptionstreeviewmenucolor.lblcursorcolor.caption
 msgid "Cursor color:"
-msgstr ""
+msgstr "Culoare cursor:"
 
 #: tfrmoptionstreeviewmenucolor.lblfoundtextcolor.caption
 msgid "Found text color:"
@@ -8193,10 +8234,9 @@ msgid "Execute"
 msgstr "Execută"
 
 #: tfrmsetfileproperties.lblmodeinfo.caption
-#, fuzzy
 msgctxt "tfrmsetfileproperties.lblmodeinfo.caption"
 msgid "(gray field means unchanged value)"
-msgstr "(câmpul gri semnifică valori neschimbate)"
+msgstr "(un câmp gri înseamnă valoare neschimbată)"
 
 #: tfrmsetfileproperties.lbloctal.caption
 msgctxt "TFRMSETFILEPROPERTIES.LBLOCTAL.CAPTION"
@@ -8229,7 +8269,6 @@ msgid "&OK"
 msgstr "&OK"
 
 #: tfrmsplitter.btnrelativeftchoice.hint
-#, fuzzy
 msgctxt "tfrmsplitter.btnrelativeftchoice.hint"
 msgid "Some functions to select appropriate path"
 msgstr "Unele funcții pentru a selecta calea potrivită"
@@ -8348,6 +8387,10 @@ msgstr "&OK"
 msgid "Create symbolic link"
 msgstr "Creează legătură simbolică"
 
+#: tfrmsymlink.chkuserelativepath.caption
+msgid "Use &relative path when possible"
+msgstr ""
+
 #: tfrmsymlink.lblexistingfile.caption
 msgctxt "TFRMSYMLINK.LBLEXISTINGFILE.CAPTION"
 msgid "&Destination that the link will point to"
@@ -8417,19 +8460,16 @@ msgid "Show:"
 msgstr "Arată:"
 
 #: tfrmsyncdirsdlg.headerdg.columns[0].title.caption
-#, fuzzy
 msgctxt "tfrmsyncdirsdlg.headerdg.columns[0].title.caption"
 msgid "Name"
 msgstr "Nume"
 
 #: tfrmsyncdirsdlg.headerdg.columns[1].title.caption
-#, fuzzy
 msgctxt "tfrmsyncdirsdlg.headerdg.columns[1].title.caption"
 msgid "Size"
 msgstr "Mărime"
 
 #: tfrmsyncdirsdlg.headerdg.columns[2].title.caption
-#, fuzzy
 msgctxt "tfrmsyncdirsdlg.headerdg.columns[2].title.caption"
 msgid "Date"
 msgstr "Dată"
@@ -8439,19 +8479,16 @@ msgid "<=>"
 msgstr ""
 
 #: tfrmsyncdirsdlg.headerdg.columns[4].title.caption
-#, fuzzy
 msgctxt "tfrmsyncdirsdlg.headerdg.columns[4].title.caption"
 msgid "Date"
 msgstr "Dată"
 
 #: tfrmsyncdirsdlg.headerdg.columns[5].title.caption
-#, fuzzy
 msgctxt "tfrmsyncdirsdlg.headerdg.columns[5].title.caption"
 msgid "Size"
 msgstr "Mărime"
 
 #: tfrmsyncdirsdlg.headerdg.columns[6].title.caption
-#, fuzzy
 msgctxt "tfrmsyncdirsdlg.headerdg.columns[6].title.caption"
 msgid "Name"
 msgstr "Nume"
@@ -8681,6 +8718,10 @@ msgstr "Despre Vizualizator..."
 msgid "Displays the About message"
 msgstr "Afișează mesajul despre"
 
+#: tfrmviewer.actchangeencoding.caption
+msgid "Change encoding"
+msgstr ""
+
 #: tfrmviewer.actcopyfile.caption
 msgctxt "TFRMVIEWER.ACTCOPYFILE.CAPTION"
 msgid "Copy File"
@@ -8692,7 +8733,6 @@ msgid "Copy File"
 msgstr "Copiază fișier"
 
 #: tfrmviewer.actcopytoclipboard.caption
-#, fuzzy
 msgctxt "tfrmviewer.actcopytoclipboard.caption"
 msgid "Copy To Clipboard"
 msgstr "Copiază în Clipboard"
@@ -8712,19 +8752,16 @@ msgid "Delete File"
 msgstr "Șterge fișierul"
 
 #: tfrmviewer.actexitviewer.caption
-#, fuzzy
 msgctxt "tfrmviewer.actexitviewer.caption"
 msgid "E&xit"
 msgstr "Ieșire (&x)"
 
 #: tfrmviewer.actfind.caption
-#, fuzzy
 msgctxt "tfrmviewer.actfind.caption"
 msgid "Find"
-msgstr "Caută"
+msgstr "Găsește"
 
 #: tfrmviewer.actfindnext.caption
-#, fuzzy
 msgctxt "tfrmviewer.actfindnext.caption"
 msgid "Find next"
 msgstr "Găsește următorul"
@@ -8735,7 +8772,6 @@ msgid "Find previous"
 msgstr ""
 
 #: tfrmviewer.actfullscreen.caption
-#, fuzzy
 msgctxt "tfrmviewer.actfullscreen.caption"
 msgid "Full Screen"
 msgstr "Ecran complet"
@@ -8769,7 +8805,6 @@ msgid "Mirror Horizontally"
 msgstr ""
 
 #: tfrmviewer.actmirrorhorz.hint
-#, fuzzy
 msgctxt "tfrmviewer.actmirrorhorz.hint"
 msgid "Mirror"
 msgstr "Oglindă"
@@ -8789,7 +8824,6 @@ msgid "Move File"
 msgstr "Mută fișier"
 
 #: tfrmviewer.actpreview.caption
-#, fuzzy
 msgctxt "tfrmviewer.actpreview.caption"
 msgid "Preview"
 msgstr "Previzualizează"
@@ -8804,49 +8838,36 @@ msgid "Reload current file"
 msgstr "Reîncarcă fișierul curent"
 
 #: tfrmviewer.actrotate180.caption
-#, fuzzy
-#| msgid "Rotate 180"
 msgctxt "TFRMVIEWER.ACTROTATE180.CAPTION"
 msgid "+ 180"
-msgstr "Rotește 180"
+msgstr "+ 180"
 
 #: tfrmviewer.actrotate180.hint
-#, fuzzy
-#| msgid "Rotate 180"
 msgctxt "TFRMVIEWER.ACTROTATE180.HINT"
 msgid "Rotate 180 degrees"
-msgstr "Rotește 180"
+msgstr "Rotește cu 180 de grade"
 
 #: tfrmviewer.actrotate270.caption
-#, fuzzy
-#| msgid "Rotate 270"
 msgctxt "TFRMVIEWER.ACTROTATE270.CAPTION"
 msgid "- 90"
-msgstr "Rotește 270"
+msgstr "- 90"
 
 #: tfrmviewer.actrotate270.hint
-#, fuzzy
-#| msgid "Rotate 270"
 msgctxt "TFRMVIEWER.ACTROTATE270.HINT"
 msgid "Rotate -90 degrees"
-msgstr "Rotește 270"
+msgstr "Rotește cu -90 de grade"
 
 #: tfrmviewer.actrotate90.caption
-#, fuzzy
-#| msgid "Rotate 90"
 msgctxt "TFRMVIEWER.ACTROTATE90.CAPTION"
 msgid "+ 90"
-msgstr "Rotește 90"
+msgstr "+ 90"
 
 #: tfrmviewer.actrotate90.hint
-#, fuzzy
-#| msgid "Rotate 90"
 msgctxt "TFRMVIEWER.ACTROTATE90.HINT"
 msgid "Rotate +90 degrees"
-msgstr "Rotește 90"
+msgstr "Rotește cu +90 de grade"
 
 #: tfrmviewer.actsave.caption
-#, fuzzy
 msgctxt "tfrmviewer.actsave.caption"
 msgid "Save"
 msgstr "Salvează"
@@ -8861,7 +8882,6 @@ msgid "Save File As..."
 msgstr "Salvare Fișier Ca..."
 
 #: tfrmviewer.actscreenshot.caption
-#, fuzzy
 msgctxt "tfrmviewer.actscreenshot.caption"
 msgid "Screenshot"
 msgstr "Captură ecran"
@@ -8875,53 +8895,45 @@ msgid "Delay 5 sec"
 msgstr ""
 
 #: tfrmviewer.actselectall.caption
-#, fuzzy
 msgctxt "tfrmviewer.actselectall.caption"
 msgid "Select All"
 msgstr "Selectează toate"
 
 #: tfrmviewer.actshowasbin.caption
-#, fuzzy
 msgctxt "tfrmviewer.actshowasbin.caption"
 msgid "Show as &Bin"
 msgstr "Arată ca &Bin"
 
 #: tfrmviewer.actshowasbook.caption
-#, fuzzy
 msgctxt "tfrmviewer.actshowasbook.caption"
 msgid "Show as B&ook"
 msgstr "Arată ca și Carte (&o)"
 
 #: tfrmviewer.actshowasdec.caption
 msgid "Show as &Dec"
-msgstr ""
+msgstr "Arată ca &Dec"
 
 #: tfrmviewer.actshowashex.caption
-#, fuzzy
 msgctxt "tfrmviewer.actshowashex.caption"
 msgid "Show as &Hex"
 msgstr "Arată ca &Hex"
 
 #: tfrmviewer.actshowastext.caption
-#, fuzzy
 msgctxt "tfrmviewer.actshowastext.caption"
 msgid "Show as &Text"
 msgstr "Arată ca &Text"
 
 #: tfrmviewer.actshowaswraptext.caption
-#, fuzzy
 msgctxt "tfrmviewer.actshowaswraptext.caption"
 msgid "Show as &Wrap text"
 msgstr "Arată ca text &Wrap"
 
 #: tfrmviewer.actshowgraphics.caption
-#, fuzzy
 msgctxt "tfrmviewer.actshowgraphics.caption"
 msgid "Graphics"
 msgstr "Grafică"
 
 #: tfrmviewer.actshowplugins.caption
-#, fuzzy
 msgctxt "tfrmviewer.actshowplugins.caption"
 msgid "Plugins"
 msgstr "Module"
@@ -8945,13 +8957,11 @@ msgid "Zoom"
 msgstr ""
 
 #: tfrmviewer.actzoomin.caption
-#, fuzzy
 msgctxt "tfrmviewer.actzoomin.caption"
 msgid "Zoom In"
 msgstr "Mărește"
 
 #: tfrmviewer.actzoomout.caption
-#, fuzzy
 msgctxt "tfrmviewer.actzoomout.caption"
 msgid "Zoom Out"
 msgstr "Micșorează"
@@ -9169,7 +9179,6 @@ msgid "When file exists"
 msgstr "Când fișierul există"
 
 #: twfxplugincopymoveoperationoptionsui.cbcopytime.caption
-#, fuzzy
 msgctxt "twfxplugincopymoveoperationoptionsui.cbcopytime.caption"
 msgid "Copy d&ate/time"
 msgstr "Copiază d&ată/timp"
@@ -9182,6 +9191,34 @@ msgstr "Lucrează în fundal (conexiune separată)"
 msgctxt "TWFXPLUGINCOPYMOVEOPERATIONOPTIONSUI.LBLFILEEXISTS.CAPTION"
 msgid "When file exists"
 msgstr "Când fișierul există"
+
+#: uexifreader.rsdatetimeoriginal
+msgid "Date taken"
+msgstr ""
+
+#: uexifreader.rsimageheight
+#, fuzzy
+msgctxt "uexifreader.rsimageheight"
+msgid "Height"
+msgstr "Înălțime"
+
+#: uexifreader.rsimagewidth
+#, fuzzy
+msgctxt "uexifreader.rsimagewidth"
+msgid "Width"
+msgstr "Lățime"
+
+#: uexifreader.rsmake
+msgid "Manufacturer"
+msgstr ""
+
+#: uexifreader.rsmodel
+msgid "Camera model"
+msgstr ""
+
+#: uexifreader.rsorientation
+msgid "Orientation"
+msgstr ""
 
 #: ulng.msgtrytolocatecrcfile
 msgid ""
@@ -9239,6 +9276,10 @@ msgstr "Verifică sumă de control"
 #: ulng.rschecksumverifytotal
 msgid "Total:"
 msgstr "Total:"
+
+#: ulng.rsclearfiltersornot
+msgid "Do you want to clear filters for this new search?"
+msgstr ""
 
 #: ulng.rsclipboardcontainsinvalidtoolbardata
 msgid "Clipboard doesn't contain any valid toolbar data."
@@ -9397,16 +9438,20 @@ msgid "&Continue"
 msgstr "&Continuă"
 
 #: ulng.rsdlgbuttoncopyinto
-msgid "Copy &Into"
-msgstr "Cop&iază la"
+msgid "&Merge"
+msgstr "Co&mbină"
 
 #: ulng.rsdlgbuttoncopyintoall
-msgid "Copy Into &All"
-msgstr "Copiază to&ate la"
+msgid "Mer&ge All"
+msgstr "Co&mbină toate"
 
 #: ulng.rsdlgbuttonexitprogram
 msgid "E&xit program"
 msgstr "Părăsește programul (&x)"
+
+#: ulng.rsdlgbuttonignore
+msgid "Ig&nore"
+msgstr ""
 
 #: ulng.rsdlgbuttonignoreall
 msgid "I&gnore All"
@@ -9461,6 +9506,10 @@ msgstr "&Reia"
 #: ulng.rsdlgbuttonretry
 msgid "Re&try"
 msgstr "Reîncearcă (&t)"
+
+#: ulng.rsdlgbuttonretryadmin
+msgid "As Ad&ministrator"
+msgstr ""
 
 #: ulng.rsdlgbuttonskip
 msgid "&Skip"
@@ -9597,8 +9646,8 @@ msgid "Exported_from_DC"
 msgstr ""
 
 #: ulng.rsfileopdirectoryexistsoptions
-msgid "Ask;Overwrite;Copy into;Skip"
-msgstr "Întreabă;Suprascrie;Copiază la;Sari"
+msgid "Ask;Merge;Skip"
+msgstr "Întreabă;Combină;Sari"
 
 #: ulng.rsfileopfileexistsoptions
 msgid "Ask;Overwrite;Overwrite Older;Skip"
@@ -9776,13 +9825,11 @@ msgid "Edit Comment Dialog"
 msgstr ""
 
 #: ulng.rshotkeycategoryeditor
-#, fuzzy
 msgctxt "ulng.rshotkeycategoryeditor"
 msgid "Editor"
 msgstr "Editor"
 
 #: ulng.rshotkeycategoryfindfiles
-#, fuzzy
 msgctxt "ulng.rshotkeycategoryfindfiles"
 msgid "Find files"
 msgstr "Găsește fișiere"
@@ -9796,8 +9843,56 @@ msgctxt "ulng.rshotkeycategoryviewer"
 msgid "Viewer"
 msgstr "Vizualizator"
 
+#: ulng.rshotkeyfilealreadyexists
+msgid ""
+"A setup with that name already exists.\n"
+"Do you want to overwrite it?\n"
+msgstr ""
+
+#: ulng.rshotkeyfileconfirmdefault
+msgid "Are you sure you want to restore default?"
+msgstr ""
+
+#: ulng.rshotkeyfileconfirmerasure
+msgid "Are you sure you want to erase setup \"%s\"?"
+msgstr ""
+
+#: ulng.rshotkeyfilecopyof
+msgid "Copy of %s"
+msgstr ""
+
+#: ulng.rshotkeyfileinputnewname
+msgid "Input your new name"
+msgstr ""
+
+#: ulng.rshotkeyfilemustkeepone
+msgid "You must keep at least one shortcut file."
+msgstr ""
+
+#: ulng.rshotkeyfilenewname
+msgid "New name"
+msgstr ""
+
+#: ulng.rshotkeyfilesavemodified
+msgid ""
+"\"%s\" setup has been modified.\n"
+"Do you want to save it now?\n"
+msgstr ""
+
+#: ulng.rshotkeynoscenter
+msgid "No shortcut with \"ENTER\""
+msgstr ""
+
+#: ulng.rshotkeysortorder
+msgid "By command name;By shortcut key (grouped);By shortcut key (one per row)"
+msgstr ""
+
 #: ulng.rsimporttoolbarproblem
 msgid "Cannot find reference to default bar file"
+msgstr ""
+
+#: ulng.rslistoffindfileswindows
+msgid "List of \"Find files\" windows"
 msgstr ""
 
 #: ulng.rsmarkminus
@@ -9832,6 +9927,18 @@ msgstr ""
 msgctxt "ulng.rsmnuactions"
 msgid "Actions"
 msgstr "Actiuni"
+
+#: ulng.rsmnucontentdefault
+msgid "<Default>"
+msgstr ""
+
+#: ulng.rsmnucontentoctal
+msgid "Octal"
+msgstr ""
+
+#: ulng.rsmnucopynetnamestoclip
+msgid "Copy names with UNC path"
+msgstr ""
 
 #: ulng.rsmnudisconnectnetworkdrive
 msgid "Disconnect Network Drive..."
@@ -9868,7 +9975,6 @@ msgid "No media available"
 msgstr "Niciun dispozitiv disponibil"
 
 #: ulng.rsmnuopen
-#, fuzzy
 msgctxt "ulng.rsmnuopen"
 msgid "Open"
 msgstr "Deschide"
@@ -9903,9 +10009,17 @@ msgstr "Vizualizează"
 msgid "Account:"
 msgstr "Cont:"
 
+#: ulng.rsmsgalldcintcmds
+msgid "All Double Commander internal commands"
+msgstr ""
+
 #: ulng.rsmsgarchivercustomparams
 msgid "Additional parameters for archiver command-line:"
 msgstr "Parametri adiționali pentru linia de comandă a arhivatorului:"
+
+#: ulng.rsmsgaskquoteornot
+msgid "Do you want to enclose between quotes?"
+msgstr ""
 
 #: ulng.rsmsgbadcrc32
 msgid ""
@@ -9923,6 +10037,10 @@ msgstr "Nu puteți copia/muta un fișier \"%s\" la sine însuși!"
 msgid "Cannot delete directory %s"
 msgstr "Nu se poate șterge dosarul %s"
 
+#: ulng.rsmsgcannotoverwritedirectory
+msgid "Cannot overwrite directory \"%s\" with non-directory \"%s\""
+msgstr ""
+
 #: ulng.rsmsgchdirfailed
 msgid "ChDir to [%s] failed!"
 msgstr "ChDir la [%s] a eșuat!"
@@ -9934,6 +10052,10 @@ msgstr "Se înlătură toate filele inactive?"
 #: ulng.rsmsgcloselockedtab
 msgid "This tab (%s) is locked! Close anyway?"
 msgstr "Această filă (%s) este blocată! Se închide oricum?"
+
+#: ulng.rsmsgcofirmuserparam
+msgid "Confirmation of parameter"
+msgstr ""
 
 #: ulng.rsmsgconfirmquit
 msgid "Are you sure you want to quit?"
@@ -10229,19 +10351,24 @@ msgstr "Operațiile cu fișiere active"
 msgid "Some file operations have not yet finished. Closing Double Commander may result in data loss."
 msgstr "Câteva operații cu fișierele nu au fost finalizate. Închiderea Double Commander ar putea duce la pierderea datelor."
 
+#: ulng.rsmsgfilepathovermaxpath
+msgid ""
+"The target name length (%d) is more than %d characters!\n"
+"%s\n"
+"Most programs will not be able to access a file/directory with such a long name!\n"
+msgstr ""
+
 #: ulng.rsmsgfilereadonly
-#, fuzzy
-#| msgid "File %s is marked as read-only. Delete it?"
 msgid "File %s is marked as read-only/hidden/system. Delete it?"
-msgstr "Fișierul %s e setat ca doar citibil. Se șterge?"
+msgstr "Fișierul %s e marcat ca doar citibil/ascuns/sistem. Se șterge?"
 
 #: ulng.rsmsgfilesizetoobig
 msgid "The file size of \"%s\" is too big for destination file system!"
 msgstr "Mărimea lui \"%s\" este prea mare pentru sistemul de fișiere destinație!"
 
 #: ulng.rsmsgfolderexistsrwrt
-msgid "Folder %s exists, overwrite?"
-msgstr "Dosarul %s există, se suprascrie?"
+msgid "Folder %s exists, merge?"
+msgstr "Dosarul %s există, se combină?"
 
 #: ulng.rsmsgfollowsymlink
 msgid "Follow symlink \"%s\"?"
@@ -10317,7 +10444,6 @@ msgid "Export selected"
 msgstr ""
 
 #: ulng.rsmsghotdirimportall
-#, fuzzy
 msgctxt "ulng.rsmsghotdirimportall"
 msgid "Import all!"
 msgstr "Importă toate!"
@@ -10327,14 +10453,13 @@ msgid "Import Directory Hotlist - Select the entries you want to import"
 msgstr ""
 
 #: ulng.rsmsghotdirimportsel
-#, fuzzy
 msgctxt "ulng.rsmsghotdirimportsel"
 msgid "Import selected"
 msgstr "Importă selectate"
 
 #: ulng.rsmsghotdirjustpath
 msgctxt "ulng.rsmsghotdirjustpath"
-msgid "Path"
+msgid "&Path:"
 msgstr "Cale"
 
 #: ulng.rsmsghotdirlocatehotlistfile
@@ -10370,7 +10495,6 @@ msgid "Enter location and filename of Directory Hotlist to restore"
 msgstr ""
 
 #: ulng.rsmsghotdirsimplecommand
-#, fuzzy
 msgctxt "ulng.rsmsghotdirsimplecommand"
 msgid "Command:"
 msgstr "Comandă:"
@@ -10382,12 +10506,12 @@ msgstr ""
 
 #: ulng.rsmsghotdirsimplemenu
 msgctxt "ulng.rsmsghotdirsimplemenu"
-msgid "Menu name:"
+msgid "Menu &name:"
 msgstr ""
 
 #: ulng.rsmsghotdirsimplename
 msgctxt "ulng.rsmsghotdirsimplename"
-msgid "Name:"
+msgid "&Name:"
 msgstr "Nume:"
 
 #: ulng.rsmsghotdirsimpleseparator
@@ -10606,6 +10730,10 @@ msgstr "Nu poate fi șters fișierul %s"
 #: ulng.rsmsgnotimplemented
 msgid "Not implemented."
 msgstr "Nu este implementat."
+
+#: ulng.rsmsgobjectnotexists
+msgid "Object does not exist!"
+msgstr ""
 
 #: ulng.rsmsgpanelpreview
 msgctxt "ulng.rsmsgpanelpreview"
@@ -10874,6 +11002,14 @@ msgstr "Nume utilizator:"
 msgid "User name (Firewall):"
 msgstr "Nume utilizator (Paravan de protecție):"
 
+#: ulng.rsmsgverify
+msgid "VERIFICATION:"
+msgstr ""
+
+#: ulng.rsmsgverifywrong
+msgid "The target file is corrupted, checksum mismatch!"
+msgstr ""
+
 #: ulng.rsmsgvolumelabel
 msgid "Volume label:"
 msgstr "Eticheta volumului:"
@@ -10894,12 +11030,36 @@ msgstr "Se șterge definitiv selecția \"%s\"?"
 msgid "with"
 msgstr ""
 
+#: ulng.rsmulrenautorename
+msgid "Do auto-rename to \"name (1).ext\", \"name (2).ext\" etc.?"
+msgstr ""
+
 #: ulng.rsmulrenfilenamestylelist
 msgid "No change;UPPERCASE;lowercase;First char uppercase;First Char Of Every Word Uppercase;"
 msgstr "Nicio schimbare: MAJUSCULE;minuscule;Majuscule primul char; Primul char din fiecare cuvânt Majusculă"
 
+#: ulng.rsmulrenwarningduplicate
+msgid "Warning, duplicate names!"
+msgstr ""
+
 #: ulng.rsmulrenwronglinesnumber
 msgid "File contains wrong number of lines: %d, should be %d!"
+msgstr ""
+
+#: ulng.rsnewsearchclearfilteroptions
+msgid "Keep;Clear;Prompt"
+msgstr ""
+
+#: ulng.rsnoequivalentinternalcommand
+msgid "No internal equivalent command"
+msgstr ""
+
+#: ulng.rsnofindfileswindowyet
+msgid "Sorry, no \"Find files\" window yet..."
+msgstr ""
+
+#: ulng.rsnootherfindfileswindowtoclose
+msgid "Sorry, no other \"Find files\" window to close and free from memory..."
 msgstr ""
 
 #: ulng.rsoperaborted
@@ -11117,7 +11277,7 @@ msgid "Working"
 msgstr "Se lucrează"
 
 #: ulng.rsoptaddfrommainpanel
-msgid "Add at beginning;Add at the end;Smart add"
+msgid "Add at &beginning;Add at the end;Smart add"
 msgstr ""
 
 #: ulng.rsoptarchivedelete
@@ -11380,7 +11540,6 @@ msgid "File associations"
 msgstr "Asocieri de fișier"
 
 #: ulng.rsoptionseditorfilenewfiletypes
-#, fuzzy
 msgctxt "ulng.rsoptionseditorfilenewfiletypes"
 msgid "New"
 msgstr "Nou"
@@ -11394,6 +11553,11 @@ msgstr "Operații cu fișiere"
 msgctxt "ulng.rsoptionseditorfilepanels"
 msgid "File panels"
 msgstr "Panouri fișiere"
+
+#: ulng.rsoptionseditorfilesearch
+msgctxt "ulng.rsoptionseditorfilesearch"
+msgid "File search"
+msgstr "Căutare de fișiere"
 
 #: ulng.rsoptionseditorfilesviews
 msgid "Files views"
@@ -11638,15 +11802,31 @@ msgstr "Rezultate căutare"
 
 #: ulng.rssearchstatus
 msgid "SEARCH"
-msgstr ""
+msgstr "Caută"
 
 #: ulng.rssearchtemplateunnamed
 msgid "<unnamed template>"
 msgstr ""
 
+#: ulng.rssearchwithdsxplugininprogress
+msgid ""
+"A file search using DSX plugin is already in progress.\n"
+"We need that one to be completed before to launch a new one.\n"
+msgstr ""
+
+#: ulng.rssearchwithwdxplugininprogress
+msgid ""
+"A file search using WDX plugin is already in progress.\n"
+"We need that one to be completed before to launch a new one.\n"
+msgstr ""
+
 #: ulng.rsselectdir
 msgid "Select a directory"
 msgstr "Selectați un director"
+
+#: ulng.rsselectyoufindfileswindow
+msgid "Select your window"
+msgstr ""
 
 #: ulng.rsshowhelpfor
 msgid "&Show help for %s"
@@ -11667,7 +11847,6 @@ msgid "Column"
 msgstr ""
 
 #: ulng.rssimplewordcommand
-#, fuzzy
 msgctxt "ulng.rssimplewordcommand"
 msgid "Command"
 msgstr "Comandă"
@@ -11678,6 +11857,10 @@ msgstr ""
 
 #: ulng.rssimplewordfiles
 msgid "files"
+msgstr "Fișiere"
+
+#: ulng.rssimplewordletter
+msgid "Letter"
 msgstr ""
 
 #: ulng.rssimplewordparameter
@@ -11995,7 +12178,7 @@ msgid "Other example of what's possible"
 msgstr ""
 
 #: ulng.rsvarpath
-msgid "Path, with ending delimiter"
+msgid "Path, without ending delimiter"
 msgstr ""
 
 #: ulng.rsvarpercentchangetopound
@@ -12097,7 +12280,6 @@ msgid "Image Type"
 msgstr ""
 
 #: ulng.rsviewnewsize
-#, fuzzy
 msgctxt "ulng.rsviewnewsize"
 msgid "New Size"
 msgstr "Dimensiune nouă"

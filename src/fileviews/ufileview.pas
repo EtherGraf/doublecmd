@@ -1,12 +1,35 @@
-unit uFileView; 
+{
+   Double commander
+   -------------------------------------------------------------------------
+   FileView, base class of all of them
+
+   Copyright (C) 2016 Alexander Koblov (alexx2000@mail.ru)
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, write to the Free Software
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+}
+
+unit uFileView;
 
 {$mode objfpc}{$H+}
 
 interface
 
 uses
-  Classes, SysUtils, Controls, ExtCtrls, Graphics, ComCtrls, contnrs, fgl, LMessages,
-  uFile, uDisplayFile, uFileSource, uFormCommands, uDragDropEx, DCXmlConfig,
+  uFindFiles, Classes, SysUtils, Controls, ExtCtrls, Graphics, ComCtrls, contnrs, fgl, LMessages,
+  uFile, uDisplayFile, uFileSource, uFormCommands, uDragDropEx, DCXmlConfig, DCBasicTypes,
   DCClassesUtf8, uFileSorting, uFileViewHistory, uFileProperty, uFileViewWorker,
   uFunctionThread, uFileSystemWatcher, fQuickSearch, StringHashList, uGlobs;
 
@@ -54,6 +77,9 @@ type
   TFileViewApplyFilterResult = (fvaprRemoved, fvaprInserted,
                                 fvaprExisting, fvaprNotExisting);
 
+  { TMarkApplyOnAllDispatcher }
+  TMarkApplyOnAllDispatcher = (tmaoa_Mark, tmaoa_UnMark, tmaoa_InvertMark);
+
   {en
      Base class for any view of a file or files.
      There should always be at least one file displayed on the view.
@@ -81,7 +107,6 @@ type
        Which file properties are needed to be displayed for each file.
     }
     FFilePropertiesNeeded: TFilePropertiesTypes;
-    FSortingProperties: TFilePropertiesTypes;
     FFileViewWorkers: TFileViewWorkers;
     FFlags: TFileViewFlags;
     FHashedFiles: TBucketList;  //<en Contains pointers to file source files for quick checking if a file object is still valid
@@ -136,9 +161,10 @@ type
     procedure ClearPendingFilesChanges;
     procedure ClearRecentlyUpdatedFiles;
     procedure DoOnFileListChanged;
-    procedure EachViewDeactivate(AFileView: TFileView; UserData: Pointer);
+    procedure EachViewDeactivate(AFileView: TFileView; {%H-}UserData: Pointer);
     function FileListLoaded: Boolean;
     function GetCurrentAddress: String;
+    function GetCurrentLocation: String;
     function GetNotebookPage: TCustomPage;
     function GetCurrentFileSource: IFileSource;
     function GetCurrentFileSourceIndex: Integer;
@@ -198,6 +224,7 @@ type
     FAllDisplayFiles: TDisplayFiles;    //<en List of all files that can be displayed
     FFiles: TDisplayFiles;              //<en List of displayed files (filtered)
     FSavedSelection: TStringListEx;
+    FSortingProperties: TFilePropertiesTypes;
 
     {en
        Initializes parts of the view common to all creation methods.
@@ -245,7 +272,7 @@ type
        It could be useful in case there are multiple files with the
        same name in the panel and SetActiveFile(String) is not enough.
     }
-    procedure SetActiveFile(const aFile: TFile); virtual; overload;
+    procedure SetActiveFile(const {%H-}aFile: TFile); virtual; overload;
 
     {en
        Executed before file list has been retrieved.
@@ -315,6 +342,8 @@ type
 
     procedure WMEraseBkgnd(var Message: TLMEraseBkgnd); message LM_ERASEBKGND;
 
+    function GetVariantFileProperties: TDynamicStringArray; virtual;
+
     property Active: Boolean read FActive write SetActive;
     property FilePropertiesNeeded: TFilePropertiesTypes read FFilePropertiesNeeded write FFilePropertiesNeeded;
     property History: TFileViewHistory read FHistory;
@@ -334,11 +363,6 @@ type
     // Constructor for cloning.
     constructor Create(AOwner: TWinControl;
                        AFileView: TFileView;
-                       AFlags: TFileViewFlags = []); virtual reintroduce;
-    constructor Create(AOwner: TWinControl;
-                       {%H-}AConfig: TIniFileEx;
-                       ASectionName: String;
-                       ATabIndex: Integer;
                        AFlags: TFileViewFlags = []); virtual reintroduce;
     constructor Create(AOwner: TWinControl;
                        AConfig: TXmlConfig;
@@ -409,8 +433,6 @@ type
 
     // For now we use here the knowledge that there are tabs.
     // Config should be independent of that in the future.
-    procedure LoadConfiguration(Section: String; TabIndex: Integer); virtual;
-    procedure SaveConfiguration(Section: String; TabIndex: Integer); virtual;
     procedure LoadConfiguration(AConfig: TXmlConfig; ANode: TXmlNode); virtual;
     procedure SaveConfiguration(AConfig: TXmlConfig; ANode: TXmlNode; ASaveHistory:boolean); virtual;
 
@@ -429,7 +451,7 @@ type
        to the path to a given file, and moves the selection to the file.
        @param(aFilePath may be an absolute path to the directory or to the file)
     }
-    procedure ChangePathAndSetActiveFile(aFilePath: String); virtual; overload;
+    procedure ChangePathAndSetActiveFile({%H-}aFilePath: String); virtual; overload;
 
     procedure CalculateSpaceOfAllDirectories;
     {en
@@ -456,12 +478,16 @@ type
     procedure InvertAll;
     procedure LoadSelectionFromClipboard;
     procedure LoadSelectionFromFile(const AFileName: String);
+    procedure MarkCurrentName(bSelect: Boolean);
+    procedure MarkCurrentNameExt(bSelect: Boolean);
     procedure MarkCurrentExtension(bSelect: Boolean);
+    procedure MarkCurrentPath(bSelect: Boolean);
     procedure MarkFile(AFile: TDisplayFile; bSelect: Boolean; bNotify: Boolean = True);
     procedure MarkFiles(bSelect: Boolean);
     procedure MarkFiles(FromIndex, ToIndex: PtrInt; bSelect: Boolean);
-    procedure MarkGroup(const sMask: String; bSelect: Boolean; pbCaseSensitive:PBoolean = nil; pbIgnoreAccents: PBoolean = nil; pbWindowsInterpretation: PBoolean = nil);
-    procedure MarkGroup(bSelect: Boolean; pbCaseSensitive:PBoolean = nil; pbIgnoreAccents: PBoolean = nil; pbWindowsInterpretation: PBoolean = nil);
+    procedure MarkApplyOnAllFiles(const MarkApplyOnAllDispatcher: TMarkApplyOnAllDispatcher; MarkFileChecks: TFindFileChecks);
+    procedure MarkGroup(const sMask: String; bSelect: Boolean; pbCaseSensitive:PBoolean = nil; pbIgnoreAccents: PBoolean = nil; pbWindowsInterpretation: PBoolean = nil; pMarkFileChecks: TPFindFileChecks = nil);
+    procedure MarkGroup(bSelect: Boolean; pbCaseSensitive:PBoolean = nil; pbIgnoreAccents: PBoolean = nil; pbWindowsInterpretation: PBoolean = nil; psAttribute:PString = nil);
     procedure OpenActiveFile;
     procedure RestoreSelection;
     procedure SaveSelection;
@@ -487,6 +513,7 @@ type
     property CurrentFileSourceIndex: Integer read GetCurrentFileSourceIndex;
     property CurrentPath: String read GetCurrentPath write SetCurrentPath;
     property CurrentPathIndex: Integer read GetCurrentPathIndex;
+    property CurrentLocation: String read GetCurrentLocation;
     property FileFilter: String read FFileFilter;
     property FilterOptions: TQuickSearchOptions read FFilterOptions;
     property Filtered: Boolean read GetFiltered;
@@ -603,27 +630,6 @@ begin
     if Assigned(FileSource) then
       FileSource.AddReloadEventListener(@ReloadEvent);
     UpdateView;
-  finally
-    EnableAutoSizing;
-  end;
-end;
-
-constructor TFileView.Create(AOwner: TWinControl; AConfig: TIniFileEx; ASectionName: String; ATabIndex: Integer; AFlags: TFileViewFlags = []);
-begin
-  DisableAutoSizing;
-  try
-    FFlags := AFlags;
-    CreateDefault(AOwner);
-    LoadConfiguration(ASectionName, ATabIndex);
-
-    // Update view before making file source file list,
-    // so that file list isn't unnecessarily displayed twice.
-    UpdateView;
-
-    if FileSourcesCount > 0 then
-    begin
-      MakeFileSourceFileList;
-    end;
   finally
     EnableAutoSizing;
   end;
@@ -1036,7 +1042,7 @@ begin
     AFile := TFile.Create(APath);
     AFile.Name := FileName;
     try
-      FileSource.RetrieveProperties(AFile, FilePropertiesNeeded);
+      FileSource.RetrieveProperties(AFile, FilePropertiesNeeded, GetVariantFileProperties);
     except
       on EFileSourceException do
         begin
@@ -1098,6 +1104,7 @@ begin
       FHashedNames.Remove(OldFileName);
       FHashedNames.Add(NewFileName, ADisplayFile);
       ADisplayFile.IconID := -1;
+      ADisplayFile.Selected := False;
       ADisplayFile.IconOverlayID := -1;
       ADisplayFile.TextColor := clNone;
       ADisplayFile.DisplayStrings.Clear;
@@ -1220,7 +1227,7 @@ begin
     AFile := ADisplayFile.FSFile;
     AFile.ClearProperties;
     try
-      FileSource.RetrieveProperties(AFile, FilePropertiesNeeded);
+      FileSource.RetrieveProperties(AFile, FilePropertiesNeeded, GetVariantFileProperties);
     except
       on EFileNotFound do
         begin
@@ -1313,6 +1320,19 @@ begin
     Result := FileSource.CurrentAddress
   else
     Result := '';
+end;
+
+function TFileView.GetCurrentLocation: String;
+begin
+  if Length(CurrentAddress) = 0 then
+    Result := GetCurrentPath
+  else begin
+    Result := CurrentAddress;
+    if (PathDelim = '/') then
+      {%H-}Result += GetCurrentPath
+    else
+      Result += StringReplace(GetCurrentPath, PathDelim, '/', [rfReplaceAll]);
+  end;
 end;
 
 procedure TFileView.AddWorker(const Worker: TFileViewWorker; SetEvents: Boolean = True);
@@ -1703,12 +1723,45 @@ begin
   end;
 end;
 
-procedure TFileView.MarkGroup(const sMask: String; bSelect: Boolean; pbCaseSensitive:PBoolean = nil; pbIgnoreAccents: PBoolean = nil; pbWindowsInterpretation: PBoolean = nil);
+{ TFileView.MarkApplyOnAllFiles }
+procedure TFileView.MarkApplyOnAllFiles(const MarkApplyOnAllDispatcher: TMarkApplyOnAllDispatcher; MarkFileChecks: TFindFileChecks);
+var
+  Index: PtrInt;
+  bInitialValue: boolean;
+  bSelected: boolean = False;
+begin
+  BeginUpdate;
+  try
+    for Index := 0 to pred(FFiles.Count) do
+    begin
+      if FFiles[Index].FSFile.Name = '..' then Continue;
+      if CheckFileAttributes(MarkFileChecks, FFiles[Index].FSFile.Attributes) then
+      begin
+        bInitialValue := FFiles[Index].Selected;
+        case MarkApplyOnAllDispatcher of
+          tmaoa_Mark: FFiles[Index].Selected := True;
+          tmaoa_UnMark: FFiles[Index].Selected := False;
+          tmaoa_InvertMark: FFiles[Index].Selected := not FFiles[Index].Selected;
+        end;
+        bSelected := bSelected OR (bInitialValue xor FFiles[Index].Selected);
+      end;
+    end;
+
+    if bSelected then
+      Notify([fvnSelectionChanged]);
+  finally
+    EndUpdate;
+  end;
+end;
+
+{ TFileView.MarkGroup (Where we have all the parameters) }
+procedure TFileView.MarkGroup(const sMask: String; bSelect: Boolean; pbCaseSensitive:PBoolean = nil; pbIgnoreAccents: PBoolean = nil; pbWindowsInterpretation: PBoolean = nil; pMarkFileChecks: TPFindFileChecks = nil);
 var
   I: Integer;
   SearchTemplate: TSearchTemplate = nil;
   bSelected: Boolean = False;
   bCaseSensitive, bIgnoreAccents, bWindowsInterpretation: boolean;
+  LocalMarkFileChecks: TFindFileChecks;
 begin
   BeginUpdate;
   try
@@ -1727,18 +1780,25 @@ begin
             end;
       end
     else
+    begin
+      if pbCaseSensitive <> nil then bCaseSensitive := pbCaseSensitive^ else bCaseSensitive := gbMarkMaskCaseSensitive;
+      if pbIgnoreAccents <> nil then bIgnoreAccents := pbIgnoreAccents^ else bIgnoreAccents := gbMarkMaskIgnoreAccents;
+      if pbWindowsInterpretation <> nil then bWindowsInterpretation := pbWindowsInterpretation^ else bWindowsInterpretation := gMarkMaskFilterWindows;
+      if pMarkFileChecks<> nil then LocalMarkFileChecks:=pMarkFileChecks^ else LocalMarkFileChecks.Attributes:=nil;
+
       for I := 0 to FFiles.Count - 1 do
+      begin
+        if FFiles[I].FSFile.Name = '..' then Continue;
+        if CheckFileAttributes(LocalMarkFileChecks, FFiles[I].FSFile.Attributes) then
         begin
-          if FFiles[I].FSFile.Name = '..' then Continue;
-          if pbCaseSensitive <> nil then bCaseSensitive := pbCaseSensitive^ else bCaseSensitive := gbMarkMaskCaseSensitive;
-          if pbIgnoreAccents <> nil then bIgnoreAccents := pbIgnoreAccents^ else bIgnoreAccents := gbMarkMaskIgnoreAccents;
-          if pbWindowsInterpretation <> nil then bWindowsInterpretation := pbWindowsInterpretation^ else bWindowsInterpretation := gMarkMaskFilterWindows;
           if MatchesMaskList(FFiles[I].FSFile.Name, sMask, ';, ', bCaseSensitive, bIgnoreAccents, bWindowsInterpretation) then
-            begin
-              FFiles[I].Selected := bSelect;
-              bSelected := True;
-            end;
+          begin
+            FFiles[I].Selected := bSelect;
+            bSelected := True;
+          end;
         end;
+      end;
+    end;
 
     if bSelected then
       Notify([fvnSelectionChanged]);
@@ -1747,10 +1807,13 @@ begin
   end;
 end;
 
-procedure TFileView.MarkGroup(bSelect: Boolean; pbCaseSensitive:PBoolean = nil; pbIgnoreAccents: PBoolean = nil; pbWindowsInterpretation: PBoolean = nil);
+{ TFileView.MarkGroup (Where we prompt the user) }
+procedure TFileView.MarkGroup(bSelect: Boolean; pbCaseSensitive:PBoolean = nil; pbIgnoreAccents: PBoolean = nil; pbWindowsInterpretation: PBoolean = nil; psAttribute:PString = nil);
 var
-  s, ADlgTitle: String;
+  s, ADlgTitle, sAttribute: String;
   bCaseSensitive, bIgnoreAccents, bWindowsInterpretation: boolean;
+  MarkSearchTemplateRec: TSearchTemplateRec;
+  MarkFileChecks: TFindFileChecks;
 begin
   if not IsEmpty then
   begin
@@ -1763,15 +1826,22 @@ begin
     if pbCaseSensitive <> nil then bCaseSensitive := pbCaseSensitive^ else bCaseSensitive := FLastMarkCaseSensitive;
     if pbIgnoreAccents <> nil then bIgnoreAccents := pbIgnoreAccents^ else bIgnoreAccents := FLastMarkIgnoreAccents;
     if pbWindowsInterpretation <> nil then bWindowsInterpretation := pbWindowsInterpretation^ else bWindowsInterpretation := gMarkMaskFilterWindows;
+    if psAttribute <> nil then sAttribute := psAttribute^ else
+      if not gMarkShowWantedAttribute then sAttribute:=gMarkDefaultWantedAttribute else sAttribute := gMarkLastWantedAttribute;
 
-    if ShowExtendedMaskInputDlg(ADlgTitle, rsMaskInput, glsMaskHistory, s, midsFull, bCaseSensitive, bIgnoreAccents) then
+    if ShowExtendedMaskInputDlg(ADlgTitle, rsMaskInput, glsMaskHistory, s, midsFull, bCaseSensitive, bIgnoreAccents, sAttribute) then
       begin
         FLastMark := s;
         FLastMarkCaseSensitive := bCaseSensitive;
         FLastMarkIgnoreAccents := bIgnoreAccents;
         gbMarkMaskCaseSensitive := bCaseSensitive;
         gbMarkMaskIgnoreAccents := bIgnoreAccents;
-        MarkGroup(s, bSelect, @bCaseSensitive, @bIgnoreAccents, @bWindowsInterpretation);
+        if (psAttribute = nil) AND gMarkShowWantedAttribute then gMarkLastWantedAttribute:=sAttribute;
+
+        MarkSearchTemplateRec.AttributesPattern := sAttribute;
+        AttrsPatternOptionsToChecks(MarkSearchTemplateRec, MarkFileChecks);
+
+        MarkGroup(s, bSelect, @bCaseSensitive, @bIgnoreAccents, @bWindowsInterpretation, @MarkFileChecks);
       end;
   end;
 end;
@@ -1789,6 +1859,37 @@ begin
     if sGroup <> '' then
       sGroup := '.' + sGroup;
     MarkGroup('*' + sGroup, bSelect, @bCaseSensitive, @bIgnoreAccents, @bWindowsInterpretation);
+  end;
+end;
+
+procedure TFileView.MarkCurrentPath(bSelect: Boolean);
+var
+  I: Integer;
+  sPath: String;
+  bSelected: Boolean = False;
+begin
+  if IsActiveItemValid then
+  begin
+    sPath := GetActiveDisplayFile.FSFile.Path;
+
+    BeginUpdate;
+    try
+      for I := 0 to FFiles.Count - 1 do
+      begin
+        if FFiles[I].FSFile.IsDirectory then Continue;
+
+        if mbCompareFileNames(FFiles[I].FSFile.Path, sPath) then
+        begin
+          FFiles[I].Selected := bSelect;
+          bSelected := True;
+        end;
+      end;
+
+      if bSelected then
+        Notify([fvnSelectionChanged]);
+    finally
+      EndUpdate;
+    end;
   end;
 end;
 
@@ -1963,6 +2064,7 @@ begin
     FlatView,
     AThread,
     FSortingProperties,
+    GetVariantFileProperties,
     @SetFileList,
     ClonedDisplayFiles,
     DisplayFilesHashed);
@@ -2072,7 +2174,7 @@ begin
         ChangePathToChild(FSFile)
       else if not FolderMode then
         try
-          uFileSourceUtil.ChooseFile(Self, FSFile);
+          uFileSourceUtil.ChooseFile(Self, FileSource, FSFile);
         except
           on e: EInvalidCommandLine do
             MessageDlg(rsMsgInvalidCommandLine, rsMsgInvalidCommandLine + ': ' + e.Message, mtError, [mbOK], 0);
@@ -2356,16 +2458,6 @@ begin
   SetLoadingFileListLongTime(False);
 end;
 
-procedure TFileView.LoadConfiguration(Section: String; TabIndex: Integer);
-begin
-  // Empty. For backward compatibility with loading from INI.
-end;
-
-procedure TFileView.SaveConfiguration(Section: String; TabIndex: Integer);
-begin
-  // Empty. For backward compatibility with saving to INI.
-end;
-
 procedure TFileView.LoadConfiguration(AConfig: TXmlConfig; ANode: TXmlNode);
 var
   HistoryNode, EntryNode, FSNode, PathsNode: TXmlNode;
@@ -2560,6 +2652,35 @@ begin
   end;
 end;
 
+procedure TFileView.MarkCurrentName(bSelect: Boolean);
+var
+  sGroup: String;
+  bCaseSensitive: boolean = false;
+  bIgnoreAccents: boolean = false;
+  bWindowsInterpretation: boolean = True;
+begin
+  if IsActiveItemValid then
+  begin
+    sGroup := GetActiveDisplayFile.FSFile.NameNoExt;
+    if Length(sGroup) > 0 then sGroup += ExtensionSeparator + '*';
+    MarkGroup(sGroup, bSelect, @bCaseSensitive, @bIgnoreAccents, @bWindowsInterpretation);
+  end;
+end;
+
+procedure TFileView.MarkCurrentNameExt(bSelect: Boolean);
+var
+  sGroup: String;
+  bCaseSensitive: boolean = False;
+  bIgnoreAccents: boolean = False;
+  bWindowsInterpretation: boolean = False;
+begin
+  if IsActiveItemValid then
+  begin
+    sGroup := GetActiveDisplayFile.FSFile.Name;
+    MarkGroup(sGroup, bSelect, @bCaseSensitive, @bIgnoreAccents, @bWindowsInterpretation);
+  end;
+end;
+
 procedure TFileView.SaveConfiguration(AConfig: TXmlConfig; ANode: TXmlNode; ASaveHistory:boolean);
 var
   HistoryNode, EntryNode, FSNode, PathsNode, PathNode: TXmlNode;
@@ -2711,6 +2832,8 @@ var
   PreviousSubDirectory,
   sUpLevel: String;
 begin
+  AllowChangingFileSource:= AllowChangingFileSource and
+                            not (fspNoneParent in FileSource.Properties);
   // Check if this is root level of the current file source.
   if FileSource.IsPathAtRoot(CurrentPath) then
   begin
@@ -2932,7 +3055,7 @@ begin
   begin
     for J:= Low(FSortings[I].SortFunctions) to High(FSortings[I].SortFunctions) do
     begin
-      Result:= Result + TFileFunctionToProperty[FSortings[I].SortFunctions[J]];
+      Result:= Result + GetFilePropertyType(FSortings[I].SortFunctions[J]);
     end;
   end;
   Result:= (Result - FileSource.SupportedFileProperties) * FileSource.RetrievableFileProperties;
@@ -3237,6 +3360,11 @@ begin
   Message.Result := 1;
 end;
 
+function TFileView.GetVariantFileProperties: TDynamicStringArray;
+begin
+  SetLength(Result, 0);
+end;
+
 procedure TFileView.GoToHistoryIndex(aFileSourceIndex, aPathIndex: Integer);
 var
   IsNewFileSource: Boolean;
@@ -3252,6 +3380,8 @@ begin
   if BeforeChangePath(FHistory.FileSource[aFileSourceIndex],
                       FHistory.Path[aFileSourceIndex, aPathIndex]) then
   begin
+    FFlatView := False;
+
     FilenameFromHistory := FHistory.Filename[aFileSourceIndex, aPathIndex];
 
     if Assigned(FileSource) and IsNewFileSource then

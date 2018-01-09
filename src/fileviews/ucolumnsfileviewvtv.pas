@@ -168,6 +168,7 @@ type
     procedure SetActiveFile(FileIndex: PtrInt); override;
     procedure SetSorting(const NewSortings: TFileSortings); override;
     procedure ShowRenameFileEdit(AFile: TFile); override;
+    procedure UpdateRenameFileEditPosition; override;
 
   public
     ActiveColm: String;
@@ -177,7 +178,6 @@ type
 
     constructor Create(AOwner: TWinControl; AFileSource: IFileSource; APath: String; AFlags: TFileViewFlags = []); override;
     constructor Create(AOwner: TWinControl; AFileView: TFileView; AFlags: TFileViewFlags = []); override;
-    constructor Create(AOwner: TWinControl; AConfig: TIniFileEx; ASectionName: String; ATabIndex: Integer; AFlags: TFileViewFlags = []); override;
     constructor Create(AOwner: TWinControl; AConfig: TXmlConfig; ANode: TXmlNode; AFlags: TFileViewFlags = []); override;
 
     destructor Destroy; override;
@@ -597,9 +597,6 @@ begin
 end;
 
 procedure TColumnsFileViewVTV.ShowRenameFileEdit(AFile: TFile);
-var
-  ALeft, ATop, AWidth, AHeight: Integer;
-  aRect: TRect;
 begin
   if FFileNameColumn <> -1 then
   begin
@@ -609,21 +606,28 @@ begin
       edtRename.Font.Size  := GetColumnsClass.GetColumnFontSize(FFileNameColumn);
       edtRename.Font.Style := GetColumnsClass.GetColumnFontStyle(FFileNameColumn);
 
-      aRect := dgPanel.GetDisplayRect(dgPanel.FocusedNode, FFileNameColumn, False);
-      ATop := aRect.Top - 2;
-      ALeft := aRect.Left;
-      if gShowIcons <> sim_none then
-        Inc(ALeft, gIconsSize + 2);
-      AWidth := aRect.Right - aRect.Left;
-      if Succ(FFileNameColumn) = FExtensionColumn then
-        Inc(AWidth, dgPanel.Header.Columns[FExtensionColumn].Width);
-      AHeight := dgPanel.FocusedNode^.NodeHeight + 4;
-
-      edtRename.SetBounds(ALeft, ATop, AWidth, AHeight);
+      UpdateRenameFileEditPosition;
     end;
 
     inherited ShowRenameFileEdit(AFile);
   end;
+end;
+
+procedure TColumnsFileViewVTV.UpdateRenameFileEditPosition;
+var
+  ARect: TRect;
+begin
+  ARect := dgPanel.GetDisplayRect(dgPanel.FocusedNode, FFileNameColumn, False);
+  Dec(ARect.Top, 2);
+  Inc(ARect.Bottom, 2);
+
+  if gShowIcons <> sim_none then
+    Inc(ARect.Left, gIconsSize + 2);
+
+  if Succ(FFileNameColumn) = FExtensionColumn then
+    Inc(ARect.Right, dgPanel.Header.Columns[FExtensionColumn].Width);
+
+  edtRename.SetBounds(ARect.Left, ARect.Top, ARect.Width, ARect.Height);
 end;
 
 procedure TColumnsFileViewVTV.RedrawFile(FileIndex: PtrInt);
@@ -926,11 +930,6 @@ end;
 constructor TColumnsFileViewVTV.Create(AOwner: TWinControl; AFileView: TFileView; AFlags: TFileViewFlags = []);
 begin
   inherited Create(AOwner, AFileView, AFlags);
-end;
-
-constructor TColumnsFileViewVTV.Create(AOwner: TWinControl; AConfig: TIniFileEx; ASectionName: String; ATabIndex: Integer; AFlags: TFileViewFlags = []);
-begin
-  inherited Create(AOwner, AConfig, ASectionName, ATabIndex, AFlags);
 end;
 
 constructor TColumnsFileViewVTV.Create(AOwner: TWinControl; AConfig: TXmlConfig; ANode: TXmlNode; AFlags: TFileViewFlags = []);

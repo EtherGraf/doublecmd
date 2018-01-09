@@ -4,7 +4,7 @@
 
 Name:		doublecmd-gtk
 Summary:	Twin-panel (commander-style) file manager (GTK2)
-Version:	0.8.0
+Version:	0.9.0
 Release:	1
 URL:		http://doublecmd.sourceforge.net
 Source0:	%{doublecmd}-%{version}.orig.tar.gz
@@ -48,6 +48,7 @@ install/linux/install.sh --install-prefix=%{buildroot}
 %{_datadir}/man/man1/%{doublecmd}.*
 %{_datadir}/pixmaps/%{doublecmd}.*
 %{_datadir}/applications/%{doublecmd}.desktop
+%{_datadir}/icons/hicolor/scalable/apps/%{doublecmd}.svg
 
 %changelog
 * Fri Jun 11 2010 - Alexander Koblov <Alexx2000@mail.ru>

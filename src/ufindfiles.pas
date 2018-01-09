@@ -32,6 +32,7 @@ uses
   Classes, SysUtils, DCBasicTypes, uFile;
 
 type
+  TTextSearch = (tsAnsi, tsUtf8, tsUtf16le, tsUtf16be, tsOther);
   TTimeUnit = (tuSecond, tuMinute, tuHour, tuDay, tuWeek, tuMonth, tuYear);
   TFileSizeUnit = (suBytes, suKilo, suMega, suGiga, suTera);
   TPluginOperator = (poEqual, poNotEqual, poMore, poLess, poMoreEqual, poLessEqual,
@@ -107,6 +108,7 @@ type
     FileSizeTo : Int64;
     Attributes: array of TFindFileAttrsCheck;  //en> Each entry is OR'ed.
   end;
+  TPFindFileChecks = ^TFindFileChecks;
 
   procedure SearchTemplateToFindFileChecks(const SearchTemplate: TSearchTemplateRec;
                                            out FileChecks: TFindFileChecks);
@@ -122,12 +124,13 @@ type
   function CheckFileSize(const FileChecks: TFindFileChecks; FileSize : Int64) : Boolean;
   function CheckFileAttributes(const FileChecks: TFindFileChecks; Attrs : TFileAttrs) : Boolean;
   function CheckFile(const SearchTemplate: TSearchTemplateRec; const FileChecks: TFindFileChecks; const AFile: TFile) : Boolean;
+  procedure AttrsPatternOptionsToChecks(const SearchTemplate: TSearchTemplateRec; var FileChecks: TFindFileChecks);
 
 implementation
 
 uses
-  strutils, DateUtils, DCDateTimeUtils, DCFileAttributes, SynRegExpr, uMasks,
-  DCStrUtils, uFileProperty, uGlobs, uWDXModule, LazUTF8;
+  strutils, DateUtils, DCDateTimeUtils, DCFileAttributes, RegExpr, uMasks,
+  DCStrUtils, DCUnicodeUtils, uFileProperty, uGlobs, uWDXModule, LazUTF8, WdxPlugin;
 
 const
   cKilo = 1024;
@@ -172,7 +175,7 @@ begin
     if SearchTemplate.IsNotOlderThan then
     begin
       DateTimeFrom := SysUtils.Now;
-      DateTimeTo   := DateTimeFrom;
+      DateTimeTo   := MaxDateTime;
 
       case SearchTemplate.NotOlderThanUnit of
         tuSecond:
@@ -325,6 +328,44 @@ begin
   AttrsPatternOptionsToChecks(SearchTemplate, FileChecks);
 end;
 
+function CheckPluginFullText(Module: TWdxModule; constref ContentPlugin: TPluginSearchRec;
+  const FileName: String): Boolean;
+var
+  Value: String;
+  Old: String = '';
+  FindText: String;
+  FieldIndex: Integer;
+  UnitIndex: Integer = 0;
+begin
+  // Prepare find text
+  case ContentPlugin.Compare of
+    poContainsCase,
+    poNotContainsCase: FindText := UTF8LowerCase(ContentPlugin.Value);
+    else FindText:= ContentPlugin.Value;
+  end;
+  // Find field index
+  FieldIndex:= Module.GetFieldIndex(ContentPlugin.Field);
+  Value:= Module.CallContentGetValue(FileName, FieldIndex, UnitIndex);
+  while Length(Value) > 0 do
+  begin
+    Old+= Value;
+    DCUnicodeUtils.Utf8FixBroken(Old);
+    case ContentPlugin.Compare of
+      poContains: Result := Pos(FindText, Old) > 0;
+      poNotContains: Result := Pos(FindText, Old) = 0;
+      poContainsCase: Result := Pos(FindText, UTF8LowerCase(Old)) > 0;
+      poNotContainsCase: Result := Pos(FindText, UTF8LowerCase(Old)) = 0;
+    end;
+    if Result then begin
+       Module.CallContentGetValue(FileName, FieldIndex, -1, 0);
+       Exit;
+    end;
+    Old:= RightStr(Value, Length(FindText));
+    Value:= Module.CallContentGetValue(FileName, FieldIndex, UnitIndex);
+  end;
+  Result:= False;
+end;
+
 function CheckPlugin(const SearchTemplate: TSearchTemplateRec;
   const FileName: String): Boolean;
 var
@@ -339,20 +380,24 @@ begin
   begin
     Module := gWDXPlugins.GetWdxModule(ContentPlugins[I].Plugin);
     if (Module = nil) or (not Module.IsLoaded) then Continue;
-    Value:= Module.CallContentGetValueV(FileName, ContentPlugins[I].Field, ContentPlugins[I].UnitName, 0);
-    case ContentPlugins[I].Compare of
-      poEqual: Work:= (ContentPlugins[I].Value = Value);
-      poNotEqual: Work:= (ContentPlugins[I].Value <> Value);
-      poMore: Work := (Value > ContentPlugins[I].Value);
-      poLess: Work := (Value < ContentPlugins[I].Value);
-      poMoreEqual: Work := (Value >= ContentPlugins[I].Value);
-      poLessEqual: Work := (Value <= ContentPlugins[I].Value);
-      poEqualCase: Work:= UTF8CompareText(Value, ContentPlugins[I].Value) = 0;
-      poNotEqualCase: Work:= UTF8CompareText(Value, ContentPlugins[I].Value) <> 0;
-      poContains: Work := UTF8Pos(ContentPlugins[I].Value, Value) > 0;
-      poNotContains: Work := UTF8Pos(ContentPlugins[I].Value, Value) = 0;
-      poContainsCase: Work := UTF8Pos(UTF8LowerCase(ContentPlugins[I].Value), UTF8LowerCase(Value)) > 0;
-      poNotContainsCase: Work := UTF8Pos(UTF8LowerCase(ContentPlugins[I].Value), UTF8LowerCase(Value)) = 0;
+    if ContentPlugins[I].FieldType in [ft_fulltext, ft_fulltextw] then
+      Work:= CheckPluginFullText(Module, ContentPlugins[I], FileName)
+    else begin
+      Value:= Module.CallContentGetValueV(FileName, ContentPlugins[I].Field, ContentPlugins[I].UnitName, 0);
+      case ContentPlugins[I].Compare of
+        poEqual: Work:= (ContentPlugins[I].Value = Value);
+        poNotEqual: Work:= (ContentPlugins[I].Value <> Value);
+        poMore: Work := (Value > ContentPlugins[I].Value);
+        poLess: Work := (Value < ContentPlugins[I].Value);
+        poMoreEqual: Work := (Value >= ContentPlugins[I].Value);
+        poLessEqual: Work := (Value <= ContentPlugins[I].Value);
+        poEqualCase: Work:= UTF8CompareText(Value, ContentPlugins[I].Value) = 0;
+        poNotEqualCase: Work:= UTF8CompareText(Value, ContentPlugins[I].Value) <> 0;
+        poContains: Work := UTF8Pos(ContentPlugins[I].Value, Value) > 0;
+        poNotContains: Work := UTF8Pos(ContentPlugins[I].Value, Value) = 0;
+        poContainsCase: Work := UTF8Pos(UTF8LowerCase(ContentPlugins[I].Value), UTF8LowerCase(Value)) > 0;
+        poNotContainsCase: Work := UTF8Pos(UTF8LowerCase(ContentPlugins[I].Value), UTF8LowerCase(Value)) = 0;
+      end;
     end;
     if ContentPluginCombine then
       Result := Result and Work
@@ -406,7 +451,7 @@ end;
 
 function CheckFileDateTime(const FileChecks: TFindFileChecks; DT : TDateTime) : Boolean;
 begin
-  with FileChecks do
+    with FileChecks do
     Result := (DateTimeFrom <= DT) and (DT <= DateTimeTo);
 end;
 

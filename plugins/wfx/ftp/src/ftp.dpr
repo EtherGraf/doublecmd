@@ -43,6 +43,8 @@ exports
   FsSetCryptCallbackW,
   FsGetDefRootName,
   FsSetDefaultParams,
+  FsStatusInfoW,
+  FsGetBackgroundFlags,
   {
   FsNetworkGetSupportedProtocols,
   FsNetworkGetConnection,
@@ -54,5 +56,5 @@ exports
 {$R *.res}
 
 begin
-
+  Randomize;
 end.

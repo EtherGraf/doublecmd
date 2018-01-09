@@ -76,6 +76,7 @@ type
     procedure AttemptToSetupForThisCommand(CommandToShow: string);
     procedure lbledtFilterEnter(Sender: TObject);
     procedure lbledtFilterExit(Sender: TObject);
+    procedure lbledtFilterKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure lblPlaceCaptionInClipClick(Sender: TObject);
     procedure lblSelectedCommandHelpClick(Sender: TObject);
     procedure lblSelectedCommandHelpMouseEnter(Sender: TObject);
@@ -87,6 +88,7 @@ type
     ListCommands: TStringList;
     OffsetForHotKey: integer;
     OffsetForHint: integer;
+    lbCommandsItemHeight: Integer;
   public
     { Public declarations }
     procedure LoadCategoryListbox(CategoryToSelectIfAny: string);
@@ -103,7 +105,7 @@ implementation
 
 uses
   //Lazarus, Free-Pascal, etc.
-  Clipbrd, LCLType, Graphics, LazUTF8, LCLIntf,
+  Clipbrd, LCLType, Graphics, LazUTF8, LCLIntf, Math,
 
   //DC
   DCStrUtils, dmHelpManager, uLng, uPixMapManager, uGlobs, fMain, uDebug, uClipboard;
@@ -185,6 +187,7 @@ var
   FlagCategoryTitle: boolean = False;
   Bitmap: TBitmap = nil;
 begin
+  lbCommandsItemHeight := ARect.Height;
   with Control as TListbox do
   begin
     FFormCommands.ExtractCommandFields(Items.Strings[Index], sCategory, sCommand, sHint, sHotKey, FlagCategoryTitle);
@@ -279,7 +282,9 @@ var
   LastSelectedText: string;
 begin
   lblSelectedCommand.Caption := '';
+  lblSelectedCommandHotkey.Caption := '';
   lblSelectedCommandHint.Caption := '';
+  lblSelectedCommandCategory.Caption := '';
   imgCommandIcon.Picture.Bitmap.Clear;
   if lbCommands.ItemIndex <> -1 then
     LastSelectedText := lbCommands.Items.Strings[lbCommands.ItemIndex]
@@ -289,7 +294,7 @@ begin
   lbCommands.Items.Clear;
   for IndexItem := 0 to pred(ListCommands.Count) do
   begin
-    if (lbledtFilter.Text = '') or (pos(lowercase(lbledtFilter.Text), lowercase(ListCommands.Strings[IndexItem])) <> 0) then
+    if (lbledtFilter.Text = '') or (Pos(UTF8LowerCase(lbledtFilter.Text), UTF8LowerCase(ListCommands.Strings[IndexItem])) <> 0) then
       lbCommands.Items.Add(ListCommands.Strings[IndexItem]);
   end;
 
@@ -385,8 +390,8 @@ begin
 
   FFormCommands.GetCommandsListForACommandCategory(ListCommands, lbCategory.Items.Strings[lbCategory.ItemIndex], TCommandSortOrder(cbCommandsSortOrNot.ItemIndex));
 
-  LargestCommandName := lbCommands.Canvas.TextWidth(lblCommandName.Caption);
-  LargestHotKeyName := lbCommands.Canvas.TextWidth(lblHotKey.Caption); //This way, if the word "hotkey" once translated is longer than a hotkey, label will not be overwritten.
+  LargestCommandName := lblCommandName.Canvas.TextWidth(lblCommandName.Caption);
+  LargestHotKeyName := lblCommandName.Canvas.TextWidth(lblHotKey.Caption); //This way, if the word "hotkey" once translated is longer than a hotkey, label will not be overwritten.
   WantedCommandIndex := -1;
   LastSelectedIndex := -1;
 
@@ -396,10 +401,10 @@ begin
     FFormCommands.ExtractCommandFields(ListCommands.Strings[SearchingIndex], sCategory, sCommand, sHint, sHotKey, FlagCategoryTitle);
     if not FlagCategoryTitle then
     begin
-      if lbCommands.Canvas.TextWidth(sCommand) > LargestCommandName then
-        LargestCommandName := lbCommands.Canvas.TextWidth(sCommand);
-      if lbCommands.Canvas.TextWidth(sHotKey) > LargestHotKeyName then
-        LargestHotKeyName := lbCommands.Canvas.TextWidth(sHotKey);
+      if lblCommandName.Canvas.TextWidth(sCommand) > LargestCommandName then
+        LargestCommandName := lblCommandName.Canvas.TextWidth(sCommand);
+      if lblCommandName.Canvas.TextWidth(sHotKey) > LargestHotKeyName then
+        LargestHotKeyName := lblCommandName.Canvas.TextWidth(sHotKey);
       if (WantedCommandToSelect <> '') and (WantedCommandToSelect = sCommand) then
         WantedCommandIndex := SearchingIndex;
       if (LastSelectedCommand <> '') and (LastSelectedCommand = sCommand) then
@@ -409,9 +414,9 @@ begin
   end;
 
   OffsetForHotKey := LargestCommandName + 10;
-  lblHotKey.BorderSpacing.Left := OffsetForHotKey;
+  lblHotKey.BorderSpacing.Left := OffsetForHotKey + 1;
   OffsetForHint := LargestCommandName + 10 + LargestHotKeyName + 10;
-  lblHint.BorderSpacing.Left := OffsetForHint;
+  lblHint.BorderSpacing.Left := OffsetForHint + 1;
 
   lbCommands.Items.Assign(ListCommands);
 
@@ -454,6 +459,37 @@ end;
 procedure TfrmMainCommandsDlg.lbledtFilterExit(Sender: TObject);
 begin
   lbledtFilter.EditLabel.Font.Style := [];
+end;
+
+procedure TfrmMainCommandsDlg.lbledtFilterKeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+var NewIndex: Integer;
+begin
+  case Key of
+    VK_UP:
+      NewIndex := lbCommands.ItemIndex - 1;
+    VK_DOWN:
+      NewIndex := lbCommands.ItemIndex + 1;
+    VK_PRIOR:
+      NewIndex := lbCommands.ItemIndex - (lbCommands.ClientHeight div lbCommandsItemHeight) + 1;
+    VK_NEXT:
+      NewIndex := lbCommands.ItemIndex + (lbCommands.ClientHeight div lbCommandsItemHeight) - 1;
+    VK_HOME:
+      if (ssCtrl in Shift) then
+        NewIndex := 0
+      else
+        Exit;
+    VK_END:
+      if (ssCtrl in Shift) then
+        NewIndex := lbCommands.Items.Count - 1
+      else
+        Exit;
+    else
+      Exit;
+  end;
+  Key := 0;
+  if lbCommands.Items.Count > 0 then
+    lbCommands.ItemIndex := EnsureRange(NewIndex, 0, lbCommands.Items.Count - 1);
 end;
 
 { TfrmMainCommandsDlg.lblPlaceCaptionInClipClick }

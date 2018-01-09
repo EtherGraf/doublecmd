@@ -3,7 +3,7 @@
   -------------------------------------------------------------------------
   SevenZip archiver plugin, compression options
 
-  Copyright (C) 2014-2015 Alexander Koblov (alexx2000@mail.ru)
+  Copyright (C) 2014-2017 Alexander Koblov (alexx2000@mail.ru)
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -222,7 +222,7 @@ var
 implementation
 
 uses
-  ActiveX, LazUTF8, SevenZipAdv;
+  ActiveX, LazUTF8, SevenZipAdv, SevenZipCodecs;
 
 function GetNumberOfProcessors: LongWord;
 var
@@ -251,6 +251,7 @@ var
   Index: Integer;
   Start: Integer = 1;
   Parameters: WideString;
+  MethodStandard: Boolean;
   Method: TJclCompressionMethod;
   JclArchive: TJclCompressionArchive;
 
@@ -258,9 +259,9 @@ var
   begin
     with JclArchive do
     begin
-      SetLength(PropNames, Length(PropNames)+1);
+      SetLength(PropNames, Length(PropNames) + 1);
       PropNames[High(PropNames)] := Name;
-      SetLength(PropValues, Length(PropValues)+1);
+      SetLength(PropValues, Length(PropValues) + 1);
       PropValues[High(PropValues)] := Value;
     end;
   end;
@@ -286,6 +287,7 @@ var
   procedure AddOption(Finish: Integer);
   var
     C: WideChar;
+    IValue: Int64;
     PropValue: TPropVariant;
     Option, Value: WideString;
   begin
@@ -309,26 +311,15 @@ var
     else begin
       Value:= Copy(Option, Start + 1, MaxInt);
       SetLength(Option, Start - 1);
-      AddWideStringProperty(Option, Value);
+      if TryStrToInt64(AnsiString(Value), IValue) then
+        AddCardinalProperty(Option, IValue)
+      else
+        AddWideStringProperty(Option, Value);
     end;
   end;
 
 begin
   JclArchive:= AJclArchive as TJclCompressionArchive;
-  // Set word size parameter
-  Method:= TJclCompressionMethod(PluginConfig[AFormat].Method);
-  case Method of
-    cmLZMA, cmLZMA2,
-    cmDeflate, cmDeflate64:
-        AddCardinalProperty('fb', PluginConfig[AFormat].WordSize);
-    cmPPMd:
-        AddCardinalProperty('o', PluginConfig[AFormat].WordSize);
-  end;
-  // Set 7-zip compression method
-  if IsEqualGUID(CLSID_CFormat7z, PluginConfig[AFormat].ArchiveCLSID^) then
-  begin
-    AddWideStringProperty('0', MethodName[Method]);
-  end;
   // Parse additional parameters
   Parameters:= Trim(PluginConfig[AFormat].Parameters);
   if Length(Parameters) > 0 then
@@ -343,18 +334,57 @@ begin
     end;
     AddOption(MaxInt);
   end;
+  Parameters:= WideUpperCase(Parameters);
+  MethodStandard:= PluginConfig[AFormat].Method <= cmMaximum;
+  // Set word size parameter
+  if MethodStandard then
+  begin
+    Method:= TJclCompressionMethod(PluginConfig[AFormat].Method);
+    case Method of
+      cmLZMA, cmLZMA2,
+      cmDeflate, cmDeflate64:
+        begin
+          if (Pos('FB=', Parameters) = 0) and (Pos('1=', Parameters) = 0) then
+            AddCardinalProperty('fb', PluginConfig[AFormat].WordSize);
+        end;
+      cmPPMd:
+        begin
+          if Pos('O=', Parameters) = 0 then
+            AddCardinalProperty('o', PluginConfig[AFormat].WordSize);
+        end;
+    end;
+  end;
+  // Set 7-zip compression method
+  if IsEqualGUID(CLSID_CFormat7z, PluginConfig[AFormat].ArchiveCLSID^) then
+  begin
+    if Pos('0=', Parameters) = 0 then
+    begin
+      if MethodStandard then
+        AddWideStringProperty('0', MethodName[Method])
+      else begin
+        AddWideStringProperty('0', GetCodecName(PluginConfig[AFormat].Method));
+      end;
+    end;
+    if MethodStandard and (Method <> cmCopy) and (Pos('D=', Parameters) = 0) then begin
+      AddWideStringProperty('D', WideString(IntToStr(PluginConfig[AFormat].Dictionary) + 'B'));
+    end;
+  end;
 end;
 
 procedure SetArchiveOptions(AJclArchive: IInterface);
 var
+  MethodStd: Boolean;
   ArchiveCLSID: TGUID;
   SolidBlockSize: Int64;
   Index: TArchiveFormat;
   Solid: IJclArchiveSolid;
+  CompressHeader: IJclArchiveCompressHeader;
   DictionarySize: IJclArchiveDictionarySize;
   CompressionLevel: IJclArchiveCompressionLevel;
   MultiThreadStrategy: IJclArchiveNumberOfThreads;
   CompressionMethod: IJclArchiveCompressionMethod;
+  SaveCreationDateTime: IJclArchiveSaveCreationDateTime;
+  SaveLastAccessDateTime: IJclArchiveSaveLastAccessDateTime;
 begin
   if AJclArchive is TJclSevenzipCompressArchive then
     ArchiveCLSID:= (AJclArchive as TJclSevenzipCompressArchive).ArchiveCLSID
@@ -365,7 +395,9 @@ begin
   begin
     if IsEqualGUID(ArchiveCLSID, PluginConfig[Index].ArchiveCLSID^) then
     begin
-      if Supports(AJclArchive, IJclArchiveCompressionMethod, CompressionMethod) and Assigned(CompressionMethod) then
+      MethodStd:= (PluginConfig[Index].Method <= cmMaximum);
+
+      if MethodStd and Supports(AJclArchive, IJclArchiveCompressionMethod, CompressionMethod) and Assigned(CompressionMethod) then
         CompressionMethod.SetCompressionMethod(TJclCompressionMethod(PluginConfig[Index].Method));
 
       if Supports(AJclArchive, IJclArchiveCompressionLevel, CompressionLevel) and Assigned(CompressionLevel) then
@@ -373,7 +405,7 @@ begin
 
       if PluginConfig[Index].Level <> PtrInt(clStore) then
       begin
-        if Supports(AJclArchive, IJclArchiveDictionarySize, DictionarySize) and Assigned(DictionarySize) then
+        if MethodStd and Supports(AJclArchive, IJclArchiveDictionarySize, DictionarySize) and Assigned(DictionarySize) then
           DictionarySize.SetDictionarySize(PluginConfig[Index].Dictionary);
 
         if Supports(AJclArchive, IJclArchiveSolid, Solid) and Assigned(Solid) then
@@ -385,6 +417,15 @@ begin
 
         if Supports(AJclArchive, IJclArchiveNumberOfThreads, MultiThreadStrategy) and Assigned(MultiThreadStrategy) then
           MultiThreadStrategy.SetNumberOfThreads(PluginConfig[Index].ThreadCount);
+
+        if Supports(AJclArchive, IJclArchiveSaveCreationDateTime, SaveCreationDateTime) and Assigned(SaveCreationDateTime) then
+          SaveCreationDateTime.SetSaveCreationDateTime(False);
+
+        if Supports(AJclArchive, IJclArchiveSaveLastAccessDateTime, SaveLastAccessDateTime) and Assigned(SaveLastAccessDateTime) then
+          SaveLastAccessDateTime.SetSaveLastAccessDateTime(False);
+
+        if Supports(AJclArchive, IJclArchiveCompressHeader, CompressHeader) and Assigned(CompressHeader) then
+          CompressHeader.SetCompressHeader(True);
       end;
 
       try

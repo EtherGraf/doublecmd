@@ -25,6 +25,12 @@ uses
   {$ENDIF}
   DCConvertEncoding,
   Interfaces,
+  {$IFDEF LCLGTK2}
+  uGtk2FixCursorPos,
+  {$ENDIF}
+  {$IFDEF LCLWIN32}
+  uDClass,
+  {$ENDIF}
   LCLProc,
   Classes,
   SysUtils,
@@ -100,6 +106,10 @@ begin
   uMyWindows.FixCommandLineToUTF8;
   {$ENDIF}
 
+  {$if lcl_fullversion >= 1070000}
+  Application.Scaled:= True;
+  {$endif}
+
   // Fix default BidiMode
   // see http://bugs.freepascal.org/view.php?id=22044
   Application.BidiMode:= bdLeftToRight;
@@ -140,7 +150,7 @@ begin
   if WSVersion <> EmptyStr then
     DCDebug('Widgetset library: ' + WSVersion);
   DCDebug('This program is free software released under terms of GNU GPL 2');
-  DCDebug('(C)opyright 2006-2016 Alexander Koblov (alexx2000@mail.ru)');
+  DCDebug('(C)opyright 2006-2017 Alexander Koblov (alexx2000@mail.ru)');
   DCDebug('   and contributors (see about dialog)');
 
   Application.ShowMainForm:= False;

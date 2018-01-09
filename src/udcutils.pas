@@ -3,7 +3,7 @@
    -------------------------------------------------------------------------
    Several useful functions
    
-   Copyright (C) 2006-2015 Alexander Koblov (alexx2000@mail.ru)
+   Copyright (C) 2006-2017 Alexander Koblov (alexx2000@mail.ru)
 
    contributors:
    
@@ -45,7 +45,7 @@ const
   TextLineBreakValue: array[TTextLineBreakStyle] of String = (#10, #13#10, #13);
 
 {$IF DEFINED(UNIX)}
-  NoQuotesSpecialChars     = [' ', '"', '''', '(', ')', ':', '&', '!', '$', '*', '?', '=', '`', '\', #10];
+  NoQuotesSpecialChars     = [' ', '"', '''', '(', ')', ':', '&', '!', '$', '*', '?', '=', '`', '\', '|', ';', #10];
   DoubleQuotesSpecialChars = ['$', '\', '`', '"', #10];
 {$ENDIF}
 
@@ -85,10 +85,11 @@ function mbExpandFileName(const sFileName: String): String;
    @param(iSize File size)
    @param(ShortFormat If @true than short format is used,
                       otherwise long format (bytes) is used.)
+   @param(Number Number of digits after decimal)
    @returns(File size in string representation)
 }
-function cnvFormatFileSize(iSize: Int64; FSF: TFileSizeFormat): String;
-function cnvFormatFileSize(iSize: Int64; FSF: Boolean): String;
+function cnvFormatFileSize(iSize: Int64; FSF: TFileSizeFormat; Number: Integer): String;
+function cnvFormatFileSize(iSize: Int64; {%H-}FSF: Boolean): String;
 function cnvFormatFileSize(iSize: Int64): String; inline;
 {en
    Minimize file path
@@ -249,6 +250,7 @@ procedure SplitCmdLineToCmdParams(sCmdLine : String; var sCmd, sParams : String)
 
 function GuessLineBreakStyle(const S: String): TTextLineBreakStyle;
 function GetTextRange(Strings: TStrings; Start, Finish: Integer): String;
+function DCGetNewGUID: TGUID;
 
 implementation
 
@@ -342,64 +344,68 @@ end;
 
 function mbExpandFileName(const sFileName: String): String;
 begin
-  Result:= NormalizePathDelimiters(sFileName);
-  Result:= ReplaceEnvVars(Result);
-  if Pos(PathDelim, Result) <> 0 then
-    Result:= ExpandFileName(Result);
+  if (Pos('://', sFileName) > 0) then
+    Result:= sFileName
+  else begin
+    Result:= NormalizePathDelimiters(sFileName);
+    Result:= ReplaceEnvVars(Result);
+    if Pos(PathDelim, Result) <> 0 then
+      Result:= ExpandFileName(Result);
+  end;
 end;
 
-function cnvFormatFileSize(iSize: Int64; FSF: TFileSizeFormat): String;
+function cnvFormatFileSize(iSize: Int64; FSF: TFileSizeFormat; Number: Integer): String;
 var
-  d: Double;
+  FloatSize: Extended;
 begin
+  FloatSize:= iSize;
   case FSF of
   fsfFloat:
   begin
-    if iSize div (1024*1024*1024) > 0 then
+    if iSize div (1024 * 1024 * 1024) > 0 then
     begin
-      Result:=FloatToStrF((iSize*16 div (1024*1024*1024))/16, ffFixed, 15, 1)+' G'
+      Result:= FloatToStrF(FloatSize / (1024 * 1024 * 1024), ffFixed, 15, Number) + ' G'
     end
     else
-    if iSize div (1024*1024) >0 then
+    if iSize div (1024 * 1024) > 0 then
     begin
-      Result:=FloatToStrF((iSize*10 div (1024*1024))/10, ffFixed, 15, 1)+' M'
+      Result:= FloatToStrF(FloatSize / (1024 * 1024), ffFixed, 15, Number) + ' M'
     end
     else
-    if iSize div 1024 >0 then
+    if iSize div 1024 > 0 then
     begin
-      Result:=FloatToStrF((iSize*10 div 1024)/10, ffFixed, 15, 1)+' K'
+      Result:= FloatToStrF(FloatSize / 1024, ffFixed, 15, Number) + ' K'
     end
     else
-      Result:=IntToStr(iSize);
+      Result:= Format('%.0n', [FloatSize]);
   end;
-  fsfB:
+  fsfByte:
   begin
-    d:=iSize;
-    Result:=Format('%8.0n',[d]);
+    Result:= Format('%.0n', [FloatSize]);
   end;
-  fsfK:
+  fsfKilo:
   begin
-    Result:=FloatToStrF((iSize*10 div 1024)/10, ffFixed, 15, 1)+' K'
+    Result:=FloatToStrF(FloatSize / 1024, ffFixed, 15, Number) + ' K'
   end;
-  fsfM:
+  fsfMega:
   begin
-    Result:=FloatToStrF((iSize*10 div (1024*1024))/10, ffFixed, 15, 1)+' M'
+    Result:=FloatToStrF(FloatSize / (1024 * 1024), ffFixed, 15, Number) + ' M'
   end;
-  fsfG:
+  fsfGiga:
   begin
-    Result:=FloatToStrF((iSize*16 div (1024*1024*1024))/16, ffFixed, 15, 1)+' G'
+    Result:=FloatToStrF(FloatSize / (1024 * 1024 * 1024), ffFixed, 15, Number) + ' G'
   end;
   end;
 end;
 
 function cnvFormatFileSize(iSize: Int64; FSF: Boolean): String;
 begin
-  Result := cnvFormatFileSize(iSize, fsfFloat);
+  Result := cnvFormatFileSize(iSize, fsfFloat, gFileSizeDigits);
 end;
 
 function cnvFormatFileSize(iSize: Int64): String;
 begin
-  Result := cnvFormatFileSize(iSize, gFileSizeFormat);
+  Result := cnvFormatFileSize(iSize, gFileSizeFormat, gFileSizeDigits);
 end;
 
 {
@@ -949,8 +955,8 @@ var
 begin
   // Set up compare function
   case CaseSensitivity of
-    cstNotSensitive: str_cmp:= WideStringManager.CompareTextWideStringProc;
-    cstLocale:       str_cmp:= WideStringManager.CompareWideStringProc;
+    cstNotSensitive: str_cmp:= @WideCompareText;
+    cstLocale:       str_cmp:= @WideCompareStr;
     cstCharValue:    str_cmp:= @WideStrComp;
     else
       raise Exception.Create('Invalid CaseSensitivity parameter');
@@ -981,12 +987,6 @@ begin
       is_digit2 := is_digit(str2^);
 
       if (is_digit1 and is_digit2) then break;
-
-      if (is_digit1 and not is_digit2) then
-        exit(-1);
-
-      if (is_digit2 and not is_digit1) then
-        exit(+1);
 
       string_result:= str_cmp(str1^, str2^);
 
@@ -1198,7 +1198,7 @@ begin
   Start:= PAnsiChar(S);
   Finish:= Start + Length(S);
   Current:= Start;
-  while Current + 2 < Finish do
+  while Current < Finish do
   begin
     case Current[0] of
       #10, #13:
@@ -1249,6 +1249,20 @@ begin
         Inc(P);
       end;
     end;
+  end;
+end;
+
+{ DCGetNewGUID }
+function DCGetNewGUID: TGUID;
+var
+  iIndex: integer;
+begin
+  if CreateGuid(Result) <> 0 then
+  begin
+    Result.Data1 := random($233528DE);
+    Result.Data2 := random($FFFF);
+    Result.Data3 := random($FFFF);
+    for iIndex := 0 to 7 do Result.Data4[iIndex] := random($FF);
   end;
 end;
 

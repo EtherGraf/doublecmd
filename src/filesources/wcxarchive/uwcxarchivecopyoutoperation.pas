@@ -61,8 +61,8 @@ type
 
     function DoFileExists(Header: TWcxHeader; var AbsoluteTargetFileName: String): TFileSourceOperationOptionFileExists;
 	
-    procedure ShowError(sMessage: String; logOptions: TLogOptions = []);
-    procedure LogMessage(sMessage: String; logOptions: TLogOptions; logMsgType: TLogMsgType);
+    procedure ShowError(const sMessage: String; iError: Integer; logOptions: TLogOptions = []);
+    procedure LogMessage(const sMessage: String; logOptions: TLogOptions; logMsgType: TLogMsgType);
 
   protected
     procedure SetProcessDataProc(hArcData: TArcHandle);
@@ -149,7 +149,7 @@ begin
       //DCDebug('CurrentDone  = ' + IntToStr(CurrentFileDoneBytes) + ' Done  = ' + IntToStr(DoneBytes));
       //DCDebug('CurrentTotal = ' + IntToStr(CurrentFileTotalBytes) + ' Total = ' + IntToStr(TotalBytes));
       WcxCopyOutOperation.UpdateStatistics(WcxCopyOutOperation.FStatistics);
-      WcxCopyOutOperation.CheckOperationState;
+      if not WcxCopyOutOperation.CheckOperationStateSafe then Exit(0);
     end;
   end;
 end;
@@ -300,14 +300,13 @@ begin
 
         if iResult <> E_SUCCESS then
         begin
+          // User aborted operation.
+          if iResult = E_EABORTED then Break;
+
           ShowError(Format(rsMsgLogError + rsMsgLogExtract,
                            [FWcxArchiveFileSource.ArchiveFileName + PathDelim +
                             Header.FileName + ' -> ' + TargetFileName +
-                            ' - ' + GetErrorMsg(iResult)]), [log_arc_op]);
-
-          // User aborted operation.
-          if iResult = E_EABORTED then
-            Break;
+                            ' : ' + GetErrorMsg(iResult)]), iResult, [log_arc_op]);
         end // Error
         else
         begin
@@ -326,7 +325,7 @@ begin
           ShowError(Format(rsMsgLogError + rsMsgLogExtract,
                            [FWcxArchiveFileSource.ArchiveFileName + PathDelim +
                             Header.FileName + ' -> ' + TargetFileName +
-                            ' - ' + GetErrorMsg(iResult)]), [log_arc_op]);
+                            ' : ' + GetErrorMsg(iResult)]), iResult, [log_arc_op]);
         end;
       end; // Skip
 
@@ -334,21 +333,20 @@ begin
       FreeAndNil(Header);
     end;
 
-    iResult := WcxModule.CloseArchive(ArcHandle);
+    if (FExtractWithoutPath = False) then SetDirsAttributes(CreatedPaths);
 
+  finally
+    // Close archive
+    iResult := WcxModule.CloseArchive(ArcHandle);
     // Check for errors
     if iResult <> E_SUCCESS then
     begin
       ShowError(Format(rsMsgLogError + rsMsgLogExtract,
                        [FWcxArchiveFileSource.ArchiveFileName +
-                        ' - ' + GetErrorMsg(iResult)]), [log_arc_op]);
+                        ' : ' + GetErrorMsg(iResult)]), iResult, [log_arc_op]);
     end;
-
-    if (FExtractWithoutPath = False) then SetDirsAttributes(CreatedPaths);
-
-  finally
-    if Assigned(Files) then
-      FreeAndNil(Files);
+    // Free memory
+    FreeAndNil(Files);
     FreeAndNil(CreatedPaths);
   end;
 end;
@@ -519,11 +517,10 @@ begin
       TargetDir := Paths.List[PathIndex]^.Key;
 
       try
-{$IF DEFINED(MSWINDOWS)}
-        // Restore attributes, e.g., hidden, read-only.
-        // On Unix attributes value would have to be translated somehow.
+        // Restore attributes
         mbFileSetAttr(TargetDir, Header.FileAttr);
 
+{$IF DEFINED(MSWINDOWS)}
         DosToWinTime(TDosFileTime(Header.FileTime), Time);
 {$ELSE}
   {$PUSH}{$R-}
@@ -554,7 +551,7 @@ var
 
   function OverwriteOlder: TFileSourceOperationOptionFileExists;
   begin
-    if WcxFileTimeToDateTime(Header) > FileTimeToDateTime(mbFileAge(AbsoluteTargetFileName)) then
+    if WcxFileTimeToDateTime(Header.FileTime) > FileTimeToDateTime(mbFileAge(AbsoluteTargetFileName)) then
       Result := fsoofeOverwrite
     else
       Result := fsoofeSkip;
@@ -584,7 +581,7 @@ begin
       repeat
         Answer := True;
         Message:= FileExistsMessage(AbsoluteTargetFileName, Header.FileName,
-                                    Header.UnpSize, WcxFileTimeToDateTime(Header));
+                                    Header.UnpSize, WcxFileTimeToDateTime(Header.FileTime));
         case AskQuestion(Message, '',
                          PossibleResponses, fsourOverwrite, fsourSkip) of
           fsourOverwrite:
@@ -660,23 +657,23 @@ begin
   end;
 end;
 
-procedure TWcxArchiveCopyOutOperation.ShowError(sMessage: String; logOptions: TLogOptions);
+procedure TWcxArchiveCopyOutOperation.ShowError(const sMessage: String;
+  iError: Integer; logOptions: TLogOptions);
 begin
-  if not gSkipFileOpError then
+  LogMessage(sMessage, logOptions, lmtError);
+
+  if (gSkipFileOpError = False) and (iError > E_SUCCESS) then
   begin
     if AskQuestion(sMessage, '', [fsourSkip, fsourAbort],
                    fsourSkip, fsourAbort) = fsourAbort then
     begin
       RaiseAbortOperation;
     end;
-  end
-  else
-  begin
-    LogMessage(sMessage, logOptions, lmtError);
   end;
 end;
 
-procedure TWcxArchiveCopyOutOperation.LogMessage(sMessage: String; logOptions: TLogOptions; logMsgType: TLogMsgType);
+procedure TWcxArchiveCopyOutOperation.LogMessage(const sMessage: String;
+  logOptions: TLogOptions; logMsgType: TLogMsgType);
 begin
   case logMsgType of
     lmtError:

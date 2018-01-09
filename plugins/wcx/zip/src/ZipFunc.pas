@@ -128,7 +128,7 @@ begin
   else if E is EWriteError then
     Result := E_EWRITE
   else
-    Result := E_BAD_DATA;
+    Result := E_UNKNOWN;
 end;
 
 // -- Exported functions ------------------------------------------------------
@@ -191,6 +191,10 @@ begin
       HeaderData.FileCRC      := CRC32;
       HeaderData.FileTime     := NativeLastModFileTime;
       HeaderData.FileAttr     := NativeFileAttributes;
+
+      if IsEncrypted then begin
+        HeaderData.Flags      := RHDF_ENCRYPTED;
+      end;
 
       if IsDirectory then begin
         HeaderData.FileAttr   := HeaderData.FileAttr or faFolder;
@@ -257,7 +261,18 @@ begin
 
   except
     on E: Exception do
+    begin
       Arc.FOperationResult := GetArchiveError(E);
+      if (Operation = PK_TEST) and (Arc.FOperationResult = E_UNKNOWN) then
+      begin
+        DestNameUtf8:= E.Message + LineEnding + LineEnding + Arc.Items[Arc.Tag].FileName;
+        if gStartupInfo.MessageBox(PAnsiChar(DestNameUtf8), nil, MB_OKCANCEL or MB_ICONERROR) = ID_OK then
+          Arc.FOperationResult:= E_HANDLED
+        else begin
+          Arc.FOperationResult:= E_EABORTED;
+        end;
+      end;
+    end;
   end;
 
   Result:= Arc.FOperationResult;
@@ -309,6 +324,10 @@ var
   sPassword: AnsiString;
   sPackedFile: String;
 begin
+  if (Flags and PK_PACK_MOVE_FILES) <> 0 then begin
+    Exit(E_NOT_SUPPORTED);
+  end;
+
   Arc := TAbZipKitEx.Create(nil);
   try
     Arc.AutoSave := False;
@@ -475,36 +494,53 @@ procedure TAbZipKitEx.AbProcessItemFailureEvent(Sender: TObject;
 var
   Message: AnsiString;
 begin
+  // Unknown error
+  FOperationResult:= E_UNKNOWN;
+  // Check error class
   case ErrorClass of
   ecFileOpenError:
     begin
+      ErrorClass:= ecAbbrevia;
       ErrorCode:= AbFCIFileOpenError;
       FOperationResult:= E_EOPEN;
     end;
   ecFileCreateError:
     begin
+      ErrorClass:= ecAbbrevia;
       ErrorCode:= AbFCICreateError;
       FOperationResult:= E_ECREATE;
-    end
-  else
-    case ErrorCode of
-    AbUserAbort:
-      FOperationResult:= E_EABORTED;
-    AbZipBadCRC:
-      FOperationResult:= E_BAD_ARCHIVE;
-    AbFileNotFound:
-      FOperationResult:= E_NO_FILES;
-    AbReadError:
-      FOperationResult:= E_EREAD;
-    else
-      FOperationResult:= E_BAD_DATA;
+    end;
+  ecAbbrevia:
+    begin
+      case ErrorCode of
+        AbUserAbort:
+          FOperationResult:= E_EABORTED;
+        AbZipBadCRC:
+          FOperationResult:= E_BAD_ARCHIVE;
+        AbFileNotFound:
+          FOperationResult:= E_NO_FILES;
+        AbReadError:
+          FOperationResult:= E_EREAD;
+      end;
+    end;
+  // Has exception message? Show it!
+  else if Assigned(ExceptObject) and (ExceptObject is Exception) then
+    begin
+      Message := Exception(ExceptObject).Message;
+      if Assigned(Item) then Message += LineEnding + LineEnding + Item.FileName;
+      if gStartupInfo.MessageBox(PAnsiChar(Message), nil, MB_OKCANCEL or MB_ICONERROR) = ID_OK then
+        FOperationResult:= E_HANDLED
+      else begin
+        raise EAbUserAbort.Create;
+      end;
     end;
   end;
-  if ProcessType in [ptAdd, ptFreshen, ptReplace] then
+  // Show abbrevia specific errors
+  if (ErrorClass = ecAbbrevia) and (ProcessType in [ptAdd, ptFreshen, ptReplace]) then
   begin
-    Message:= AbStrRes(ErrorCode) + ': ' + Item.FileName;
-    if gStartupInfo.MessageBox(PAnsiChar(Message), nil, MB_OKCANCEL) = ID_OK then
-      FOperationResult:= E_SUCCESS
+    Message:= AbStrRes(ErrorCode) + LineEnding + LineEnding + Item.FileName;
+    if gStartupInfo.MessageBox(PAnsiChar(Message), nil, MB_OKCANCEL or MB_ICONERROR) = ID_OK then
+      FOperationResult:= E_HANDLED
     else begin
       raise EAbUserAbort.Create;
     end;

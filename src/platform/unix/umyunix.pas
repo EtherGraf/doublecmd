@@ -3,7 +3,7 @@
     -------------------------------------------------------------------------
     This unit contains specific UNIX functions.
 
-    Copyright (C) 2008-2015 Alexander Koblov (alexx2000@mail.ru)
+    Copyright (C) 2008-2016 Alexander Koblov (alexx2000@mail.ru)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -130,6 +130,10 @@ function getmntent(stream: PFILE): PMountEntry; cdecl; external libc name 'getmn
 function endmntent(stream: PFILE): LongInt; cdecl; external libc name 'endmntent';
 {$ENDIF}
 {en
+   Set process group ID for job control
+}
+function setpgid(pid, pgid: pid_t): cint; cdecl; external libc name 'setpgid';
+{en
    Get password file entry
    @param(uid User ID)
    @returns(The function returns a pointer to a structure containing the broken-out
@@ -167,14 +171,6 @@ function getgrnam(name: PChar): PGroupRecord; cdecl; external libc name 'getgrna
 }
 function setenv(const name, value: PChar; overwrite: LongInt): LongInt; cdecl; external libc name 'setenv';
 
-{$IFDEF LINUX}
-function fpOpenDir(__name: PChar): pDir; cdecl; external libc name 'opendir';
-function fpReadDir(__dirp: pDir): pDirent; cdecl; external libc name 'readdir64';
-function fpCloseDir(__dirp: pDir): cInt; cdecl; external libc name 'closedir';
-{$ELSE}
-function fpReadDir(__dirp: pDir): pDirent; inline;
-function fpCloseDir(__dirp: pDir): cInt; inline;
-{$ENDIF}
 function fpSystemStatus(Command: string): cint;
 
 function GetDesktopEnvironment: TDesktopEnvironment;
@@ -241,7 +237,8 @@ var
 implementation
 
 uses
-  URIParser, Unix, LazUTF8, DCOSUtils, DCClassesUtf8, DCStrUtils, uDCUtils, uOSUtils
+  URIParser, Unix, Process, LazUTF8, DCOSUtils, DCClassesUtf8, DCStrUtils,
+  DCUnix, uDCUtils, uOSUtils
 {$IF (NOT DEFINED(FPC_USE_LIBC)) or (DEFINED(BSD) AND NOT DEFINED(DARWIN))}
   , SysCall
 {$ENDIF}
@@ -249,7 +246,7 @@ uses
   , uMimeActions, uMimeType
 {$ENDIF}
 {$IFDEF LINUX}
-  , Process, uUDisks
+  , uUDisks
 {$ENDIF}
   ;
 
@@ -262,20 +259,6 @@ const
 begin
   Result := do_syscall(syscall_nr_getfsstat, TSysParam(struct_statfs), TSysParam(buffsize), TSysParam(int_flags));
 end;
-{$ENDIF}
-
-{$IF NOT DEFINED(LINUX)}
-
-function fpReadDir(__dirp: pDir): pDirent;
-begin
-  Result:= BaseUnix.FpReaddir(__dirp^);
-end;
-
-function fpCloseDir(__dirp: pDir): cInt;
-begin
-  Result:= BaseUnix.FpClosedir(__dirp^);
-end;
-
 {$ENDIF}
 
 function fpSystemStatus(Command: string): cint;
@@ -499,11 +482,69 @@ begin
   end;
 end;
 
+function Mount(const Path: String; Timeout: Integer): Boolean;
+var
+  Message: String;
+  Handler: TMethod;
+  Process: TProcess;
+  Index: Integer = 0;
+
+  procedure ProcessForkEvent{$IF (FPC_FULLVERSION >= 30000)}(Self, Sender : TObject){$ENDIF};
+  begin
+    if (setpgid(0, 0) < 0) then fpExit(127);
+  end;
+
+begin
+  Process:= TProcess.Create(nil);
+  try
+    Handler.Data:= Process;
+    Process.Executable:= 'mount';
+    Process.Parameters.Add(Path);
+    Handler.Code:= @ProcessForkEvent;
+    {$IF (FPC_FULLVERSION >= 30000)}
+    Process.OnForkEvent:= TProcessForkEvent(Handler);
+    {$ELSE}
+    Process.OnForkEvent:= TProcessForkEvent(@ProcessForkEvent);
+    {$ENDIF}
+    Process.Options:= Process.Options + [poUsePipes, poStderrToOutPut];
+    try
+      Process.Execute;
+      while Process.Running do
+      begin
+        Inc(Index);
+        Sleep(100);
+        if (Index > Timeout) then
+        begin
+          Process.Terminate(-1);
+          fpKill(-Process.Handle, SIGTERM);
+          Exit(False);
+        end;
+        Process.Input.Write(#13#10, 2);
+        if (Process.Output.NumBytesAvailable > 0) then
+        begin
+          SetLength(Message, Process.Output.NumBytesAvailable);
+          Process.Output.Read(Message[1], Length(Message));
+          Write(Message);
+        end;
+      end;
+      {$IF (FPC_FULLVERSION >= 30000)}
+      Result:= (Process.ExitCode = 0);
+      {$ELSE}
+      Result:= (Process.ExitStatus = 0);
+      {$ENDIF}
+    except
+      Result:= False;
+    end;
+  finally
+    Process.Free;
+  end;
+end;
+
 function MountDrive(Drive: PDrive): Boolean;
 {$IFDEF LINUX}
 var
   Index: Integer;
-  MountPath: String;
+  MountPath: String = '';
 {$ENDIF}
 begin
   if not Drive^.IsMounted then
@@ -513,11 +554,10 @@ begin
     // If Path is not empty "mount" can mount it because it has a destination path from fstab.
     if Drive^.Path <> EmptyStr then
 {$ENDIF}
-      Result := fpSystemStatus('mount ' + Drive^.DeviceId) = 0;
+      Result := Mount(Drive^.Path, 300);
 {$IF DEFINED(LINUX)}
     if not Result and HaveUDisksCtl then
     begin
-      {$IF (FPC_FULLVERSION >= 20602)}
       Result:= RunCommand('udisksctl', ['mount', '-b', Drive^.DeviceId], MountPath);
       if Result then
       begin
@@ -529,11 +569,18 @@ begin
           Drive^.Path:= Copy(MountPath, Index, Length(MountPath) - Index - 1);
         end;
       end
-      {$ENDIF}
     end;
     if not Result and uUDisks.Initialize then
     begin
-      Result := uUDisks.Mount(DeviceFileToUDisksObjectPath(Drive^.DeviceId), EmptyStr, nil, MountPath);
+      try
+        Result := uUDisks.Mount(DeviceFileToUDisksObjectPath(Drive^.DeviceId), EmptyStr, nil, MountPath);
+      except
+        on E: Exception do
+        begin
+          Result := False;
+          WriteLn(E.Message);
+        end;
+      end;
       if Result then
         Drive^.Path := MountPath;
       uUDisks.Finalize;
@@ -584,46 +631,33 @@ begin
   Result := fpSystemStatus('eject ' + Drive^.DeviceId) = 0;
 end;
 
-type
-  {en
-    Waits for a child process to finish and collects its exit status,
-    causing it to be released by the system (prevents defunct processes).
+{en
+  Waits for a child process to finish and collects its exit status,
+  causing it to be released by the system (prevents defunct processes).
 
-    Instead of the wait-thread we could just ignore or handle SIGCHLD signal
-    for the process, but this way we don't interfere with the signal handling.
-    The downside is that there's a thread for every child process running.
+  Instead of the wait-thread we could just ignore or handle SIGCHLD signal
+  for the process, but this way we don't interfere with the signal handling.
+  The downside is that there's a thread for every child process running.
 
-    Another method is to periodically do a cleanup, for example from OnIdle
-    or OnTimer event. Remember PIDs of spawned child processes and when
-    cleaning call FpWaitpid(PID, nil, WNOHANG) on each PID. Downside is they
-    are not released immediately after the child process finish (may be relevant
-    if we want to display exit status to the user).
-  }
-  TWaitForPidThread = class(TThread)
-  private
-    FPID: TPid;
-  protected
-    procedure Execute; override;
-  public
-    constructor Create(WaitForPid: TPid); overload;
-  end;
-
-  constructor TWaitForPidThread.Create(WaitForPid: TPid);
-  begin
-    inherited Create(True);
-    FPID := WaitForPid;
-    FreeOnTerminate := True;
-  end;
-
-  procedure TWaitForPidThread.Execute;
-  begin
-    while (FpWaitPid(FPID, nil, 0) = -1) and (fpgeterrno() = ESysEINTR) do;
-  end;
+  Another method is to periodically do a cleanup, for example from OnIdle
+  or OnTimer event. Remember PIDs of spawned child processes and when
+  cleaning call FpWaitpid(PID, nil, WNOHANG) on each PID. Downside is they
+  are not released immediately after the child process finish (may be relevant
+  if we want to display exit status to the user).
+}
+function WaitForPidThread(Parameter : Pointer): PtrInt;
+var
+  Status : cInt = 0;
+  PID: PtrInt absolute Parameter;
+begin
+  while (FpWaitPid(PID, @Status, 0) = -1) and (fpgeterrno() = ESysEINTR) do;
+  WriteLn('Process ', PID, ' finished, exit status ', Status);
+  Result:= Status; EndThread(Result);
+end;
 
 function ExecuteCommand(Command: String; Args: TDynamicStringArray; StartPath: String): Boolean;
 var
   pid : TPid;
-  WaitForPidThread: TWaitForPidThread;
 begin
   {$IFDEF DARWIN}
   // If we run application bundle (*.app) then
@@ -643,6 +677,9 @@ begin
 
   if pid = 0 then
     begin
+      { Set the close-on-exec flag to all }
+      FileCloseOnExecAll;
+
       { Set child current directory }
       if Length(StartPath) > 0 then fpChdir(StartPath);
 
@@ -655,12 +692,13 @@ begin
     end
   else if pid = -1 then         { Fork failed }
     begin
-      raise Exception.Create('Fork failed: ' + Command);
+      WriteLn('Fork failed: ' + Command, LineEnding, SysErrorMessage(fpgeterrno));
     end
   else if pid > 0 then          { Parent }
     begin
-      WaitForPidThread := TWaitForPidThread.Create(pid);
-      WaitForPidThread.Start;
+      {$PUSH}{$WARNINGS OFF}{$HINTS OFF}
+      BeginThread(@WaitForPidThread, Pointer(PtrInt(pid)));
+      {$POP}
     end;
 
   Result := (pid > 0);

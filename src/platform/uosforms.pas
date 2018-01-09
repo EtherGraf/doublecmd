@@ -3,7 +3,7 @@
     -------------------------------------------------------------------------
     This unit contains platform depended functions.
 
-    Copyright (C) 2006-2016 Alexander Koblov (alexx2000@mail.ru)
+    Copyright (C) 2006-2017 Alexander Koblov (alexx2000@mail.ru)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -128,15 +128,16 @@ uses
   {$IF DEFINED(MSWINDOWS)}
   , ComObj, fMain, DCOSUtils, uOSUtils, uFileSystemFileSource
   , uTotalCommander, FileUtil, Windows, ShlObj, uShlObjAdditional
-  , uWinNetFileSource, uVfsModule, uLng, uMyWindows
-  , uThumbnailProvider, uFileSourceUtil, Dialogs
+  , uWinNetFileSource, uVfsModule, uLng, uMyWindows, DCStrUtils
+  , uThumbnailProvider, uDCReadSVG, uFileSourceUtil, Dialogs, Clipbrd
   {$ENDIF}
   {$IFDEF UNIX}
   , BaseUnix, fFileProperties, uJpegThumb
     {$IF NOT DEFINED(DARWIN)}
     , uDCReadSVG, uMagickWand, uGio, uGioFileSource, uVfsModule, uVideoThumb
+    , uDCReadWebP
     {$ELSE}
-    , MacOSAll, uQuickLook
+    , MacOSAll, fMain, uQuickLook, uMyDarwin, uShowMsg, uLng
     {$ENDIF}
     {$IF NOT DEFINED(DARWIN)}
     , fOpenWith, uKde
@@ -335,6 +336,7 @@ begin
         if HandleAllocated then RecreateWnd(Self);
         Show;
         try
+          EnableWindow(Handle, True);
           // Activate must happen after show
           Perform(CM_ACTIVATE, 0, 0);
           TWSCustomFormClass(WidgetSetClass).ShowModal(Self);
@@ -419,6 +421,32 @@ begin
     end;
   end;
 end;
+
+procedure CopyNetNamesToClip(Self, Sender: TObject);
+var
+  I: Integer;
+  sl: TStringList = nil;
+  SelectedFiles: TFiles = nil;
+begin
+  SelectedFiles := frmMain.ActiveFrame.CloneSelectedOrActiveFiles;
+  try
+    if SelectedFiles.Count > 0 then
+    begin
+      sl := TStringList.Create;
+      for I := 0 to SelectedFiles.Count - 1 do
+      begin
+        sl.Add(mbGetRemoteFileName(SelectedFiles[I].FullPath));
+      end;
+
+      Clipboard.Clear; // Prevent multiple formats in Clipboard (specially synedit)
+      Clipboard.AsText := TrimRightLineEnding(sl.Text, sl.TextLineBreakStyle);
+    end;
+
+  finally
+    FreeAndNil(sl);
+    FreeAndNil(SelectedFiles);
+  end;
+end;
 {$ENDIF}
 
 {$IF DEFINED(LCLGTK2) or (DEFINED(LCLQT) and not DEFINED(DARWIN))}
@@ -442,6 +470,18 @@ begin
   end;
 end;
 {$ENDIF}
+
+{$ENDIF}
+
+{$IF DEFINED(DARWIN)}
+
+procedure MenuHandler(Self, Sender: TObject);
+var
+  Address: String = '';
+begin
+  if ShowInputQuery(Application.Title, rsMsgURL, False, Address) then
+    MountNetworkDrive(Address);
+end;
 
 {$ENDIF}
 
@@ -485,12 +525,25 @@ begin
     MenuItem.Tag:= 1;
     MenuItem.OnClick:= TNotifyEvent(Handler);
     mnuNetwork.Add(MenuItem);
+
+    MenuItem:= TMenuItem.Create(mnuMain);
+    MenuItem.Caption:= '-';
+    mnuNetwork.Add(MenuItem);
+
+    MenuItem:= TMenuItem.Create(mnuMain);
+    MenuItem.Caption:= rsMnuCopyNetNamesToClip;
+    Handler.Code:= @CopyNetNamesToClip;
+    MenuItem.OnClick:= TNotifyEvent(Handler);
+    mnuNetwork.Add(MenuItem);
   end;
 end;
 {$ELSE}
-{$IF DEFINED(LCLQT) or DEFINED(LCLGTK2)}
+{$IF DEFINED(LCLQT) or DEFINED(LCLGTK2) or DEFINED(DARWIN)}
 var
   Handler: TMethod;
+{$ENDIF}
+{$IF DEFINED(DARWIN)}
+  MenuItem: TMenuItem;
 {$ENDIF}
 begin
   if fpGetUID = 0 then // if run under root
@@ -510,6 +563,26 @@ begin
   Handler.Code:= @ScreenFormEvent;
   ScreenFormEvent(MainForm, MainForm, MainForm);
   Screen.AddHandlerFormAdded(TScreenFormEvent(Handler), True);
+  {$ENDIF}
+
+  {$IF DEFINED(DARWIN)}
+  if HasMountURL then
+  begin
+    with frmMain do
+    begin
+      Handler.Code:= @MenuHandler;
+      Handler.Data:= MainForm;
+
+      MenuItem:= TMenuItem.Create(mnuMain);
+      MenuItem.Caption:= '-';
+      mnuNetwork.Add(MenuItem);
+
+      MenuItem:= TMenuItem.Create(mnuMain);
+      MenuItem.Caption:= rsMnuMapNetworkDrive;
+      MenuItem.OnClick:= TNotifyEvent(Handler);
+      mnuNetwork.Add(MenuItem);
+    end;
+  end;
   {$ENDIF}
 end;
 {$ENDIF}

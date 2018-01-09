@@ -21,6 +21,7 @@ type
 
     procedure FillAndCount(Files: TFiles; CountDirs: Boolean; ExcludeRootDir: Boolean;
                            out NewFiles: TFiles; out FilesCount: Int64; out FilesSize: Int64);
+    function FillSingleFile(const FullPath: String; out aFile: TFile): Boolean;
     function WfxCopyMove(sSourceFile, sTargetFile: String; Flags: LongInt;
                          RemoteInfo: PRemoteInfo; Internal, CopyMoveIn: Boolean): LongInt;
 
@@ -79,11 +80,13 @@ type
 
   protected
     function GetSupportedFileProperties: TFilePropertiesTypes; override;
+    function GetRetrievableFileProperties: TFilePropertiesTypes; override;
     function GetCurrentAddress: String; override;
     procedure OperationFinished(Operation: TFileSourceOperation); override;
   public
     procedure FillAndCount(Files: TFiles; CountDirs: Boolean; ExcludeRootDir: Boolean;
                            out NewFiles: TFiles; out FilesCount: Int64; out FilesSize: Int64);
+    function FillSingleFile(const FullPath: String; out aFile: TFile): Boolean;
     function WfxCopyMove(sSourceFile, sTargetFile: String; Flags: LongInt;
                          RemoteInfo: PRemoteInfo; Internal, CopyMoveIn: Boolean): LongInt;
   public
@@ -93,6 +96,8 @@ type
 
     class function CreateFile(const APath: String): TFile; override;
     class function CreateFile(const APath: String; FindData: TWfxFindData): TFile; overload;
+
+    procedure RetrieveProperties(AFile: TFile; PropertiesToSet: TFilePropertiesTypes; AVariantProperties: array of String); override;
 
     // Retrieve operations permitted on the source.  = capabilities?
     function GetOperationsTypes: TFileSourceOperationTypes; override;
@@ -117,6 +122,7 @@ type
     function CreateExecuteOperation(var ExecutableFile: TFile; BasePath, Verb: String): TFileSourceOperation; override;
     function CreateSetFilePropertyOperation(var theTargetFiles: TFiles;
                                             var theNewProperties: TFileProperties): TFileSourceOperation; override;
+    function CreateCalcStatisticsOperation(var theFiles: TFiles): TFileSourceOperation; override;
 
     function GetLocalName(var aFile: TFile): Boolean; override;
     function CreateDirectory(const Path: String): Boolean; override;
@@ -161,7 +167,7 @@ uses
   uWfxPluginCopyInOperation, uWfxPluginCopyOutOperation,  uWfxPluginMoveOperation, uVfsModule,
   uWfxPluginExecuteOperation, uWfxPluginListOperation, uWfxPluginCreateDirectoryOperation,
   uWfxPluginDeleteOperation, uWfxPluginSetFilePropertyOperation, uWfxPluginCopyOperation,
-  DCConvertEncoding;
+  DCConvertEncoding, uWfxPluginCalcStatisticsOperation, uFileFunctions;
 
 const
   connCopyIn      = 0;
@@ -587,11 +593,31 @@ begin
   end;
 end;
 
+procedure TWfxPluginFileSource.RetrieveProperties(AFile: TFile;
+  PropertiesToSet: TFilePropertiesTypes; AVariantProperties: array of String);
+var
+  AIndex: Integer;
+  AProp: TFilePropertyType;
+  AVariant: TFileVariantProperty;
+begin
+  PropertiesToSet:= PropertiesToSet * fpVariantAll;
+  for AProp in PropertiesToSet do
+  begin
+    AIndex:= Ord(AProp) - Ord(fpVariant);
+    if (AIndex >= 0) and (AIndex <= High(AVariantProperties)) then
+    begin
+      AVariant:= TFileVariantProperty.Create(AVariantProperties[AIndex]);
+      AVariant.Value:= GetVariantFileProperty(AVariantProperties[AIndex], AFile, Self);
+      AFile.Properties[AProp]:= AVariant;
+    end;
+  end;
+end;
+
 function TWfxPluginFileSource.GetOperationsTypes: TFileSourceOperationTypes;
 begin
   with WfxModule do
   begin
-    Result := [fsoList]; // supports by any plugin
+    Result := [fsoList, fsoCalcStatistics]; // supports by any plugin
     if Assigned(FsPutFile) or Assigned(FsPutFileW) then
       Result:= Result + [fsoCopyIn];
     if Assigned(FsGetFile) or Assigned(FsGetFileW) then
@@ -634,6 +660,12 @@ begin
   Result := inherited GetSupportedFileProperties
           + [fpSize, fpAttributes, fpModificationTime, fpCreationTime,
              fpLastAccessTime, fpLink];
+end;
+
+function TWfxPluginFileSource.GetRetrievableFileProperties: TFilePropertiesTypes;
+begin
+  Result:= inherited GetRetrievableFileProperties;
+  if WfxModule.ContentPlugin then Result += fpVariantAll;
 end;
 
 function TWfxPluginFileSource.GetCurrentAddress: String;
@@ -722,6 +754,34 @@ begin
           Inc(FilesSize, aFile.Size); // in first level we know file size -> use it
         end;
     end;
+  end;
+end;
+
+function TWfxPluginFileSource.FillSingleFile(const FullPath: String; out aFile: TFile): Boolean;
+var
+  FilePath, ExpectedFileName: String;
+  FindData: TWfxFindData;
+  Handle: THandle;
+begin
+  Result := False;
+  aFile := nil;
+  FilePath := ExtractFilePath(FullPath);
+  ExpectedFileName := ExtractFileName(FullPath);
+  with FWfxModule do
+  begin
+    Handle := WfxFindFirst(FilePath, FindData);
+    if Handle = wfxInvalidHandle then Exit;
+
+    repeat
+      if (FindData.FileName = ExpectedFileName) then
+      begin
+        aFile := TWfxPluginFileSource.CreateFile(FilePath, FindData);
+        Result := True;
+        Break;
+      end;
+    until not WfxFindNext(Handle, FindData);
+
+    FsFindClose(Handle);
   end;
 end;
 
@@ -853,6 +913,14 @@ begin
                 TargetFileSource,
                 theTargetFiles,
                 theNewProperties);
+end;
+
+function TWfxPluginFileSource.CreateCalcStatisticsOperation(var theFiles: TFiles): TFileSourceOperation;
+var
+  TargetFileSource: IFileSource;
+begin
+  TargetFileSource := Self;
+  Result := TWfxPluginCalcStatisticsOperation.Create(TargetFileSource, theFiles);
 end;
 
 function TWfxPluginFileSource.GetLocalName(var aFile: TFile): Boolean;

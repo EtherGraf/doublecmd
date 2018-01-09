@@ -25,8 +25,10 @@ uses
    ActiveX;
 
 const
+   { The operation was canceled by the user }
+   HRESULT_ERROR_CANCELLED = HRESULT($800704C7);
    { User canceled the current action }
-   COPYENGINE_E_USER_CANCELLED: HRESULT = HRESULT($80270000);
+   COPYENGINE_E_USER_CANCELLED = HRESULT($80270000);
 
 const
   IID_IImageList: TGUID = '{46EB5926-582E-4017-9FDF-E8998DAA0950}';
@@ -65,6 +67,15 @@ type
       function GetOverlayIconIndex(pidl : PItemIDList; var IconIndex : Integer) : HResult; stdcall;
    end; { IShellIconOverlay }
 
+type
+  TSHStockIconInfo = record
+    cbSize: DWORD;
+    hIcon: HICON;
+    iSysImageIndex: Int32;
+    iIcon: Int32;
+    szPath: array[0..MAX_PATH-1] of WCHAR;
+  end;
+
 function SHGetSystemImageList(iImageList: Integer): HIMAGELIST;
 function SHChangeIconDialog(hOwner: HWND; var FileName: String; var IconIndex: Integer): Boolean;
 function SHGetOverlayIconIndex(const sFilePath, sFileName: String): Integer;
@@ -83,7 +94,7 @@ procedure OleCheckUTF8(Result: HResult);
 implementation
 
 uses
-  SysUtils, ShellApi, JwaShlGuid, ComObj, LazUTF8;
+  SysUtils, ShellApi, JwaShlGuid, ComObj, LazUTF8, DCOSUtils;
 
 function SHGetImageListFallback(iImageList: Integer; const riid: TGUID; var ImageList: HIMAGELIST): HRESULT; stdcall;
 var
@@ -262,7 +273,7 @@ end;
 
 procedure OleErrorUTF8(ErrorCode: HResult);
 begin
-  raise EOleError.Create(SysToUTF8(SysErrorMessage(ErrorCode)));
+  raise EOleError.Create(mbSysErrorMessage(ErrorCode));
 end;
 
 procedure OleCheckUTF8(Result: HResult);

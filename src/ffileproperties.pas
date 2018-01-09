@@ -30,9 +30,10 @@ unit fFileProperties;
 interface
 
 uses
-  LazUtf8,LResources, SysUtils, Classes, Graphics, Forms, StdCtrls, Buttons, ComCtrls,
-  Dialogs, Controls, ExtCtrls, DCBasicTypes, uFile, uFileProperty, uFileSource,
-  uFileSourceOperation, uFileSourceCalcStatisticsOperation;
+  LResources, SysUtils, Classes, Graphics, Forms, StdCtrls, Buttons, ComCtrls,
+  Dialogs, Controls, ExtCtrls, Grids, DividerBevel, KASCDEdit, DCBasicTypes,
+  uFile, uFileProperty, uFileSource, uFileSourceOperation,
+  uFileSourceCalcStatisticsOperation, uExifReader;
 
 type
 
@@ -57,17 +58,21 @@ type
     cbWriteOwner: TCheckBox;
     cbxGroups: TComboBox;
     cbxUsers: TComboBox;
+    chkExecutable: TCheckBox;
+    DividerBevel1: TDividerBevel;
+    DividerBevel2: TDividerBevel;
     edtOctal: TEdit;
     gbOwner: TGroupBox;
+    lblExecutable: TLabel;
     lblFileName: TLabel;
-    lblFileNameStr: TLabel;
-    lblFolder: TLabel;
+    imgFileIcon: TImage;
+    lblFolder: TKASCDEdit;
     lblFolderStr: TLabel;
-    lblLastAccess: TLabel;
+    lblLastAccess: TKASCDEdit;
     lblLastAccessStr: TLabel;
-    lblLastModif: TLabel;
+    lblLastModif: TKASCDEdit;
     lblLastModifStr: TLabel;
-    lblLastStChange: TLabel;
+    lblLastStChange: TKASCDEdit;
     lblLastStChangeStr: TLabel;
     lblOctal: TLabel;
     lblAttrBitsStr: TLabel;
@@ -82,25 +87,29 @@ type
     lblOwnerStr: TLabel;
 
     lblRead: TLabel;
-    lblSize: TLabel;
-    lblContains: TLabel;
+    lblSize: TKASCDEdit;
+    lblContains: TKASCDEdit;
     lblSizeStr: TLabel;
     lblContainsStr: TLabel;
-    lblSymlink: TLabel;
+    lblSymlink: TKASCDEdit;
     lblAttrTextStr: TLabel;
     lblSymlinkStr: TLabel;
-    lblType: TLabel;
+    lblType: TKASCDEdit;
     lblTypeStr: TLabel;
     lblWrite: TLabel;
     pnlCaption: TPanel;
     pnlData: TPanel;
+    pnlIcon: TPanel;
     pcPageControl: TPageControl;
+    sgImage: TStringGrid;
+    tsPlugins: TTabSheet;
     tmUpdateFolderSize: TTimer;
     tsProperties: TTabSheet;
     tsAttributes: TTabSheet;
     procedure btnSetPropertiesToAllFilesClick(Sender: TObject);
     procedure btnCloseClick(Sender: TObject);
     procedure cbChangeModeClick(Sender: TObject);
+    procedure chkExecutableChange(Sender: TObject);
     procedure edtOctalKeyPress(Sender: TObject; var Key: char);
     procedure edtOctalKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormCreate(Sender: TObject);
@@ -115,14 +124,17 @@ type
     iCurrent: Integer;
     FFileSource: IFileSource;
     FFiles: TFiles;
+    FExif: TExifReader;
     FPropertyFormatter: IFilePropertyFormatter;
     FFileSourceCalcStatisticsOperation: TFileSourceCalcStatisticsOperation;
     ChangeTriggersEnabled: Boolean;
+    FFileType,
     OriginalAttr: TFileAttrs;
     OriginalUser, OriginalGroup: String;
     FChangedProperties: Boolean;
 
     function ShowError(const MessageFmt: String): TModalResult;
+    procedure ShowExecutable;
     procedure ShowPermissions(Mode: TFileAttrs);
     function ChangeProperties: Boolean;
     function CheckIfChangedProperties: Boolean;
@@ -131,6 +143,7 @@ type
     procedure AllowChange(Allow: Boolean);
     procedure StartCalcFolderSize;
     procedure StopCalcFolderSize;
+    procedure ShowPlugin(iIndex:Integer);
   public
     constructor Create(AOwner: TComponent; aFileSource: IFileSource; theFiles: TFiles); reintroduce;
     destructor Destroy; override;
@@ -144,10 +157,10 @@ implementation
 {$R *.lfm}
 
 uses
-  LCLType, FileUtil, StrUtils, uLng, BaseUnix, uUsersGroups, uDCUtils, uOSUtils,
-  uDefaultFilePropertyFormatter, uMyUnix, DCFileAttributes,
-  uFileSourceOperationTypes, uFileSystemFileSource, uOperationsManager,
-  uFileSourceOperationOptions, uKeyboard, DCStrUtils, DCUnix;
+  LCLType, LazUTF8, StrUtils, uLng, BaseUnix, uUsersGroups, uDCUtils, DCOSUtils,
+  uDefaultFilePropertyFormatter, uMyUnix, DCFileAttributes, uGlobs, uWdxModule,
+  uFileSourceOperationTypes, uFileSystemFileSource, uOperationsManager, WdxPlugin,
+  uFileSourceOperationOptions, uKeyboard, DCStrUtils, DCUnix, uPixMapManager;
 
 procedure ShowFileProperties(aFileSource: IFileSource; const aFiles: TFiles);
 begin
@@ -164,16 +177,21 @@ end;
 
 constructor TfrmFileProperties.Create(AOwner: TComponent; aFileSource: IFileSource; theFiles: TFiles);
 begin
+  FExif:= TExifReader.Create;
   FFileSource:= aFileSource;
   FFiles := theFiles;
   FPropertyFormatter := MaxDetailsFilePropertyFormatter;
   ChangeTriggersEnabled := True;
 
   inherited Create(AOwner);
+
+  imgFileIcon.Width:= gIconsSize;
+  imgFileIcon.Height:= gIconsSize;
 end;
 
 destructor TfrmFileProperties.Destroy;
 begin
+  FExif.Free;
   StopCalcFolderSize;
   inherited Destroy;
   FPropertyFormatter := nil; // free interface
@@ -205,12 +223,41 @@ begin
 end;
 
 procedure TfrmFileProperties.cbChangeModeClick(Sender: TObject);
+var
+  AMode: TFileAttrs;
 begin
   if ChangeTriggersEnabled then
   begin
     ChangeTriggersEnabled := False;
-    edtOctal.Text:= DecToOct(GetModeFromForm);
+    ShowExecutable;
+    AMode:= GetModeFromForm;
+    edtOctal.Text:= DecToOct(AMode);
+    lblAttrText.Caption := FormatUnixAttributes(FFileType or AMode);
     ChangeTriggersEnabled := True;
+  end;
+end;
+
+procedure TfrmFileProperties.chkExecutableChange(Sender: TObject);
+begin
+  if chkExecutable.Tag = 0 then
+  begin
+    chkExecutable.Tag:= 1;
+    case chkExecutable.State of
+      cbChecked,
+      cbUnchecked:
+        begin
+          cbExecOwner.Checked:= chkExecutable.Checked;
+          cbExecGroup.Checked:= chkExecutable.Checked;
+          cbExecOther.Checked:= chkExecutable.Checked;
+        end;
+      cbGrayed:
+        begin
+          cbExecOwner.Checked:= ((OriginalAttr and S_IXUSR) = S_IXUSR);
+          cbExecGroup.Checked:= ((OriginalAttr and S_IXGRP) = S_IXGRP);
+          cbExecOther.Checked:= ((OriginalAttr and S_IXOTH) = S_IXOTH);
+        end;
+    end;
+   chkExecutable.Tag:= 0;
   end;
 end;
 
@@ -222,11 +269,15 @@ end;
 
 procedure TfrmFileProperties.edtOctalKeyUp(Sender: TObject; var Key: Word;
   Shift: TShiftState);
+var
+  AMode: TFileAttrs;
 begin
   if ChangeTriggersEnabled then
   begin
     ChangeTriggersEnabled := False;
-    ShowPermissions(OctToDec(edtOctal.Text));
+    AMode:= OctToDec(edtOctal.Text);
+    lblAttrText.Caption := FormatUnixAttributes(FFileType or AMode);
+    ShowPermissions(AMode);
     ChangeTriggersEnabled := True;
   end;
 end;
@@ -258,6 +309,8 @@ begin
   cbSuid.Checked:= ((Mode AND S_ISUID) = S_ISUID);
   cbSgid.Checked:= ((Mode AND S_ISGID) = S_ISGID);
   cbSticky.Checked:= ((Mode AND S_ISVTX) = S_ISVTX);
+
+  ShowExecutable;
 end;
 
 function TfrmFileProperties.ChangeProperties: Boolean;
@@ -290,14 +343,22 @@ end;
 
 procedure TfrmFileProperties.ShowFile(iIndex:Integer);
 var
-  sb: BaseUnix.Stat;
+  Idx: PtrInt;
   iMyUID: Cardinal;
+  hasSize: Boolean;
+  ABitmap: TBitmap;
+  sb: BaseUnix.Stat;
   Attrs: TFileAttrs;
   isFileSystem: Boolean;
-  hasSize: Boolean;
 begin
   StopCalcFolderSize; // Stop previous calculate folder size operation
   isFileSystem := FFileSource.IsClass(TFileSystemFileSource);
+
+  Idx := PixMapManager.GetIconByFile(FFiles[iIndex], isFileSystem, True, sim_all_and_exe, True);
+  if Idx < 0 then Idx:= PixMapManager.GetDefaultIcon(FFiles[iIndex]);
+  ABitmap:= PixMapManager.GetBitmap(Idx);
+  imgFileIcon.Picture.Bitmap := ABitmap;
+  ABitmap.Free;
 
   with FFiles[iIndex] do
   begin
@@ -306,7 +367,7 @@ begin
     lblFolder.Caption:= Path;
 
     // Size
-    hasSize := (fpSize in SupportedProperties);
+    hasSize := (fpSize in SupportedProperties) and (not IsLinkToDirectory);
     if hasSize then
       begin
         if IsDirectory and (fsoCalcStatistics in FFileSource.GetOperationsTypes) then
@@ -367,11 +428,14 @@ begin
     if fpAttributes in SupportedProperties then
     begin
       Attrs := AttributesProperty.Value;
+      FFileType:= Attrs and S_IFMT;
       OriginalAttr := Attrs and $0FFF;
       //if Attrs is TUnixFileAttributesProperty
       //if Attrs is TNtfsFileAttributesProperty
 
       ShowPermissions(Attrs);
+      lblExecutable.Visible:= FPS_ISREG(Attrs);
+      chkExecutable.Visible:= lblExecutable.Visible;
       edtOctal.Text:= DecToOct(GetModeFromForm);
       lblAttrText.Caption := Properties[fpAttributes].Format(DefaultFilePropertyFormatter);
 
@@ -415,14 +479,17 @@ begin
     end;
   end;
 
+  tsPlugins.Visible:= isFileSystem;
+  if isFileSystem then ShowPlugin(iIndex);
+
   // Only allow changes for file system file.
   AllowChange(isFileSystem);
 end;
 
 procedure TfrmFileProperties.FormCreate(Sender: TObject);
 begin
-  lblFileNameStr.Font.Style:=[fsBold];
-  lblFileName.Font.Style:=[fsBold];
+  InitPropStorage(Self);
+  lblFileName.Font.Style:= [fsBold];
 
   AllowChange(False);
   ShowFile(0);
@@ -496,6 +563,21 @@ begin
                       LineEnding + SysErrorMessageUTF8(fpgetErrNo), mtError, mbOKCancel, 0);
 end;
 
+procedure TfrmFileProperties.ShowExecutable;
+begin
+  if chkExecutable.Tag = 0 then
+  begin
+    if cbExecOwner.Checked and cbExecGroup.Checked and cbExecOther.Checked then
+      chkExecutable.State:= cbChecked
+    else if not (cbExecOwner.Checked or cbExecGroup.Checked or cbExecOther.Checked) then
+      chkExecutable.State:= cbUnchecked
+    else begin
+      chkExecutable.AllowGrayed:= True;
+      chkExecutable.State:= cbGrayed;
+    end;
+  end;
+end;
+
 procedure TfrmFileProperties.AllowChange(Allow: Boolean);
 begin
   btnSetPropertiesToAllFiles.Enabled := Allow;
@@ -527,6 +609,87 @@ begin
       FFileSourceCalcStatisticsOperation.Stop;
     end;
   FFileSourceCalcStatisticsOperation:= nil;
+end;
+
+procedure TfrmFileProperties.ShowPlugin(iIndex: Integer);
+var
+  I, J: Integer;
+  Value: String;
+  FileName: String;
+  Index: Integer = 0;
+  WdxModule: TWdxModule;
+begin
+  FileName:= FFiles[iIndex].FullPath;
+  Value:= LowerCase(FFiles[iIndex].Extension);
+  tsPlugins.TabVisible:= Contains(['jpg', 'jpeg'], Value) and FExif.LoadFromFile(FileName);
+  if tsPlugins.TabVisible then
+  begin
+    sgImage.RowCount:= 6;
+    if FExif.ImageWidth <> 0 then
+    begin
+     Inc(Index);
+     sgImage.Cells[0, Index]:= rsImageWidth;
+     sgImage.Cells[1, Index]:= IntToStr(FExif.ImageWidth);
+    end;
+    if FExif.ImageHeight <> 0 then
+    begin
+     Inc(Index);
+     sgImage.Cells[0, Index]:= rsImageHeight;
+     sgImage.Cells[1, Index]:= IntToStr(FExif.ImageHeight);
+    end;
+    if Length(FExif.DateTimeOriginal) > 0 then
+    begin
+      Inc(Index);
+      sgImage.Cells[0, Index]:= rsDateTimeOriginal;
+      sgImage.Cells[1, Index]:= FExif.DateTimeOriginal;
+    end;
+    if Length(FExif.Make) > 0 then
+    begin
+      Inc(Index);
+      sgImage.Cells[0, Index]:= rsMake;
+      sgImage.Cells[1, Index]:= FExif.Make;
+    end;
+    if Length(FExif.Model) > 0 then
+    begin
+      Inc(Index);
+      sgImage.Cells[0, Index]:= rsModel;
+      sgImage.Cells[1, Index]:= FExif.Model;
+    end;
+    tsPlugins.TabVisible:= Index > 0;
+    sgImage.RowCount:= Index + 1;
+  end
+  else begin
+    for Index:= 0 to gWdxPlugins.Count - 1 do
+    begin
+      WdxModule:= gWdxPlugins.GetWdxModule(Index);
+      if (Length(WdxModule.DetectStr) > 0) and WdxModule.FileParamVSDetectStr(FFiles[iIndex]) then
+      begin
+        if not gWdxPlugins.IsLoaded(Index) then
+        begin
+          if not gWdxPlugins.LoadModule(Index) then
+            Continue;
+        end;
+        J:= 0;
+        sgImage.RowCount:= WdxModule.FieldList.Count + 1;
+        for I:= 0 to WdxModule.FieldList.Count - 1 do
+        begin
+          if not (TWdxField(WdxModule.FieldList.Objects[I]).FType in [ft_fulltext, ft_fulltextw]) then
+          begin
+            Value:= WdxModule.CallContentGetValue(FileName, I, 0, CONTENT_DELAYIFSLOW);
+            if (Length(Value) > 0) then
+            begin
+              Inc(J);
+              sgImage.Cells[1, J]:= Value;
+              sgImage.Cells[0, J]:= WdxModule.FieldList[I];
+            end;
+          end;
+        end;
+        sgImage.RowCount:= J + 1;
+        tsPlugins.TabVisible:= J > 0;
+        if tsPlugins.TabVisible then Break;
+      end;
+    end;
+  end;
 end;
 
 end.

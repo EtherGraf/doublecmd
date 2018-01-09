@@ -5,15 +5,18 @@ unit uFileSystemSetFilePropertyOperation;
 interface
 
 uses
-  LazUtf8,Classes, SysUtils,
+  Classes, SysUtils, LazUTF8,
   uFileSourceSetFilePropertyOperation,
   uFileSource,
   uFileSourceOperationOptions,
+  uFileSourceOperationUI,
   uFile,
   uFileProperty,
   uDescr;
 
 type
+
+  { TFileSystemSetFilePropertyOperation }
 
   TFileSystemSetFilePropertyOperation = class(TFileSourceSetFilePropertyOperation)
 
@@ -23,8 +26,10 @@ type
     FDescription: TDescription;
     // Options.
     FSymLinkOption: TFileSourceOperationOptionSymLink;
+    FFileExistsOption: TFileSourceOperationUIResponse;
+    FDirExistsOption: TFileSourceOperationUIResponse;
 
-    function RenameFile(const OldName: String; NewName: String): TSetFilePropertyResult;
+    function RenameFile(aFile: TFile; NewName: String): TSetFilePropertyResult;
 
   protected
     function SetNewProperty(aFile: TFile; aTemplateProperty: TFileProperty): TSetFilePropertyResult; override;
@@ -46,11 +51,11 @@ implementation
 
 uses
   uGlobs, uLng, DCDateTimeUtils, uFileSystemUtil,
-  uFileSourceOperationUI, DCOSUtils, DCStrUtils, DCBasicTypes
+  DCOSUtils, DCStrUtils, DCBasicTypes
   {$IF DEFINED(MSWINDOWS)}
-    , Windows, ShellAPI, LCLProc
+    , Windows, ShellAPI
   {$ELSEIF DEFINED(UNIX)}
-    , BaseUnix, FileUtil
+    , BaseUnix, DCUnix
   {$ENDIF}
   ;
 
@@ -65,6 +70,10 @@ begin
 
   // Assign after calling inherited constructor.
   FSupportedProperties := [fpName,
+  {$IF DEFINED(UNIX)}
+  // Set owner/group before MODE because it clears SUID bit.
+                           fpOwner,
+  {$ENDIF}
                            fpAttributes,
                            fpModificationTime,
                            fpCreationTime,
@@ -131,7 +140,7 @@ begin
     else
       aTemplateFile := nil;
 
-    SetProperties(aFile, aTemplateFile);
+    SetProperties(CurrentFileIndex, aFile, aTemplateFile);
 
     with FStatistics do
     begin
@@ -158,7 +167,7 @@ begin
         if (aTemplateProperty as TFileNameProperty).Value <> aFile.Name then
         begin
           Result := RenameFile(
-            aFile.FullPath,
+            aFile,
             (aTemplateProperty as TFileNameProperty).Value);
 
           if (Result = sfprSuccess) and gProcessComments then
@@ -231,6 +240,17 @@ begin
         else
           Result := sfprSkipped;
 
+      {$IF DEFINED(UNIX)}
+      fpOwner:
+        begin
+          if fplchown(aFile.FullPath, (aTemplateProperty as TFileOwnerProperty).Owner,
+                      (aTemplateProperty as TFileOwnerProperty).Group) <> 0 then
+          begin
+            Result := sfprError;;
+          end;
+        end
+      {$ENDIF}
+
       else
         raise Exception.Create('Trying to set unsupported property');
     end;
@@ -262,19 +282,44 @@ begin
   end;
 end;
 
-function TFileSystemSetFilePropertyOperation.RenameFile(const OldName: String; NewName: String): TSetFilePropertyResult;
+function TFileSystemSetFilePropertyOperation.RenameFile(aFile: TFile; NewName: String): TSetFilePropertyResult;
+var
+  OldName: String;
 
   function AskIfOverwrite(Attrs: TFileAttrs): TFileSourceOperationUIResponse;
   var
     sQuestion: String;
   begin
     if DCOSUtils.FPS_ISDIR(Attrs) then
-      sQuestion := rsMsgFolderExistsRwrt
-    else
-      sQuestion := rsMsgFileExistsRwrt;
-
-    Result := AskQuestion(Format(sQuestion, [NewName]), '',
-              [fsourYes, fsourNo, fsourAbort], fsourYes, fsourNo);
+    begin
+      if FDirExistsOption <> fsourInvalid then Exit(FDirExistsOption);
+      Result := AskQuestion(Format(rsMsgErrDirExists, [NewName]), '',
+                 [fsourSkip, fsourSkipAll, fsourAbort], fsourSkip, fsourAbort);
+      if Result = fsourSkipAll then
+      begin
+        FDirExistsOption:= fsourSkip;
+        Result:= FDirExistsOption;
+      end;
+    end
+    else begin
+      if FFileExistsOption <> fsourInvalid then Exit(FFileExistsOption);
+      sQuestion:= FileExistsMessage(NewName, aFile.FullPath, aFile.Size, aFile.ModificationTime);
+      Result := AskQuestion(sQuestion, '',
+                  [fsourOverwrite, fsourSkip, fsourAbort, fsourOverwriteAll,
+                   fsourSkipAll], fsourOverwrite, fsourAbort);
+      case Result of
+      fsourOverwriteAll:
+        begin
+          Result:= fsourOverwrite;
+          FFileExistsOption:= Result;
+        end;
+      fsourSkipAll:
+        begin
+          Result:= fsourSkip;
+          FFileExistsOption:= Result;
+        end;
+      end;
+    end;
   end;
 
   {$IFDEF MSWINDOWS}
@@ -309,6 +354,8 @@ var
   NewFileAttrs: TFileAttrs;
 {$ENDIF}
 begin
+  OldName:= aFile.FullPath;
+
   if FileSource.GetPathType(NewName) <> ptAbsolute then
     NewName := ExtractFilePath(OldName) + NewName;
 
@@ -376,8 +423,8 @@ begin
       // Both names are hard links to the same file.
 
       case AskIfOverwrite(NewFileStat.st_mode) of
-        fsourYes: ; // continue
-        fsourNo:
+        fsourOverwrite: ; // continue
+        fsourSkip:
           Exit(sfprSkipped);
         fsourAbort:
           RaiseAbortOperation;
@@ -394,8 +441,8 @@ begin
     else
     begin
       case AskIfOverwrite(NewFileStat.st_mode) of
-        fsourYes: ; // continue
-        fsourNo:
+        fsourOverwrite: ; // continue
+        fsourSkip:
           Exit(sfprSkipped);
         fsourAbort:
           RaiseAbortOperation;
@@ -410,7 +457,8 @@ begin
 
 {$ELSE}
 
-  if gUseShellForFileOperations then
+  if gUseShellForFileOperations and (FFullFilesTree.Count = 1) and
+     (UTF8Length(OldName) < MAX_PATH - 1) and (UTF8Length(NewName) < MAX_PATH - 1) then
   begin
     if ShellRename then
       Result := sfprSuccess
@@ -426,8 +474,8 @@ begin
       if NewFileAttrs <> faInvalidAttributes then  // If target file exists.
       begin
         case AskIfOverwrite(NewFileAttrs) of
-          fsourYes: ; // continue
-          fsourNo:
+          fsourOverwrite: ; // continue
+          fsourSkip:
             Exit(sfprSkipped);
           fsourAbort:
             RaiseAbortOperation;

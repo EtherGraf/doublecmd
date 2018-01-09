@@ -75,7 +75,7 @@ function GetPluginBinaryType(const FileName: String): TBinaryType;
 implementation
 
 uses
-  Forms, Dialogs, DCOSUtils, DCStrUtils, DCClassesUtf8, uGlobs, uLng;
+  Forms, Dialogs, DCOSUtils, DCStrUtils, DCClassesUtf8, uGlobs, uLng, uDCUtils;
 
 procedure UpdatePlugins;
 var
@@ -90,6 +90,10 @@ begin
     gWCXPlugins.Add('zip', 735, Folder + 'zip' + PathDelim + 'zip.wcx')
   else
     gWCXPlugins.Flags[I]:= 735;
+
+  I:= gWCXPlugins.IndexOfName('jar');
+  if I < 0 then
+    gWCXPlugins.Add('jar', 990, Folder + 'zip' + PathDelim + 'zip.wcx');
 
   {$IF DEFINED(MSWINDOWS)}
   I:= gWCXPlugins.IndexOfName('7z');
@@ -157,9 +161,9 @@ begin
 
   I:= gWCXPlugins.IndexOfName('zipx');
   if I < 0 then
-    gWCXPlugins.Add('zipx', 212, Folder + 'zip' + PathDelim + 'zip.wcx')
+    gWCXPlugins.Add('zipx', 223, Folder + 'zip' + PathDelim + 'zip.wcx')
   else
-    gWCXPlugins.Flags[I]:= 212;
+    gWCXPlugins.Flags[I]:= 223;
   {$ENDIF}
 
   {$IF DEFINED(MSWINDOWS)}
@@ -279,6 +283,11 @@ begin
   if gWdxPlugins.IndexOfName('rpm_wdx') < 0 then
   begin
     gWdxPlugins.Add('rpm_wdx', Folder + 'rpm_wdx' + PathDelim + 'rpm_wdx.wdx', 'EXT="RPM"');
+  end;
+
+  if gWdxPlugins.IndexOfName('audioinfo') < 0 then
+  begin
+    gWdxPlugins.Add(GetCmdDirFromEnvVar(Folder) + 'audioinfo' + PathDelim + 'audioinfo.wdx');
   end;
 
   // Wfx plugins

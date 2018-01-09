@@ -3,12 +3,12 @@
     -------------------------------------------------------------------------
     This unit contains specific WINDOWS functions.
 
-    Copyright (C) 2006-2013  Koblov Alexander (Alexx2000@mail.ru)
+    Copyright (C) 2006-2017 Alexander Koblov (alexx2000@mail.ru)
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
+    This program is free software; you can redistribute it and/or
+    modify it under the terms of the GNU General Public License
+    as published by the Free Software Foundation; either version 2
+    of the License, or (at your option) any later version.
 
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -16,8 +16,7 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    along with this program. If not, see <http://www.gnu.org/licenses/>.
 }
 
 unit uMyWindows;
@@ -29,45 +28,21 @@ interface
 uses
   Graphics, Classes, SysUtils, JwaWinBase, Windows;
 
-type
-  tagMENUITEMINFOW = record
-    cbSize: UINT;
-    fMask: UINT;
-    fType: UINT;            // used if MIIM_TYPE (4.0) or MIIM_FTYPE (>4.0)
-    fState: UINT;           // used if MIIM_STATE
-    wID: UINT;              // used if MIIM_ID
-    hSubMenu: HMENU;        // used if MIIM_SUBMENU
-    hbmpChecked: HBITMAP;   // used if MIIM_CHECKMARKS
-    hbmpUnchecked: HBITMAP; // used if MIIM_CHECKMARKS
-    dwItemData: ULONG_PTR;  // used if MIIM_DATA
-    dwTypeData: LPWSTR;     // used if MIIM_TYPE (4.0) or MIIM_STRING (>4.0)
-    cch: UINT;              // used if MIIM_TYPE (4.0) or MIIM_STRING (>4.0)
-    hbmpItem: HBITMAP;      // used if MIIM_BITMAP
-  end;
-
-  MENUITEMINFOW = tagMENUITEMINFOW;
-  LPMENUITEMINFOW = ^MENUITEMINFOW;
-  LPCMENUITEMINFOW = ^MENUITEMINFOW;
-  TMenuItemInfoW = MENUITEMINFOW;
-  PMenuItemInfoW = LPMENUITEMINFOW;
-
-function InsertMenuItemW(hMenu: HMENU; uItem: UINT; fByPosition: BOOL;
-                         const lpmii: MENUITEMINFOW): BOOL; stdcall; external 'user32' name 'InsertMenuItemW';
-
-function GetMenuItemText(hMenu: HMENU; uItem: UINT; fByPosition: LongBool): WideString;
+function GetMenuItemText(hMenu: HMENU; uItem: UINT; fByPosition: LongBool): UnicodeString;
 function GetMenuItemType(hMenu: HMENU; uItem: UINT; fByPosition: LongBool): UINT;
 function InsertMenuItemEx(hMenu, SubMenu: HMENU; Caption: PWideChar; Position, ItemID,  ItemType : UINT; Bitmap:Graphics.TBitmap = nil): boolean;
+function RegReadKey(ARoot: HKEY; const APath, AName: UnicodeString; out AValue: UnicodeString): Boolean;
 {en
    Extracts volume GUID from a volume GUID path
 }
-function ExtractVolumeGUID(const VolumeName: WideString): WideString;
+function ExtractVolumeGUID(const VolumeName: UnicodeString): UnicodeString;
 {en
    Retrieves a volume GUID path for the volume that is associated with the specified
    volume mount point (drive letter, volume GUID path, or mounted folder)
    @param(Path The string that contains the path of a mounted folder or a drive letter)
    @returns(Volume GUID path)
 }
-function GetMountPointVolumeName(const Path: WideString): WideString;
+function GetMountPointVolumeName(const Path: UnicodeString): UnicodeString;
 {en
    Checks readiness of a drive
    @param(sDrv  String specifying the root directory of a file system volume)
@@ -111,7 +86,7 @@ function mbGetRemoteFileName(const sLocalName: String): String;
    @param(sShortPath A string to receive the short form of the path that sLongPath specifies)
    @returns(The function returns @true if successful, @false otherwise)
 }
-function mbGetShortPathName(const sLongPath: String; out sShortPath: AnsiString): Boolean;
+function mbGetShortPathName(const sLongPath: String; var sShortPath: AnsiString): Boolean;
 {en
    Retrieves owner of the file (user and group).
    Both user and group contain computer name.
@@ -136,11 +111,19 @@ function mbGetFileSystem(const sRootPath: String): String;
 }
 function mbGetCompressedFileSize(const FileName: String): Int64;
 {en
+   Retrieves the time the file was changed.
+}
+function mbGetFileChangeTime(const FileName: String; out ChangeTime: TFileTime): Boolean;
+{en
    This routine returns @true if the caller's
    process is a member of the Administrators local group.
    @returns(The function returns @true if caller has Administrators local group, @false otherwise)
 }
 function IsUserAdmin: LongBool;
+{en
+   This routine returns @true if the caller's process is running in the remote desktop session
+}
+function RemoteSession: Boolean;
 {en
    Extract file attributes from find data record.
    Removes reparse point attribute if a reparse point tag is not a name surrogate.
@@ -155,9 +138,10 @@ procedure FixCommandLineToUTF8;
 implementation
 
 uses
-  ShellAPI, MMSystem, JwaWinNetWk, LazUTF8, uShlObjAdditional;
+  ShellAPI, MMSystem, JwaWinNetWk, JwaWinUser, JwaNative, JwaVista, LazUTF8,
+  DCWindows, uShlObjAdditional;
 
-function GetMenuItemText(hMenu: HMENU; uItem: UINT; fByPosition: LongBool): WideString;
+function GetMenuItemText(hMenu: HMENU; uItem: UINT; fByPosition: LongBool): UnicodeString;
 var
   miiw: TMenuItemInfoW;
   wca: array[0..Pred(MAX_PATH)] of WideChar;
@@ -171,7 +155,7 @@ begin
     dwTypeData:= @wca[0];
     cch:= MAX_PATH;
   end;
-  if GetMenuItemInfoW(hMenu, uItem, fByPosition, @miiw) then
+  if GetMenuItemInfoW(hMenu, uItem, fByPosition, miiw) then
   begin
     Result:= miiw.dwTypeData;
   end;
@@ -188,7 +172,7 @@ begin
     cbSize:= SizeOf(TMenuItemInfoW);
     fMask:= MIIM_FTYPE;
   end;
-  if GetMenuItemInfoW(hMenu, uItem, fByPosition, @miiw) then
+  if GetMenuItemInfoW(hMenu, uItem, fByPosition, miiw) then
   begin
     Result:= miiw.fType;
   end;
@@ -227,6 +211,26 @@ begin
    Result := InsertMenuItemW(hMenu, Position, True, mi);
 end;
 
+function RegReadKey(ARoot: HKEY; const APath, AName: UnicodeString; out AValue: UnicodeString): Boolean;
+var
+  AKey: HKEY = 0;
+  dwSize: DWORD = MaxSmallint;
+begin
+  Result:= RegOpenKeyExW(ARoot, PWideChar(APath), 0, KEY_READ, AKey) = ERROR_SUCCESS;
+  if Result then
+  begin
+    SetLength(AValue, MaxSmallint);
+    Result:= RegQueryValueExW(AKey, PWideChar(AName), nil, nil, PByte(AValue), @dwSize) = ERROR_SUCCESS;
+    if Result then
+    begin
+      dwSize:= dwSize div SizeOf(WideChar);
+      if (dwSize > 0) and (AValue[dwSize] = #0) then Dec(dwSize);
+      SetLength(AValue, dwSize);
+    end;
+    RegCloseKey(AKey);
+  end;
+end;
+
 function DisplayName(const wsDrv: WideString): WideString;
 var
   SFI: TSHFileInfoW;
@@ -239,7 +243,7 @@ begin
     SetLength(Result, Pos('(', Result) - 2);
 end;
 
-function ExtractVolumeGUID(const VolumeName: WideString): WideString;
+function ExtractVolumeGUID(const VolumeName: UnicodeString): UnicodeString;
 var
   I, J: LongInt;
 begin
@@ -249,11 +253,11 @@ begin
   Result:= Copy(VolumeName, I, J - I + 1);
 end;
 
-function GetMountPointVolumeName(const Path: WideString): WideString;
+function GetMountPointVolumeName(const Path: UnicodeString): UnicodeString;
 const
   MAX_VOLUME_NAME = 50;
 var
-  wsPath: WideString;
+  wsPath: UnicodeString;
   wsVolumeName: array[0..Pred(MAX_VOLUME_NAME)] of WideChar;
 begin
   FillByte(wsVolumeName, MAX_VOLUME_NAME, 0);
@@ -261,7 +265,7 @@ begin
   if not GetVolumeNameForVolumeMountPointW(PWideChar(wsPath), wsVolumeName, MAX_VOLUME_NAME) then
     Result:= EmptyWideStr
   else
-    Result:= WideString(wsVolumeName);
+    Result:= UnicodeString(wsVolumeName);
 end;
 
 (* Drive ready *)
@@ -313,7 +317,7 @@ end;
 function mbSetVolumeLabel(sRootPathName, sVolumeName: String): Boolean;
 var
   wsRootPathName,
-  wsVolumeName: WideString;
+  wsVolumeName: UnicodeString;
 begin
   wsRootPathName:= UTF8Decode(sRootPathName);
   wsVolumeName:= UTF8Decode(sVolumeName);
@@ -332,39 +336,25 @@ begin
     st2:= mbGetVolumeLabel(sDrv, FALSE);
 end;
 
-{$IF FPC_FULLVERSION < 020600}
-type
-  // mmsystem unit has incorrect definition
-  MCI_OPEN_PARMS = packed record
-    dwCallback: DWORD_PTR;
-    wDeviceID: MCIDEVICEID;
-    lpstrDeviceType: LPCTSTR;
-    lpstrElementName: LPCTSTR;
-    lpstrAlias: LPCTSTR;
-  end;
-{$ENDIF}
-
-function mciSendCommand(IDDevice: MCIDEVICEID; uMsg: UINT; fdwCommand: DWORD; dwParam: DWORD_PTR): MCIERROR; stdcall; external 'winmm.dll' name 'mciSendCommandA';
-
 (* Close CD/DVD *)
 
 procedure mbCloseCD(const sDrv: String);
 var
-  OpenParms: MCI_OPEN_PARMS;
+  OpenParms: MCI_OPEN_PARMSA;
 begin
   FillChar(OpenParms, SizeOf(OpenParms), 0);
   OpenParms.lpstrDeviceType:= 'CDAudio';
   OpenParms.lpstrElementName:= PAnsiChar(ExtractFileDrive(sDrv));
-  mciSendCommand(0, MCI_OPEN, MCI_OPEN_TYPE or MCI_OPEN_ELEMENT, DWORD_PTR(@OpenParms));
-  mciSendCommand(OpenParms.wDeviceID, MCI_SET, MCI_SET_DOOR_CLOSED, 0);
-  mciSendCommand(OpenParms.wDeviceID, MCI_CLOSE, MCI_OPEN_TYPE or MCI_OPEN_ELEMENT, DWORD_PTR(@OpenParms));
+  mciSendCommandA(0, MCI_OPEN, MCI_OPEN_TYPE or MCI_OPEN_ELEMENT, DWORD_PTR(@OpenParms));
+  mciSendCommandA(OpenParms.wDeviceID, MCI_SET, MCI_SET_DOOR_CLOSED, 0);
+  mciSendCommandA(OpenParms.wDeviceID, MCI_CLOSE, MCI_OPEN_TYPE or MCI_OPEN_ELEMENT, DWORD_PTR(@OpenParms));
 end;
 
 function mbGetRemoteFileName(const sLocalName: String): String;
 var
-  wsLocalName: WideString;
   dwResult,
   lpBufferSize: DWORD;
+  wsLocalName: UnicodeString;
   lpBuffer: PUniversalNameInfoW;
 begin
   Result:= sLocalName;
@@ -379,29 +369,29 @@ begin
         dwResult:= WNetGetUniversalNameW(PWideChar(wsLocalName), UNIVERSAL_NAME_INFO_LEVEL, lpBuffer, lpBufferSize);
       end;
     if dwResult = NO_ERROR then
-      Result:= UTF16ToUTF8(WideString(lpBuffer^.lpUniversalName));
+      Result:= UTF16ToUTF8(UnicodeString(lpBuffer^.lpUniversalName));
   finally
     FreeMem(lpBuffer);
   end;
 end;
 
-function mbGetShortPathName(const sLongPath: String; out sShortPath: AnsiString): Boolean;
+function mbGetShortPathName(const sLongPath: String; var sShortPath: AnsiString): Boolean;
 var
   wsLongPath,
   wsShortPath: UnicodeString;
   cchBuffer: DWORD;
 begin
   Result:= False;
-  wsLongPath:= UTF8Decode(sLongPath);
+  wsLongPath:= UTF16LongName(sLongPath);
   cchBuffer:= GetShortPathNameW(PWideChar(wsLongPath), nil, 0);
   if cchBuffer = 0 then Exit;
   SetLength(wsShortPath, cchBuffer);
   cchBuffer:= GetShortPathNameW(PWideChar(wsLongPath), PWideChar(wsShortPath), cchBuffer);
   if cchBuffer <> 0 then
-    begin
-      sShortPath:= AnsiString(wsShortPath);
-      Result:= True;
-    end;
+  begin
+    sShortPath:= AnsiString(wsShortPath);
+    Result:= True;
+  end;
 end;
 
 function GetFileOwner(const sPath: String; out sUser, sGroup: String): Boolean;
@@ -563,7 +553,7 @@ end;
 function mbGetFileSystem(const sRootPath: String): String;
 var
   Buf: array [0..MAX_PATH] of WideChar;
-  NotUsed: DWORD;
+  NotUsed: DWORD = 0;
 begin
   // Available since Windows XP.
   if ((Win32MajorVersion > 5) or ((Win32MajorVersion = 5) and (Win32MinorVersion >= 1))) and
@@ -578,46 +568,31 @@ end;
 
 function mbGetCompressedFileSize(const FileName: String): Int64;
 begin
-  Int64Rec(Result).Lo:= GetCompressedFileSizeW(PWideChar(UTF8Decode(FileName)), @Int64Rec(Result).Hi);
+  Int64Rec(Result).Lo:= GetCompressedFileSizeW(PWideChar(UTF16LongName(FileName)), @Int64Rec(Result).Hi);
 end;
 
-type
-  TOKEN_ELEVATION_TYPE = (
-                          TokenElevationTypeDefault:= 1, TokenElevationTypeFull,
-                          TokenElevationTypeLimited
-                         );
-
-  TOKEN_INFORMATION_CLASS = (
-                             TokenUser:= 1, TokenGroups, TokenPrivileges,
-                             TokenOwner, TokenPrimaryGroup, TokenDefaultDacl,
-                             TokenSource, TokenType, TokenImpersonationLevel,
-                             TokenStatistics, TokenRestrictedSids, TokenSessionId,
-                             TokenGroupsAndPrivileges, TokenSessionReference,
-                             TokenSandBoxInert, TokenAuditPolicy, TokenOrigin,
-                             TokenElevationType, TokenLinkedToken, TokenElevation,
-                             TokenHasRestrictions, TokenAccessInformation,
-                             TokenVirtualizationAllowed, TokenVirtualizationEnabled,
-                             TokenIntegrityLevel, TokenUIAccess, TokenMandatoryPolicy,
-                             TokenLogonSid, TokenIsAppContainer, TokenCapabilities,
-                             TokenAppContainerSid, TokenAppContainerNumber,
-                             TokenUserClaimAttributes, TokenDeviceClaimAttributes,
-                             TokenRestrictedUserClaimAttributes,
-                             TokenRestrictedDeviceClaimAttributes,
-                             TokenDeviceGroups, TokenRestrictedDeviceGroups,
-                             TokenSecurityAttributes, TokenIsRestricted,
-                             MaxTokenInfoClass
-                            );
-
-function GetTokenInformation(TokenHandle: HANDLE; TokenInformationClass: TOKEN_INFORMATION_CLASS;
-                             TokenInformation: Pointer; TokenInformationLength: DWORD;
-                             out ReturnLength: DWORD): BOOL; stdcall; external 'advapi32' name 'GetTokenInformation';
+function mbGetFileChangeTime(const FileName: String; out ChangeTime: TFileTime): Boolean;
+var
+  Handle: System.THandle;
+  IoStatusBlock : TIoStatusBlock;
+  FileInformation: TFileBasicInformation;
+begin
+  Handle:= CreateFileW(PWideChar(UTF16LongName(FileName)), FILE_READ_ATTRIBUTES,
+                       FILE_SHARE_READ or FILE_SHARE_WRITE or FILE_SHARE_DELETE,
+                       nil, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, 0);
+  if Handle = INVALID_HANDLE_VALUE then Exit(False);
+  Result:= NtQueryInformationFile(Handle, @IoStatusBlock, @FileInformation,
+                                  SizeOf(FileInformation), FileBasicInformation) = 0;
+  CloseHandle(Handle);
+  ChangeTime:= TFileTime(FileInformation.ChangeTime);
+end;
 
 function IsUserAdmin: LongBool;
 var
-  ReturnLength: DWORD;
+  ReturnLength: DWORD = 0;
   TokenHandle: HANDLE = INVALID_HANDLE_VALUE;
   TokenInformation: array [0..1023] of Byte;
-  ElevationType: TOKEN_ELEVATION_TYPE absolute TokenInformation;
+  ElevationType: JwaVista.TTokenElevationType absolute TokenInformation;
 begin
   Result:= OpenThreadToken(GetCurrentThread, TOKEN_QUERY, True, TokenHandle);
   if not Result then
@@ -627,11 +602,8 @@ begin
   end;
   if Result then
   begin
-    Result:= GetTokenInformation(
-                                 TokenHandle, TokenElevationType,
-                                 @TokenInformation, SizeOf(TokenInformation),
-                                 ReturnLength
-                                );
+    Result:= GetTokenInformation(TokenHandle, Windows.TTokenInformationClass(TokenElevationType),
+                                 @TokenInformation, SizeOf(TokenInformation), ReturnLength);
     CloseHandle(TokenHandle);
     if Result then
     begin
@@ -639,6 +611,45 @@ begin
         TokenElevationTypeDefault: Result:= False; // The token does not have a linked token. (UAC disabled)
         TokenElevationTypeFull:    Result:= True;  // The token is an elevated token. (Administrator)
         TokenElevationTypeLimited: Result:= False; // The token is a limited token. (User)
+      end;
+    end;
+  end;
+end;
+
+function RemoteSession: Boolean;
+const
+  GLASS_SESSION_ID = 'GlassSessionId';
+  TERMINAL_SERVER_KEY = 'SYSTEM\CurrentControlSet\Control\Terminal Server\';
+var
+  dwType: DWORD;
+  lResult: LONG;
+  AKey: HKEY = 0;
+  dwGlassSessionId, cbGlassSessionId, dwCurrentSessionId: DWORD;
+  ProcessIdToSessionId: function(dwProcessId: DWORD; pSessionId: PDWORD): BOOL; stdcall;
+begin
+  Result:= False;
+  if (GetSystemMetrics(SM_REMOTESESSION) <> 0) then
+  begin
+    Result:= True;
+  end
+  else if (Win32MajorVersion > 5) then
+  begin
+    Pointer(ProcessIdToSessionId):= GetProcAddress(GetModuleHandle(Kernel32), 'ProcessIdToSessionId');
+    if Assigned(ProcessIdToSessionId) then
+    begin
+      lResult:= RegOpenKeyEx(HKEY_LOCAL_MACHINE, TERMINAL_SERVER_KEY, 0, KEY_READ, AKey);
+      if (lResult = ERROR_SUCCESS) then
+      begin
+        cbGlassSessionId:= SizeOf(dwGlassSessionId);
+        lResult:= RegQueryValueEx(AKey, GLASS_SESSION_ID, nil, @dwType, @dwGlassSessionId, @cbGlassSessionId);
+        if (lResult = ERROR_SUCCESS) then
+        begin
+          if (ProcessIdToSessionId(GetCurrentProcessId(), @dwCurrentSessionId)) then
+          begin
+            Result:= (dwCurrentSessionId <> dwGlassSessionId);
+          end;
+        end;
+        RegCloseKey(AKey);
       end;
     end;
   end;

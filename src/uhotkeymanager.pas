@@ -101,6 +101,8 @@ type
     procedure AddIfNotExists(const ShortcutsWithParams: array of String; Command: String;
                              const OldShortcuts, OldParams: array of String); overload;
     procedure AddIfNotExists(const ShortcutsWithParams: array of String; Command: String); overload;
+    procedure AddIfNotExists(Key: Word; Shift: TShiftState;
+                             const Command: String; const Param: String = ''); overload;
     procedure Clear; reintroduce;
     procedure Remove(var hotkey: THotkey); reintroduce;
     function Find(const Shortcuts: TDynamicStringArray): THotkey;
@@ -207,8 +209,6 @@ type
     procedure Save(Config: TXmlConfig; Root: TXmlNode);
     procedure Load(Config: TXmlConfig; Root: TXmlNode);
     procedure LoadIni(FileName: String);
-    //---------------------
-    function IsShortcutConflictingWithOS(Shortcut: String): Boolean;
   public
     constructor Create;
     destructor Destroy; override;
@@ -228,7 +228,7 @@ type
 implementation
 
 uses
-  XMLRead, uKeyboard, uGlobs, uDebug, uDCVersion, uFormCommands,
+  Laz2_XMLRead, uKeyboard, uGlobs, uDebug, uDCVersion, uFormCommands,
   DCOSUtils, DCStrUtils;
 
 const
@@ -326,6 +326,15 @@ end;
 procedure THotkeys.AddIfNotExists(const ShortcutsWithParams: array of String; Command: String);
 begin
   AddIfNotExists(ShortcutsWithParams, Command, [], []);
+end;
+
+procedure THotkeys.AddIfNotExists(Key: Word; Shift: TShiftState;
+                                  const Command: String; const Param: String);
+var
+  AParams: TDynamicStringArray;
+begin
+  if (Length(Param) > 0) then AddString(AParams, Param);
+  AddIfNotExists([VirtualKeyToText(Key, Shift)], AParams, Command);
 end;
 
 procedure THotkeys.AddIfNotExists(const ShortcutsWithParams: array of String; Command: String;
@@ -1066,46 +1075,6 @@ begin
   FreeAndNil(ini);
 end;
 
-function THotKeyManager.IsShortcutConflictingWithOS(Shortcut: String): Boolean;
-const
-  ConflictingShortcuts: array [0..27] of String =
-    (SmkcBkSp,                           // Delete previous character
-     SmkcDel,                            // Delete next character
-     SmkcLeft,                           // Move cursor left
-     SmkcRight,                          // Move cursor right
-     SmkcSpace,                          // Space
-     SmkcWin,                            // Context menu
-     SmkcShift + 'F10',                  // Context menu
-     SmkcShift + SmkcDel,                // Cut text
-     SmkcShift + SmkcIns,                // Paste text
-     SmkcShift + SmkcHome,               // Select to beginning
-     SmkcShift + SmkcEnd,                // Select to end
-     SmkcShift + SmkcLeft,               // Select previous character
-     SmkcShift + SmkcRight,              // Select next character
-     SmkcCtrl + 'A',                     // Select all
-     SmkcCtrl + 'C',                     // Copy text
-     SmkcCtrl + 'V',                     // Paste text
-     SmkcCtrl + 'X',                     // Cut text
-     SmkcCtrl + 'Z',                     // Undo
-     SmkcCtrl + SmkcBkSp,                // Delete previous word
-     SmkcCtrl + SmkcDel,                 // Delete next word
-     SmkcCtrl + SmkcIns,                 // Copy text
-     SmkcCtrl + SmkcHome,                // Move to beginning
-     SmkcCtrl + SmkcEnd,                 // Move to end
-     SmkcCtrl + SmkcLeft,                // Move to beginning of word
-     SmkcCtrl + SmkcRight,               // Move to end of word
-     SmkcCtrl + SmkcShift + 'Z',         // Redo
-     SmkcCtrl + SmkcShift + SmkcLeft,    // Select to beginning of word
-     SmkcCtrl + SmkcShift + SmkcRight);  // Select to end of word
-var
-  i: Integer;
-begin
-  for i := Low(ConflictingShortcuts) to High(ConflictingShortcuts) do
-    if Shortcut = ConflictingShortcuts[i] then
-      Exit(True);
-  Result := False;
-end;
-
 function THotKeyManager.Register(AForm: TCustomForm; AFormName: String): THMForm;
 var
   formInstance: THMFormInstance;
@@ -1309,7 +1278,7 @@ begin
   // Don't execute hotkeys that coincide with key typing actions.
   if (TextShortcut <> '') and
      ((FSequenceStep > 0) or
-     (not (((GetKeyTypingAction(ShiftEx) <> ktaNone)
+     (not ((((GetKeyTypingAction(ShiftEx) <> ktaNone) and (HMForm.Name = 'Main'))
 {$IFDEF MSWINDOWS}
       // Don't execute hotkeys with Ctrl+Alt = AltGr on Windows.
       or (HasKeyboardAltGrKey and

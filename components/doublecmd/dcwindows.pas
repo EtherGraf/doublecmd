@@ -33,7 +33,7 @@ uses
    Converts file name in UTF-8 encoding to file name
    with UTF-16 encoding with extended-length path prefix
 }
-function UnicodeLongName(const FileName: String): UnicodeString;
+function UTF16LongName(const FileName: String): UnicodeString;
 
 {en
    Enable a privilege
@@ -53,13 +53,22 @@ implementation
 uses
   JwaAclApi, JwaWinNT, JwaAccCtrl, JwaWinBase, JwaWinType;
 
-function UnicodeLongName(const FileName: String): UnicodeString;
+function UTF16LongName(const FileName: String): UnicodeString;
+var
+  Temp: PWideChar;
 begin
   if Pos('\\', FileName) = 0 then
     Result := '\\?\' + UTF8Decode(FileName)
   else begin
     Result := '\\?\UNC\' + UTF8Decode(Copy(FileName, 3, MaxInt));
   end;
+  Temp := Pointer(Result) + 4;
+  while Temp^ <> #0 do
+  begin
+    if Temp^ = '/' then Temp^:= '\';
+    Inc(Temp);
+  end;
+  if ((Temp - 1)^ = DriveSeparator) then Result:= Result + '\';
 end;
 
 function EnablePrivilege(hToken: HANDLE; lpszPrivilege: LPCTSTR): Boolean;

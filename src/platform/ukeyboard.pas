@@ -45,12 +45,13 @@ const
   SmkcNumMultiply = 'Num*';
   SmkcNumAdd = 'Num+';
   SmkcNumSubstract = 'Num-';
+  SmkcSuper = {$IF DEFINED(DARWIN)}SmkcWin{$ELSE}SmkcCtrl{$ENDIF};
 
   MenuKeyCaps: array[TMenuKeyCap] of string = (
     SmkcClear, SmkcBkSp, SmkcTab, SmkcEsc, SmkcEnter, SmkcSpace, SmkcPgUp,
-    SmkcPgDn, SmkcEnd, SmkcHome, SmkcLeft, SmkcUp, SmkcRight,
-    SmkcDown, SmkcIns, SmkcDel, SmkcShift, SmkcCtrl, SmkcAlt,
-    SmkcWin, SmkcNumDivide, SmkcNumMultiply, SmkcNumAdd, SmkcNumSubstract);
+    SmkcPgDn, SmkcEnd, SmkcHome, SmkcLeft, SmkcUp, SmkcRight, SmkcDown,
+    SmkcIns, SmkcDel, SmkcShift, SmkcCtrl, SmkcAlt, SmkcWin,
+    SmkcNumDivide, SmkcNumMultiply, SmkcNumAdd, SmkcNumSubstract);
 
   // Modifiers that can be used for shortcuts (non-toggable).
   KeyModifiersShortcut = [ssShift, ssAlt, ssCtrl, ssMeta, ssSuper, ssHyper, ssAltGr];
@@ -112,6 +113,8 @@ const
                                      ExcludeShiftState: TShiftState = []): TUTF8Char;
 {$ENDIF}
 
+  function IsShortcutConflictingWithOS(Shortcut: String): Boolean;
+
   {en
      Initializes keyboard module.
      Should be called after Application.Initialize.
@@ -154,16 +157,17 @@ uses
   , Gdk2, GLib2, Gtk2Extra
   , Gtk2Proc
 {$ENDIF}
-{$IF DEFINED(X11) and DEFINED(LCLQT)}
+{$IF DEFINED(X11) and (DEFINED(LCLQT) or DEFINED(LCLQT5))}
+  {$IF DEFINED(LCLQT)}
   , qt4, qtwidgets
+  {$ELSEIF DEFINED(LCLQT5)}
+  , qt5, qtwidgets
+  {$ENDIF}
   , XLib, X
   , xutil, KeySym
   , Forms  // for Application.MainForm
 {$ENDIF}
   ;
-
-const
-  scWin = $1000;
 
 type
   TModifiersMap = record
@@ -177,7 +181,8 @@ const
    ((Shift: ssCtrl;  Shortcut: scCtrl;  Text: mkcCtrl),
     (Shift: ssShift; Shortcut: scShift; Text: mkcShift),
     (Shift: ssAlt;   Shortcut: scAlt;   Text: mkcAlt),
-    (Shift: ssSuper; Shortcut: scWin;   Text: mkcWin));
+    (Shift: ssMeta;  Shortcut: scMeta;  Text: mkcWin)
+    );
 
 {$IF DEFINED(X11)}
 var
@@ -185,7 +190,7 @@ var
   XDisplay: PDisplay = nil;
   {$ELSEIF DEFINED(LCLGTK2)}
   XDisplay: PGdkDisplay = nil;
-  {$ELSEIF DEFINED(LCLQT)}
+  {$ELSEIF (DEFINED(LCLQT) or DEFINED(LCLQT5))}
   XDisplay: PDisplay = nil;
   {$ENDIF}
 {$ENDIF}
@@ -199,7 +204,7 @@ var
   {$ENDIF}
 {$ENDIF}
 
-{$IF DEFINED(X11) and DEFINED(LCLQT)}
+{$IF DEFINED(X11) and (DEFINED(LCLQT) or DEFINED(LCLQT5))}
 type
   TKeyboardLayoutChangedHook = class
   private
@@ -270,7 +275,7 @@ begin
     end;
 end;
 
-{$IF DEFINED(X11) and DEFINED(LCLQT)}
+{$IF DEFINED(X11) and (DEFINED(LCLQT) or DEFINED(LCLQT5))}
 {en
    Retrieves the character and respective modifiers state
    for the given keysym and given level.
@@ -341,12 +346,54 @@ end;
 {$ENDIF}
 
 function GetKeyShiftStateEx: TShiftState;
+
+{$IF DEFINED(LCLGTK2) and DEFINED(X11)}
+  function GetKeyState(nVirtKey: Integer): Smallint;
+  var
+    Mask, State: TGdkModifierType;
+  begin
+    Result := LCLIntf.GetKeyState(nVirtKey);
+    case nVirtKey of
+      VK_SHIFT, VK_LSHIFT, VK_RSHIFT       : Mask := GDK_SHIFT_MASK;
+      VK_CONTROL, VK_LCONTROL, VK_RCONTROL : Mask := GDK_CONTROL_MASK;
+      else                                   Exit;
+    end;
+    State := -1;
+    gdk_window_get_pointer(nil, nil, nil, @State);
+    if (State <> -1) and (State and Mask = 0) then Result := 0;
+  end;
+{$ENDIF}
+
   function IsKeyDown(Key: Integer): Boolean;
   begin
-    Result := (GetKeyState(Key) and $8000)<>0;
+    Result := (GetKeyState(Key) and $8000) <> 0;
   end;
+
+  procedure GetMouseButtonState;
+  var
+    bSwapButton: Boolean;
+  begin
+    bSwapButton:= GetSystemMetrics(SM_SWAPBUTTON) <> 0;
+    if IsKeyDown(VK_LBUTTON) then
+    begin
+      if bSwapButton then
+        Include(Result, ssRight)
+      else
+        Include(Result, ssLeft);
+    end;
+    if IsKeyDown(VK_RBUTTON) then
+    begin
+      if bSwapButton then
+        Include(Result, ssLeft)
+      else
+        Include(Result, ssRight);
+    end;
+  end;
+
 begin
   Result:=[];
+
+  GetMouseButtonState;
 
 {$IFDEF MSWINDOWS}
   if HasKeyboardAltGrKey then
@@ -384,17 +431,17 @@ begin
 {$ENDIF}
 
   if IsKeyDown(VK_RCONTROL) then
-    Include(Result,ssCtrl);
+    Include(Result, ssCtrl);
   if IsKeyDown(VK_LMENU) then
-    Include(Result,ssAlt);
+    Include(Result, ssAlt);
 
   if IsKeyDown(VK_SHIFT) then
-    Include(Result,ssShift);
+    Include(Result, ssShift);
   if IsKeyDown(VK_LWIN) or IsKeyDown(VK_RWIN) then
-    Include(Result,ssSuper);
+    Include(Result, ssMeta);
 
-  if (GetKeyState(VK_CAPITAL) and $1)<>0 then  // Caps-lock toggled
-    Include(Result,ssCaps);
+  if (GetKeyState(VK_CAPITAL) and $1) <> 0 then  // Caps-lock toggled
+    Include(Result, ssCaps);
 end;
 
 function KeyToShortCutEx(Key: Word; Shift: TShiftState): TShortCut;
@@ -519,7 +566,7 @@ end;
 
 function VirtualKeyToUTF8Char(Key: Byte; ShiftState: TShiftState): TUTF8Char;
 
-{$IF DEFINED(UNIX) and (DEFINED(LCLGTK) or DEFINED(LCLGTK2) or DEFINED(LCLQT))}
+{$IF DEFINED(UNIX) and (DEFINED(LCLGTK) or DEFINED(LCLGTK2) or DEFINED(LCLQT) or DEFINED(LCLQT5))}
   function ShiftStateToXModifierLevel(ShiftState: TShiftState): Cardinal;
   begin
     Result := 0;
@@ -533,7 +580,7 @@ var
   KeyInfo: TVKeyInfo;
 {$ENDIF}
   ShiftedChar: Boolean;
-{$IF DEFINED(X11) and DEFINED(LCLQT)}
+{$IF DEFINED(X11) and (DEFINED(LCLQT) or DEFINED(LCLQT5))}
   KeyChar:TUTF8Char;
   KeySym: TKeySym;
   TempShiftState: TShiftState;
@@ -559,7 +606,7 @@ begin
 
   Result := KeyInfo.KeyChar[ShiftStateToXModifierLevel(ShiftState)];
 
-{$ELSEIF DEFINED(X11) and DEFINED(LCLQT)}
+{$ELSEIF DEFINED(X11) and (DEFINED(LCLQT) or DEFINED(LCLQT5))}
 
   // For QT we'll use Xlib to get text for a key.
 
@@ -653,14 +700,14 @@ end;
 function VirtualKeyToText(Key: Byte; ShiftState: TShiftState): string;
 var
   Name: string;
-{$IF DEFINED(X11) and DEFINED(LCLQT)}
+{$IF DEFINED(X11) and (DEFINED(LCLQT) or DEFINED(LCLQT5))}
   KeyChar: TUTF8Char;
   KeySym: TKeySym;
   TempShiftState: TShiftState;
 {$ENDIF}
 begin
 
-{$IF DEFINED(X11) and DEFINED(LCLQT)}
+{$IF DEFINED(X11) and (DEFINED(LCLQT) or DEFINED(LCLQT5))}
   // Overwrite behaviour for some keys in QT.
   KeySym := 0;
   case Key of
@@ -913,7 +960,7 @@ begin
 end;
 {$ENDIF}
 
-{$IF DEFINED(X11) and DEFINED(LCLQT)}
+{$IF DEFINED(X11) and (DEFINED(LCLQT) or DEFINED(LCLQT5))}
 procedure UpdateModifiersMasks;
 var
   Map: PXModifierKeymap;
@@ -976,13 +1023,13 @@ begin
 {$IF DEFINED(UNIX) and (DEFINED(LCLGTK) or DEFINED(LCLGTK2))}
   UpdateGtkAltGrVirtualKeyCode;
 {$ENDIF}
-{$IF DEFINED(X11) and DEFINED(LCLQT)}
+{$IF DEFINED(X11) and (DEFINED(LCLQT) or DEFINED(LCLQT5))}
   UpdateModifiersMasks;
 {$ENDIF}
   CacheVKToChar;
 end;
 
-{$IF DEFINED(X11) and DEFINED(LCLQT)}
+{$IF DEFINED(X11) and (DEFINED(LCLQT) or DEFINED(LCLQT5))}
 constructor TKeyboardLayoutChangedHook.Create(QObject: QObjectH);
 begin
   EventHook := QObject_hook_create(QObject);
@@ -1052,7 +1099,7 @@ end;
 
 procedure UnhookKeyboardLayoutChanged;
 begin
-{$IF DEFINED(X11) and DEFINED(LCLQT)}
+{$IF DEFINED(X11) and (DEFINED(LCLQT) or DEFINED(LCLQT5))}
 
   if Assigned(KeyboardLayoutChangedHook) then
     FreeAndNil(KeyboardLayoutChangedHook);
@@ -1086,7 +1133,7 @@ begin
   // On Unix (X server) the event for changing keyboard layout
   // is sent twice (on QT, GTK1 and GTK2).
 
-{$IF DEFINED(X11) and DEFINED(LCLQT)}
+{$IF DEFINED(X11) and (DEFINED(LCLQT) or DEFINED(LCLQT5))}
 
   KeyboardLayoutChangedHook := KeyboardLayoutChangedHook.Create(
                                TQtWidget(Application.MainForm.Handle).TheObject);
@@ -1115,6 +1162,51 @@ begin
 {$ENDIF}
 end;
 
+function IsShortcutConflictingWithOS(Shortcut: String): Boolean;
+const
+  KEY_HIGH = {$IF DEFINED(DARWIN)}28{$ELSE}27{$ENDIF};
+const
+  ConflictingShortcuts: array [0..KEY_HIGH] of String =
+    (SmkcBkSp,                           // Delete previous character
+     SmkcDel,                            // Delete next character
+     SmkcLeft,                           // Move cursor left
+     SmkcRight,                          // Move cursor right
+     SmkcSpace,                          // Space
+{$IF DEFINED(DARWIN)}
+     SmkcWin + SmkcSpace,                // Spotlight (Mac OS X)
+{$ENDIF DARWIN}
+     SmkcWin,                            // Context menu
+     SmkcShift + 'F10',                  // Context menu
+     SmkcShift + SmkcDel,                // Cut text
+     SmkcShift + SmkcIns,                // Paste text
+     SmkcShift + SmkcHome,               // Select to beginning
+     SmkcShift + SmkcEnd,                // Select to end
+     SmkcShift + SmkcLeft,               // Select previous character
+     SmkcShift + SmkcRight,              // Select next character
+     SmkcSuper + 'A',                    // Select all
+     SmkcSuper + 'C',                    // Copy text
+     SmkcSuper + 'V',                    // Paste text
+     SmkcSuper + 'X',                    // Cut text
+     SmkcSuper + 'Z',                    // Undo
+     SmkcSuper + SmkcBkSp,               // Delete previous word
+     SmkcSuper + SmkcDel,                // Delete next word
+     SmkcSuper + SmkcIns,                // Copy text
+     SmkcSuper + SmkcHome,               // Move to beginning
+     SmkcSuper + SmkcEnd,                // Move to end
+     SmkcSuper + SmkcLeft,               // Move to beginning of word
+     SmkcSuper + SmkcRight,              // Move to end of word
+     SmkcSuper + SmkcShift + 'Z',        // Redo
+     SmkcSuper + SmkcShift + SmkcLeft,   // Select to beginning of word
+     SmkcSuper + SmkcShift + SmkcRight); // Select to end of word
+var
+  i: Integer;
+begin
+  for i := Low(ConflictingShortcuts) to High(ConflictingShortcuts) do
+    if Shortcut = ConflictingShortcuts[i] then
+      Exit(True);
+  Result := False;
+end;
+
 procedure InitializeKeyboard;
 begin
   OnKeyboardLayoutChanged;
@@ -1132,12 +1224,12 @@ initialization
   XDisplay := gdk_display;
   {$ELSEIF DEFINED(LCLGTK2)}
   XDisplay := gdk_display_get_default;
-  {$ELSEIF DEFINED(LCLQT)}
+  {$ELSEIF (DEFINED(LCLQT) or DEFINED(LCLQT5))}
   XDisplay := XOpenDisplay(nil);
   {$ENDIF}
 {$ENDIF}
 
-{$IF DEFINED(X11) and DEFINED(LCLQT)}
+{$IF DEFINED(X11) and (DEFINED(LCLQT) or DEFINED(LCLQT5))}
 finalization
   XCloseDisplay(XDisplay);
 {$ENDIF}

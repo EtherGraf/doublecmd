@@ -16,7 +16,7 @@ const
                                         FILE_ATTRIBUTE_STANDARD_SYMLINK_TARGET + ',' + FILE_ATTRIBUTE_TIME_MODIFIED + ',' +
                                         FILE_ATTRIBUTE_TIME_ACCESS + ',' + FILE_ATTRIBUTE_TIME_CREATED + ',' +
                                         FILE_ATTRIBUTE_UNIX_MODE + ',' + FILE_ATTRIBUTE_UNIX_UID + ',' +
-                                        FILE_ATTRIBUTE_UNIX_GID;
+                                        FILE_ATTRIBUTE_UNIX_GID + ',' + FILE_ATTRIBUTE_STANDARD_TARGET_URI;
 
 type
   TUpdateStatisticsFunction = procedure(var NewStatistics: TFileSourceCopyOperationStatistics) of object;
@@ -45,6 +45,7 @@ type
     FRenamingRootDir: Boolean;
     FCancel: PGCancellable;
     FRootDir: TFile;
+    FOldDoneBytes: Int64;
     FSkipAnyError: Boolean;
     FStatistics: TFileSourceCopyOperationStatistics;
     FFileExistsOption: TFileSourceOperationOptionFileExists;
@@ -122,43 +123,51 @@ var
   procedure FillAndCountRec(const srcPath: String);
   var
     AFolder: PGFile;
-    AError: PGError;
     AInfo: PGFileInfo;
     AFileName: Pgchar;
+    AError: PGError = nil;
     AFileEnum: PGFileEnumerator;
   begin
     AFolder:= g_file_new_for_commandline_arg (Pgchar(srcPath));
-    AFileEnum:= g_file_enumerate_children (AFolder, CONST_DEFAULT_QUERY_INFO_ATTRIBUTES,
-                                           G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, nil, @AError);
+    try
+      AFileEnum:= g_file_enumerate_children (AFolder, CONST_DEFAULT_QUERY_INFO_ATTRIBUTES,
+                                             G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, nil, @AError);
 
-    AInfo:= g_file_enumerator_next_file (AFileEnum, nil, @AError);
-    while Assigned(AInfo) do
-    begin
-      AFileName:= g_file_info_get_name(AInfo);
-
-      if (aFileName <> '.') and (aFileName <> '..') then
+      if Assigned(AFileEnum) then
       begin
-        aFile:= TGioFileSource.CreateFile(srcPath, AFolder, AInfo);
-        NewFiles.Add(aFile);
+        AInfo:= g_file_enumerator_next_file (AFileEnum, nil, @AError);
+        while Assigned(AInfo) do
+        begin
+          AFileName:= g_file_info_get_name(AInfo);
 
-        if aFile.IsLink then
+          if (aFileName <> '.') and (aFileName <> '..') then
           begin
-          end
-        else if aFile.IsDirectory then
-          begin
-            if CountDirs then Inc(FilesCount);
-            FillAndCountRec(srcPath + aFileName + PathDelim);
-          end
-        else
-          begin
-            Inc(FilesSize, aFile.Size);
-            Inc(FilesCount);
-          end;
-       end;
+            aFile:= TGioFileSource.CreateFile(srcPath, AFolder, AInfo);
+            NewFiles.Add(aFile);
 
-      AInfo:= g_file_enumerator_next_file (AFileEnum, nil, @AError);
+            if aFile.IsLink then
+              begin
+              end
+            else if aFile.IsDirectory then
+              begin
+                if CountDirs then Inc(FilesCount);
+                FillAndCountRec(srcPath + aFileName + PathDelim);
+              end
+            else
+              begin
+                Inc(FilesSize, aFile.Size);
+                Inc(FilesCount);
+              end;
+           end;
+
+          AInfo:= g_file_enumerator_next_file (AFileEnum, nil, @AError);
+        end;
+        g_object_unref(AFileEnum);
+      end;
+      if Assigned(AError) then ShowError(AError);
+    finally
+      g_object_unref(PGObject(AFolder));
     end;
-    if Assigned(AError) then ShowError(AError);
   end;
 
 begin
@@ -213,8 +222,12 @@ begin
       Exit;
     end;
 
-    FStatistics.CurrentFileDoneBytes:= current_num_bytes;
-    FStatistics.CurrentFileTotalBytes:= total_num_bytes;
+    with FStatistics do
+    begin
+      CurrentFileDoneBytes:= current_num_bytes;
+      CurrentFileTotalBytes:= total_num_bytes;
+      DoneBytes:= FOldDoneBytes + current_num_bytes;
+    end;
     UpdateStatistics(FStatistics);
 
     CheckOperationState;
@@ -447,6 +460,8 @@ var
   AError: PGError = nil;
   SourceFile, TargetFile: PGFile;
 begin
+  FOldDoneBytes:= FStatistics.DoneBytes;
+
   FCancel:= g_cancellable_new();
   SourceFile:= g_file_new_for_commandline_arg(Pgchar(aNode.TheFile.FullPath));
   TargetFile:= g_file_new_for_commandline_arg(Pgchar(AbsoluteTargetFileName));
@@ -515,6 +530,13 @@ begin
     g_object_unref(FCancel);
     g_object_unref(PGObject(SourceFile));
     g_object_unref(PGObject(TargetFile));
+  end;
+
+  with FStatistics do
+  begin
+    DoneFiles := DoneFiles + 1;
+    DoneBytes := FOldDoneBytes + aNode.TheFile.Size;
+    UpdateStatistics(FStatistics);
   end;
 end;
 

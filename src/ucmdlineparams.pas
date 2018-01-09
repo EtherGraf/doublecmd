@@ -25,13 +25,23 @@ var
 implementation
 
 uses
-  Forms, Dialogs, SysUtils, uOSUtils, uDCUtils, uGlobsPaths, getopts, uDebug, uLng;
+  Forms, Dialogs, SysUtils, uOSUtils, uDCUtils, uGlobsPaths, getopts, uDebug,
+  uLng, uClipboard, uAdministrator;
+
+function DecodePath(const Path: String): String;
+begin
+  Result := TrimQuotes(Path);
+  if Pos(fileScheme, Result) = 1 then
+  begin
+    Result:= URIDecode(Copy(Result, 8, MaxInt));
+  end;
+end;
 
 procedure ProcessCommandLineParams;
 var
   Option: AnsiChar = #0;
   OptionIndex: LongInt = 0;
-  Options: array[1..5] of TOption;
+  Options: array[1..6] of TOption;
   OptionUnknown: String;
 begin
   FillChar(Options, SizeOf(Options), #0);
@@ -56,6 +66,11 @@ begin
   with Options[5] do
   begin
     Name:= 'no-splash';
+  end;
+  with Options[6] do
+  begin
+    Name:= 'operation';
+    Has_arg:= 1;
   end;
   FillChar(CommandLineParams, SizeOf(TCommandLineParams), #0);
   repeat
@@ -92,10 +107,14 @@ begin
               begin
                 CommandLineParams.NoSplash:= True;
               end;
+            6:
+              begin
+                ExecuteOperation(ParamStrU(TrimQuotes(OptArg)));
+              end;
           end;
         end;
-      'L', 'l': CommandLineParams.LeftPath:= ParamStrU(TrimQuotes(OptArg));
-      'R', 'r': CommandLineParams.RightPath:= ParamStrU(TrimQuotes(OptArg));
+      'L', 'l': CommandLineParams.LeftPath:= DecodePath(ParamStrU(OptArg));
+      'R', 'r': CommandLineParams.RightPath:= DecodePath(ParamStrU(OptArg));
       'P', 'p': begin
         CommandLineParams.ActivePanelSpecified:= True;
         CommandLineParams.ActiveRight:= (UpperCase(OptArg) = 'R');
@@ -114,14 +133,14 @@ begin
     // If also found one parameter then use it as path of active panel
     if ParamCount - OptInd = 0 then
       begin
-        CommandLineParams.ActivePanelPath:= ParamStrU(OptInd);
+        CommandLineParams.ActivePanelPath:= DecodePath(ParamStrU(OptInd));
         Inc(OptInd, 1);
       end
     // If also found two parameters then use it as paths in panels
     else if ParamCount - OptInd = 1 then
       begin
-        CommandLineParams.LeftPath:= ParamStrU(OptInd);
-        CommandLineParams.RightPath:= ParamStrU(OptInd + 1);
+        CommandLineParams.LeftPath:= DecodePath(ParamStrU(OptInd));
+        CommandLineParams.RightPath:= DecodePath(ParamStrU(OptInd + 1));
         Inc(OptInd, 2);
       end;
     // Unknown options, print to console

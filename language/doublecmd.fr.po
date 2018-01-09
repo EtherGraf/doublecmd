@@ -1,4 +1,3 @@
-# 2016-02-12:DB-Dans ce fichier le terme "Dossier" a été préféré à "Répertoire".
 # Par soucis d'être constant, il n'y a pas d'exception, c'est toujours "Dossier" qui est utilisé.
 # C'est comme ça pour reprendre la même nomenclature que Windows et Apple.
 # Il est vrai que TC utilise le terme "Répertoire" mais on prend le partie de Windows qui lui parle de "dossier".
@@ -26,7 +25,7 @@ msgstr ""
 "Project-Id-Version: Double Commander 0.5.1 beta\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-01-17 23:08+0300\n"
-"PO-Revision-Date: 2016-06-20 00:17-0400\n"
+"PO-Revision-Date: 2017-06-26 22:16-0400\n"
 "Last-Translator: Denis Bisson <denis.bisson@denisbisson.org>\n"
 "Language-Team: Zebulon Tourneboulle <zebulon.tourneboulle@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -34,7 +33,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Native-Language: Français\n"
 "Language: fr\n"
-"X-Generator: Poedit 1.8.7\n"
+"X-Generator: Poedit 2.0\n"
 
 #: fsyncdirsdlg.rscomparingpercent
 msgid "Comparing... %d%% (ESC to cancel)"
@@ -101,6 +100,10 @@ msgstr "Suivre les liens"
 #: tfilesystemcopymoveoperationoptionsui.cbreservespace.caption
 msgid "&Reserve space"
 msgstr "Réserver l'espace"
+
+#: tfilesystemcopymoveoperationoptionsui.chkverify.caption
+msgid "&Verify"
+msgstr "Vérification"
 
 #: tfilesystemcopymoveoperationoptionsui.cmbsetpropertyerror.hint
 msgid "What to do when cannot set file time, attributes, etc."
@@ -303,6 +306,26 @@ msgstr "Comme texte :"
 msgctxt "TFRMATTRIBUTESEDIT.LBLWRITE.CAPTION"
 msgid "Write"
 msgstr "Écrire"
+
+#: tfrmbenchmark.caption
+msgid "Benchmark"
+msgstr ""
+
+#: tfrmbenchmark.lblbenchmarksize.caption
+msgid "Benchmark data size: %d MB"
+msgstr ""
+
+#: tfrmbenchmark.stgresult.columns[0].title.caption
+msgid "Hash"
+msgstr ""
+
+#: tfrmbenchmark.stgresult.columns[1].title.caption
+msgid "Time (ms)"
+msgstr ""
+
+#: tfrmbenchmark.stgresult.columns[2].title.caption
+msgid "Speed (MB/s)"
+msgstr ""
 
 #: tfrmchecksumcalc.caption
 msgctxt "tfrmchecksumcalc.caption"
@@ -802,6 +825,10 @@ msgstr "&OK"
 msgid "Remove last shortcut from sequence"
 msgstr "Retirer le dernier raccourcis de la séquence"
 
+#: tfrmedithotkey.btnselectfromlist.hint
+msgid "Select shortcut from list of remaining free available keys"
+msgstr "Choisissiez votre raccourci-clavier de la liste des touches disponibles"
+
 #: tfrmedithotkey.cghkcontrols.caption
 msgctxt "tfrmedithotkey.cghkcontrols.caption"
 msgid "Only for these controls"
@@ -1119,13 +1146,13 @@ msgctxt "TFRMEDITOR.N5.CAPTION"
 msgid "-"
 msgstr "-"
 
-#: tfrmeditsearchreplace.btncancel.caption
-msgctxt "TFRMEDITSEARCHREPLACE.BTNCANCEL.CAPTION"
+#: tfrmeditsearchreplace.buttonpanel.cancelbutton.caption
+msgctxt "tfrmeditsearchreplace.buttonpanel.cancelbutton.caption"
 msgid "&Cancel"
 msgstr "Annuler"
 
-#: tfrmeditsearchreplace.btnok.caption
-msgctxt "TFRMEDITSEARCHREPLACE.BTNOK.CAPTION"
+#: tfrmeditsearchreplace.buttonpanel.okbutton.caption
+msgctxt "tfrmeditsearchreplace.buttonpanel.okbutton.caption"
 msgid "&OK"
 msgstr "&OK"
 
@@ -1294,6 +1321,10 @@ msgctxt "TFRMFILEPROPERTIES.CBSUID.CAPTION"
 msgid "SUID"
 msgstr "SUID"
 
+#: tfrmfileproperties.chkexecutable.caption
+msgid "Allow &executing file as program"
+msgstr "Permettre l'exécution du fichier"
+
 #: tfrmfileproperties.gbowner.caption
 msgctxt "TFRMFILEPROPERTIES.GBOWNER.CAPTION"
 msgid "Owner"
@@ -1343,6 +1374,10 @@ msgctxt "TFRMFILEPROPERTIES.LBLEXEC.CAPTION"
 msgid "Execute"
 msgstr "Exécuter"
 
+#: tfrmfileproperties.lblexecutable.caption
+msgid "Execute:"
+msgstr "Exécution:"
+
 #: tfrmfileproperties.lblfile.caption
 msgctxt "TFRMFILEPROPERTIES.LBLFILE.CAPTION"
 msgid "File name"
@@ -1352,11 +1387,6 @@ msgstr "Nom du fichier"
 msgctxt "TFRMFILEPROPERTIES.LBLFILENAME.CAPTION"
 msgid "???"
 msgstr "???"
-
-#: tfrmfileproperties.lblfilenamestr.caption
-msgctxt "TFRMFILEPROPERTIES.LBLFILENAMESTR.CAPTION"
-msgid "Name:"
-msgstr "Nom :"
 
 #: tfrmfileproperties.lblfilestr.caption
 msgctxt "TFRMFILEPROPERTIES.LBLFILESTR.CAPTION"
@@ -1453,10 +1483,26 @@ msgctxt "TFRMFILEPROPERTIES.LBLWRITE.CAPTION"
 msgid "Write"
 msgstr "Écriture"
 
+#: tfrmfileproperties.sgimage.columns[0].title.caption
+msgctxt "tfrmfileproperties.sgimage.columns[0].title.caption"
+msgid "Name"
+msgstr "Nom"
+
+#: tfrmfileproperties.sgimage.columns[1].title.caption
+msgctxt "tfrmfileproperties.sgimage.columns[1].title.caption"
+msgid "Value"
+msgstr "Valeur"
+
 #: tfrmfileproperties.tsattributes.caption
 msgctxt "TFRMFILEPROPERTIES.TSATTRIBUTES.CAPTION"
 msgid "Attributes"
 msgstr "Attributs"
+
+#: tfrmfileproperties.tsplugins.caption
+#, fuzzy
+msgctxt "tfrmfileproperties.tsplugins.caption"
+msgid "Plugins"
+msgstr "\"Plugins\""
 
 #: tfrmfileproperties.tsproperties.caption
 msgctxt "TFRMFILEPROPERTIES.TSPROPERTIES.CAPTION"
@@ -1465,30 +1511,43 @@ msgstr "Propriétés"
 
 #: tfrmfinddlg.actcancel.caption
 msgctxt "tfrmfinddlg.actcancel.caption"
-msgid "Cancel"
+msgid "C&ancel"
 msgstr "Annuler"
 
 #: tfrmfinddlg.actcancelclose.caption
 msgid "Cancel search and close window"
-msgstr "Annule la recherche et ferme la fenêtre"
+msgstr "&Fermer"
 
 #: tfrmfinddlg.actclose.caption
 msgctxt "tfrmfinddlg.actclose.caption"
-msgid "Close"
+msgid "&Close"
 msgstr "Fermer"
+
+#: tfrmfinddlg.actconfigfilesearchhotkeys.caption
+msgctxt "tfrmfinddlg.actconfigfilesearchhotkeys.caption"
+msgid "Configuration of hot keys"
+msgstr "Configurations des raccourcis-clavier"
 
 #: tfrmfinddlg.actedit.caption
 msgctxt "tfrmfinddlg.actedit.caption"
-msgid "Edit"
+msgid "&Edit"
 msgstr "Éditer"
 
 #: tfrmfinddlg.actfeedtolistbox.caption
-msgid "Feed to listbox"
-msgstr "Envoyer vers le panneau actif"
+msgid "Feed to &listbox"
+msgstr "Envoyer vers un &onglet"
+
+#: tfrmfinddlg.actfreefrommem.caption
+msgid "Cancel search, close and free from memory"
+msgstr "Annule la recherche, ferme la fenêtre et oublie cette recherche"
+
+#: tfrmfinddlg.actfreefrommemallothers.caption
+msgid "For all other \"Find files\", cancel, close and free from memory"
+msgstr "Pour toutes les autres recherches, annule-les, ferme-les et oublie-les"
 
 #: tfrmfinddlg.actgotofile.caption
-msgid "Go to file"
-msgstr "Aller au fichier"
+msgid "&Go to file"
+msgstr "&Aller au fichier"
 
 #: tfrmfinddlg.actintellifocus.caption
 msgctxt "tfrmfinddlg.actintellifocus.caption"
@@ -1496,12 +1555,16 @@ msgid "Find Data"
 msgstr "Cherche donnée"
 
 #: tfrmfinddlg.actlastsearch.caption
-msgid "Last search"
+msgid "&Last search"
 msgstr "Dernière recherche"
 
 #: tfrmfinddlg.actnewsearch.caption
-msgid "New search"
-msgstr "Prochaine recherche"
+msgid "&New search"
+msgstr "&Nouvelle recherche"
+
+#: tfrmfinddlg.actnewsearchclearfilters.caption
+msgid "New search (clear filters)"
+msgstr "Nouvelle recherche (réinitialise les filtres)"
 
 #: tfrmfinddlg.actpageadvanced.caption
 msgid "Go to page \"Advanced\""
@@ -1511,9 +1574,17 @@ msgstr "Allez à la page \"Avancé\""
 msgid "Go to page \"Load/Save\""
 msgstr "Aller à la page \"Charger/Sauvegarder\""
 
+#: tfrmfinddlg.actpagenext.caption
+msgid "Switch to Nex&t Page"
+msgstr "Aller à la page suivante"
+
 #: tfrmfinddlg.actpageplugins.caption
 msgid "Go to page \"Plugins\""
 msgstr "Aller à la page \"Plugins\""
+
+#: tfrmfinddlg.actpageprev.caption
+msgid "Switch to &Previous Page"
+msgstr "Aller à la page précédente"
 
 #: tfrmfinddlg.actpageresults.caption
 msgid "Go to page \"Results\""
@@ -1525,13 +1596,13 @@ msgstr "Aller à la page \"Normal\""
 
 #: tfrmfinddlg.actstart.caption
 msgctxt "tfrmfinddlg.actstart.caption"
-msgid "Start"
-msgstr "Débuter"
+msgid "&Start"
+msgstr "Démarrer"
 
 #: tfrmfinddlg.actview.caption
 msgctxt "tfrmfinddlg.actview.caption"
-msgid "View"
-msgstr "Vue"
+msgid "&View"
+msgstr "&Vue"
 
 #: tfrmfinddlg.btnaddattribute.caption
 msgctxt "tfrmfinddlg.btnaddattribute.caption"
@@ -1542,29 +1613,6 @@ msgstr "&Ajouter"
 msgctxt "TFRMFINDDLG.BTNATTRSHELP.CAPTION"
 msgid "&Help"
 msgstr "Ai&de"
-
-#: tfrmfinddlg.btnclose.caption
-msgctxt "TFRMFINDDLG.BTNCLOSE.CAPTION"
-msgid "&Close"
-msgstr "&Fermer"
-
-#: tfrmfinddlg.btnedit.caption
-msgctxt "tfrmfinddlg.btnedit.caption"
-msgid "&Edit"
-msgstr "Éditer"
-
-#: tfrmfinddlg.btngotopath.caption
-msgid "&Go to file"
-msgstr "&Aller au fichier"
-
-#: tfrmfinddlg.btnlastsearch.caption
-msgctxt "tfrmfinddlg.btnlastsearch.caption"
-msgid "&Last search"
-msgstr "Dernière recherche"
-
-#: tfrmfinddlg.btnnewsearch.caption
-msgid "&New search"
-msgstr "&Nouvelle recherche"
 
 #: tfrmfinddlg.btnsavetemplate.caption
 msgctxt "TFRMFINDDLG.BTNSAVETEMPLATE.CAPTION"
@@ -1592,28 +1640,9 @@ msgstr "Sauvegarder avec le nom du dossier de début de recherche"
 msgid "If saved then \"Start in directory\" will be restored when loading template. Use it if you want to fix searching to a certain directory"
 msgstr "Si sauvegardé, alors le dossier de début de recherche sera restitué lorsqu'on chargera le modèle. Utilisez cela si vous voulez chercher à nouveau dans un même dossier."
 
-#: tfrmfinddlg.btnstart.caption
-msgctxt "tfrmfinddlg.btnstart.caption"
-msgid "&Start"
-msgstr "Dé&marrer"
-
-#: tfrmfinddlg.btnstop.caption
-msgctxt "TFRMFINDDLG.BTNSTOP.CAPTION"
-msgid "C&ancel"
-msgstr "Annuler"
-
 #: tfrmfinddlg.btnusetemplate.caption
 msgid "Use template"
 msgstr "Utiliser un modèle"
-
-#: tfrmfinddlg.btnview.caption
-msgctxt "TFRMFINDDLG.BTNVIEW.CAPTION"
-msgid "&View"
-msgstr "&Vue"
-
-#: tfrmfinddlg.btnworkwithfound.caption
-msgid "Feed to &listbox"
-msgstr "Envoyer vers un &onglet"
 
 #: tfrmfinddlg.caption
 msgctxt "tfrmfinddlg.caption"
@@ -1712,11 +1741,6 @@ msgstr "Entrer les noms de fichiers à exclure de la recherche et les séparer p
 msgid "Enter files names separated with \";\""
 msgstr "Entrer les noms de fichiers séparés par un point-virgule"
 
-#: tfrmfinddlg.cmbfindfilemask.text
-msgctxt "TFRMFINDDLG.CMBFINDFILEMASK.TEXT"
-msgid "*"
-msgstr "*"
-
 #: tfrmfinddlg.gbdirectories.caption
 msgctxt "tfrmfinddlg.gbdirectories.caption"
 msgid "Directories"
@@ -1765,13 +1789,40 @@ msgstr "Rechercher dans les sous-dossiers :"
 msgid "&Previous searches:"
 msgstr "Recherches &précédentes :"
 
+#: tfrmfinddlg.miaction.caption
+msgid "&Action"
+msgstr "&Action"
+
+#: tfrmfinddlg.mifreefrommemallothers.caption
+msgid "For all others, cancel, close and free from memory"
+msgstr "Pour toutes les autres, annule-les, ferme-les et oublie-les"
+
 #: tfrmfinddlg.miopeninnewtab.caption
 msgid "Open In New Tab(s)"
 msgstr "Ovrir dans un nouvel onglet"
 
+#: tfrmfinddlg.mioptions.caption
+msgctxt "tfrmfinddlg.mioptions.caption"
+msgid "Options"
+msgstr "Options"
+
 #: tfrmfinddlg.miremovefromllist.caption
 msgid "Remove from list"
 msgstr "Supprimer de la liste"
+
+#: tfrmfinddlg.miresult.caption
+msgid "&Result"
+msgstr "&Résultat"
+
+#: tfrmfinddlg.miseparator1.caption
+msgctxt "tfrmfinddlg.miseparator1.caption"
+msgid "-"
+msgstr "-"
+
+#: tfrmfinddlg.miseparator2.caption
+msgctxt "tfrmfinddlg.miseparator2.caption"
+msgid "-"
+msgstr "-"
 
 #: tfrmfinddlg.mishowallfound.caption
 msgid "Show all found items"
@@ -1784,6 +1835,11 @@ msgstr "Ouvrir dans l'éditeur"
 #: tfrmfinddlg.mishowinviewer.caption
 msgid "Show In Viewer"
 msgstr "Afficher dans la visionneuse"
+
+#: tfrmfinddlg.miviewtab.caption
+msgctxt "tfrmfinddlg.miviewtab.caption"
+msgid "&View"
+msgstr "&Vue"
 
 #: tfrmfinddlg.tsadvanced.caption
 msgid "Advanced"
@@ -1935,6 +1991,10 @@ msgstr "&A propos"
 msgid "Add file name to command line"
 msgstr "Ajouter le nom du fichier dans la ligne de commande"
 
+#: tfrmmain.actaddnewsearch.caption
+msgid "New search instance..."
+msgstr "Nouvelle instance de recherche..."
+
 #: tfrmmain.actaddpathandfilenametocmdline.caption
 msgid "Add path and file name to command line"
 msgstr "Ajouter le chemin complet et le nom du fichier dans la ligne de commande"
@@ -2055,6 +2115,19 @@ msgstr "Configuration des groupes d'onglets favoris"
 msgid "Configuration of folder tabs"
 msgstr "Configuration des options reliées aux onlgets"
 
+#: tfrmmain.actconfighotkeys.caption
+msgctxt "tfrmmain.actconfighotkeys.caption"
+msgid "Configuration of hot keys"
+msgstr "Configurations des raccourcis-clavier"
+
+#: tfrmmain.actconfigsavesettings.caption
+msgid "Save Settings"
+msgstr "Enregistre la configuration"
+
+#: tfrmmain.actconfigsearches.caption
+msgid "Configuration of searches"
+msgstr "Configuration de la recherche de fichiers"
+
 #: tfrmmain.actconfigtoolbars.caption
 msgid "Toolbar..."
 msgstr "Configuation de la barre d'outils"
@@ -2131,6 +2204,10 @@ msgctxt "TFRMMAIN.ACTDELETE.CAPTION"
 msgid "Delete"
 msgstr "Supprimer"
 
+#: tfrmmain.actdeletesearches.caption
+msgid "For all searches, cancel, close and free memory"
+msgstr "Pour toutes les recherches, annule-les, ferme-les et oublie-les"
+
 #: tfrmmain.actdirhistory.caption
 msgctxt "TFRMMAIN.ACTDIRHISTORY.CAPTION"
 msgid "Directory history"
@@ -2165,6 +2242,10 @@ msgstr "Éditer le champ du chemin au dessus de la liste des fichiers"
 msgid "Swap &Panels"
 msgstr "&Permuter les panneaux"
 
+#: tfrmmain.actexecutescript.caption
+msgid "Execute Script"
+msgstr "Exécute le script"
+
 #: tfrmmain.actexit.caption
 msgctxt "TFRMMAIN.ACTEXIT.CAPTION"
 msgid "E&xit"
@@ -2198,6 +2279,14 @@ msgstr "Vue à plat"
 #: tfrmmain.actfocuscmdline.caption
 msgid "Focus command line"
 msgstr "Mettre la contrôle actif sur la ligne de commande"
+
+#: tfrmmain.actfocusswap.caption
+msgid "Swap focus"
+msgstr "Alterner de panneau"
+
+#: tfrmmain.actfocusswap.hint
+msgid "Switch between left and right file list"
+msgstr "Alterner entre la liste de gauche et de droite"
 
 #: tfrmmain.actgotofirstfile.caption
 msgid "Place cursor on first file in list"
@@ -2295,6 +2384,18 @@ msgstr "Nouveau dossier"
 #: tfrmmain.actmarkcurrentextension.caption
 msgid "Select All with the Same E&xtension"
 msgstr "Sélectionner tous les fichiers avec la même &extension"
+
+#: tfrmmain.actmarkcurrentname.caption
+msgid "Select all files with same name"
+msgstr "Sélectionne tous les fichiers du même nom"
+
+#: tfrmmain.actmarkcurrentnameext.caption
+msgid "Select all files with same name and extension"
+msgstr "Sélectionne tous les fichiers du même nom et la même extension"
+
+#: tfrmmain.actmarkcurrentpath.caption
+msgid "Select all in same path"
+msgstr "Sélectionne tous les fichiers avec le même chemin"
 
 #: tfrmmain.actmarkinvert.caption
 msgid "&Invert Selection"
@@ -2664,6 +2765,18 @@ msgstr "Trier selon les paramètres"
 msgid "Unselect All with the Same Ex&tension"
 msgstr "Désélectionner tous les fichiers avec la &même extension"
 
+#: tfrmmain.actunmarkcurrentname.caption
+msgid "Unselect all files with same name"
+msgstr "Désélectionne tous les fichiers du même nom"
+
+#: tfrmmain.actunmarkcurrentnameext.caption
+msgid "Unselect all files with same name and extension"
+msgstr "Désélectionne tous les fichiers du même nom et la même extension"
+
+#: tfrmmain.actunmarkcurrentpath.caption
+msgid "Unselect all in same path"
+msgstr "Désélectionne tous les fichiers avec le même chemin"
+
 #: tfrmmain.actview.caption
 msgctxt "tfrmmain.actview.caption"
 msgid "View"
@@ -2684,6 +2797,10 @@ msgstr "Aller à l'entrée précédente de l'historique"
 #: tfrmmain.actviewlogfile.caption
 msgid "View log file"
 msgstr "Regarder le fichier journal"
+
+#: tfrmmain.actviewsearches.caption
+msgid "View current search instances"
+msgstr "Voir la liste des instances de recherche de fichiers"
 
 #: tfrmmain.actvisithomepage.caption
 msgid "&Visit Double Commander Website"
@@ -3007,6 +3124,11 @@ msgctxt "tfrmmain.miline50.caption"
 msgid "-"
 msgstr "-"
 
+#: tfrmmain.miline55.caption
+msgctxt "tfrmmain.miline55.caption"
+msgid "-"
+msgstr "-"
+
 #: tfrmmain.miline6.caption
 msgctxt "TFRMMAIN.MILINE6.CAPTION"
 msgid "-"
@@ -3244,6 +3366,16 @@ msgctxt "tfrmmaincommandsdlg.lblselectedcommandhotkey.caption"
 msgid "Hotkey"
 msgstr "Raccourci clavier"
 
+#: tfrmmaskinputdlg.btnaddattribute.caption
+msgctxt "tfrmmaskinputdlg.btnaddattribute.caption"
+msgid "&Add"
+msgstr "&Ajouter"
+
+#: tfrmmaskinputdlg.btnattrshelp.caption
+msgctxt "tfrmmaskinputdlg.btnattrshelp.caption"
+msgid "&Help"
+msgstr "Ai&de"
+
 #: tfrmmaskinputdlg.btncancel.caption
 msgctxt "TFRMMASKINPUTDLG.BTNCANCEL.CAPTION"
 msgid "&Cancel"
@@ -3265,6 +3397,10 @@ msgstr "Sensibilité à la casse"
 #: tfrmmaskinputdlg.chkignoreaccentsandligatures.caption
 msgid "Ignore accents and ligatures"
 msgstr "Ignorer les accents et les ligatures"
+
+#: tfrmmaskinputdlg.lblattributes.caption
+msgid "Attri&butes:"
+msgstr "Attributs:"
 
 #: tfrmmaskinputdlg.lblprompt.caption
 msgid "Input Mask:"
@@ -3378,6 +3514,7 @@ msgid "PNM"
 msgstr "PNM"
 
 #: tfrmmodview.teheight.text
+msgctxt "tfrmmodview.teheight.text"
 msgid "Height"
 msgstr "Hauteur"
 
@@ -3405,7 +3542,6 @@ msgid "&Delete"
 msgstr "&Supprimer"
 
 #: tfrmmultirename.btnedit.caption
-#, fuzzy
 msgctxt "tfrmmultirename.btnedit.caption"
 msgid "&Edit"
 msgstr "Éditer"
@@ -3631,11 +3767,11 @@ msgstr "[YYYY] Année (4 digits)"
 
 #: tfrmmultirename.mnueditnames.caption
 msgid "Edit names..."
-msgstr ""
+msgstr "Édite les noms..."
 
 #: tfrmmultirename.mnuloadfromfile.caption
 msgid "Load names from file..."
-msgstr ""
+msgstr "Charge les noms des fichiers..."
 
 #: tfrmmultirename.n1.caption
 msgctxt "TFRMMULTIRENAME.N1.CAPTION"
@@ -3678,14 +3814,13 @@ msgid "File Path"
 msgstr "Chemin du Fichier"
 
 #: tfrmmultirenamewait.caption
-#, fuzzy
 msgctxt "tfrmmultirenamewait.caption"
 msgid "Double Commander"
 msgstr "Double Commander"
 
 #: tfrmmultirenamewait.lblmessage.caption
 msgid "Click OK when you have closed the editor to load the changed names!"
-msgstr ""
+msgstr "Clique OK quand vous aurez fermé l'éditeur pour charger les noms à changer!"
 
 #: tfrmopenwith.caption
 msgid "Choose an application"
@@ -3742,12 +3877,12 @@ msgstr "%u"
 #: tfrmoptions.btnapply.caption
 msgctxt "TFRMOPTIONS.BTNAPPLY.CAPTION"
 msgid "&Apply"
-msgstr "Appliquer"
+msgstr "Appli&quer"
 
 #: tfrmoptions.btncancel.caption
 msgctxt "TFRMOPTIONS.BTNCANCEL.CAPTION"
 msgid "&Cancel"
-msgstr "Annuler"
+msgstr "Annu&ler"
 
 #: tfrmoptions.btnok.caption
 msgctxt "TFRMOPTIONS.BTNOK.CAPTION"
@@ -3958,6 +4093,10 @@ msgctxt "TFRMOPTIONSCOLUMNSVIEW.CBCUTTEXTTOCOLWIDTH.CAPTION"
 msgid "Cut &text to column width"
 msgstr "Couper le texte à la largeur de la colonne"
 
+#: tfrmoptionscolumnsview.cbextendcellwidth.caption
+msgid "&Extend cell width if text is not fitting into column"
+msgstr "Ajuster la largeur de la cellule au texte"
+
 #: tfrmoptionscolumnsview.cbgridhorzline.caption
 msgctxt "TFRMOPTIONSCOLUMNSVIEW.CBGRIDHORZLINE.CAPTION"
 msgid "&Horizontal lines"
@@ -4021,6 +4160,11 @@ msgctxt "TFRMOPTIONSCONFIGURATION.CHKSEARCHREPLACEHISTORY.CAPTION"
 msgid "Searc&h/Replace history"
 msgstr "Historique des Recherches/Remplacements"
 
+#: tfrmoptionsconfiguration.gbdirectories.caption
+msgctxt "tfrmoptionsconfiguration.gbdirectories.caption"
+msgid "Directories"
+msgstr "Dossiers"
+
 #: tfrmoptionsconfiguration.gblocconfigfiles.caption
 msgctxt "TFRMOPTIONSCONFIGURATION.GBLOCCONFIGFILES.CAPTION"
 msgid "Location of configuration files"
@@ -4039,6 +4183,14 @@ msgstr "Classement des éléments de configuration de l'arbre de gauche"
 msgctxt "TFRMOPTIONSCONFIGURATION.LBLCMDLINECONFIGDIR.CAPTION"
 msgid "Set on command line"
 msgstr "Ajuster sur la ligne de commande"
+
+#: tfrmoptionsconfiguration.lbliconthemes.caption
+msgid "Icon themes:"
+msgstr "Thème d'icône:"
+
+#: tfrmoptionsconfiguration.lblthumbcache.caption
+msgid "Thumbnails cache:"
+msgstr "Cache des vignettes:"
 
 #: tfrmoptionsconfiguration.rbprogramdir.caption
 msgctxt "TFRMOPTIONSCONFIGURATION.RBPROGRAMDIR.CAPTION"
@@ -4514,44 +4666,199 @@ msgstr "Ajouter une colonne"
 msgid "Position of frame panel after the comparison:"
 msgstr "Position des panneaux après la comparaison :"
 
+#: tfrmoptionsdirectoryhotlist.actaddactiveframedir.caption
+msgid "Add directory of the &active frame"
+msgstr "Ajouter dossier du panneau actif"
+
+#: tfrmoptionsdirectoryhotlist.actaddbothframedir.caption
+msgid "Add &directories of the active && inactive frames"
+msgstr "Ajouter dossiers des panneaux actifs et inactifs"
+
+#: tfrmoptionsdirectoryhotlist.actaddbrowseddir.caption
+msgid "Add directory I will bro&wse to"
+msgstr "Ajouter un dossier que je vais parcourir"
+
+#: tfrmoptionsdirectoryhotlist.actaddcopyofentry.caption
+msgid "Add a copy of the selected entry"
+msgstr "Ajoute une copie de l'entrée sélectionnée"
+
+#: tfrmoptionsdirectoryhotlist.actaddselectionsfromframe.caption
+msgid "Add current &selected or active directories of active frame"
+msgstr "Ajouter ce qui est choisis présentement dans le dossier actif"
+
+#: tfrmoptionsdirectoryhotlist.actaddseparator.caption
+msgid "Add a separator"
+msgstr "Ajoute un séparateur"
+
+#: tfrmoptionsdirectoryhotlist.actaddsubmenu.caption
+msgid "Add a sub menu"
+msgstr "Ajouter un sous-menu"
+
+#: tfrmoptionsdirectoryhotlist.actaddtypeddir.caption
+msgid "Add directory I will type"
+msgstr "Ajoute un dossier dont je vais entrer le nom"
+
+#: tfrmoptionsdirectoryhotlist.actcollapseall.caption
+msgctxt "tfrmoptionsdirectoryhotlist.actcollapseall.caption"
+msgid "Collapse all"
+msgstr "Compacte le tout"
+
+#: tfrmoptionsdirectoryhotlist.actcollapseitem.caption
+msgid "Collapse item"
+msgstr "Refermer la branche"
+
+#: tfrmoptionsdirectoryhotlist.actcut.caption
+msgid "Cut selection of entries"
+msgstr "Couper vers le presse-papier les entrées"
+
+#: tfrmoptionsdirectoryhotlist.actdeleteall.caption
+msgid "Delete all!"
+msgstr "Efface tout!"
+
+#: tfrmoptionsdirectoryhotlist.actdeleteselecteditem.caption
+msgctxt "tfrmoptionsdirectoryhotlist.actdeleteselecteditem.caption"
+msgid "Delete selected item"
+msgstr "Effacer l'élément sélectionné"
+
+#: tfrmoptionsdirectoryhotlist.actdeletesubmenuandelem.caption
+msgid "Delete sub-menu and all its elements"
+msgstr "Effacer le sous-menu et tous ses éléments"
+
+#: tfrmoptionsdirectoryhotlist.actdeletesubmenukeepelem.caption
+msgid "Delete just sub-menu but keep elements"
+msgstr "Effacer seulement le sous-menu, conserver les éléments"
+
+#: tfrmoptionsdirectoryhotlist.actexpanditem.caption
+msgid "Expand item"
+msgstr "Ouvrir la branche"
+
+#: tfrmoptionsdirectoryhotlist.actfocustreewindow.caption
+msgid "Focus tree window"
+msgstr "Se déplacer vers l'arbre"
+
+#: tfrmoptionsdirectoryhotlist.actgotofirstitem.caption
+msgid "Goto first item"
+msgstr "Aller au premier élément"
+
+#: tfrmoptionsdirectoryhotlist.actgotolastitem.caption
+msgid "Goto last item"
+msgstr "Aller au dernier élément"
+
+#: tfrmoptionsdirectoryhotlist.actgotonextitem.caption
+msgid "Go to next item"
+msgstr "Aller au prochain élément"
+
+#: tfrmoptionsdirectoryhotlist.actgotopreviousitem.caption
+msgid "Go to previous item"
+msgstr "Aller à l'élément précédent"
+
+#: tfrmoptionsdirectoryhotlist.actinsertactiveframedir.caption
+msgid "Insert directory of the &active frame"
+msgstr "Insérer dossier du panneau actif"
+
+#: tfrmoptionsdirectoryhotlist.actinsertbothframedir.caption
+msgid "Insert &directories of the active && inactive frames"
+msgstr "Insérer dossiers des panneaux actifs et inactifs"
+
+#: tfrmoptionsdirectoryhotlist.actinsertbrowseddir.caption
+msgid "Insert directory I will bro&wse to"
+msgstr "Insérer un dossier que je vais parcourir"
+
+#: tfrmoptionsdirectoryhotlist.actinsertcopyofentry.caption
+msgid "Insert a copy of the selected entry"
+msgstr "Insérer une copie de l'entrée sélectionnée"
+
+#: tfrmoptionsdirectoryhotlist.actinsertselectionsfromframe.caption
+msgid "Insert current &selected or active directories of active frame"
+msgstr "Insérer ce qui est choisis présentement dans le dossier actif"
+
+#: tfrmoptionsdirectoryhotlist.actinsertseparator.caption
+msgid "Insert a separator"
+msgstr "Insérer un séparateur"
+
+#: tfrmoptionsdirectoryhotlist.actinsertsubmenu.caption
+msgid "Insert sub menu"
+msgstr "Insérer un sous-menu"
+
+#: tfrmoptionsdirectoryhotlist.actinserttypeddir.caption
+msgid "Insert directory I will type"
+msgstr "Insère le dossier dont je vais entrer le nom"
+
+#: tfrmoptionsdirectoryhotlist.actmovetonext.caption
+msgid "Move to next"
+msgstr "Déplacer à la position suivante"
+
+#: tfrmoptionsdirectoryhotlist.actmovetoprevious.caption
+msgid "Move to previous"
+msgstr "Déplacer à la position précédente"
+
+#: tfrmoptionsdirectoryhotlist.actopenallbranches.caption
+msgctxt "tfrmoptionsdirectoryhotlist.actopenallbranches.caption"
+msgid "Open all branches"
+msgstr "Déploie toutes les branches"
+
+#: tfrmoptionsdirectoryhotlist.actpaste.caption
+msgid "Paste what was cut"
+msgstr "Insère le contenu presse-papier"
+
+#: tfrmoptionsdirectoryhotlist.actsearchandreplaceinpath.caption
+msgid "Search && replace in &path"
+msgstr "Chercher et replacer dans le chemin"
+
+#: tfrmoptionsdirectoryhotlist.actsearchandreplaceinpathandtarget.caption
+msgid "Search && replace in both path and target"
+msgstr "Chercher et remplacer dans le chemin et la cible"
+
+#: tfrmoptionsdirectoryhotlist.actsearchandreplaceintargetpath.caption
+msgid "Search && replace in &target path"
+msgstr "Cherche et remplacement dans la cible"
+
+#: tfrmoptionsdirectoryhotlist.acttweakpath.caption
+msgid "Tweak path"
+msgstr "Ajuster le chemin"
+
+#: tfrmoptionsdirectoryhotlist.acttweaktargetpath.caption
+msgid "Tweak target path"
+msgstr "Ajuster la cible"
+
 #: tfrmoptionsdirectoryhotlist.btnadd.caption
 msgctxt "tfrmoptionsdirectoryhotlist.btnadd.caption"
-msgid "Add..."
-msgstr "Ajouter..."
+msgid "A&dd..."
+msgstr "&Ajouter..."
 
 #: tfrmoptionsdirectoryhotlist.btnbackup.caption
 msgctxt "tfrmoptionsdirectoryhotlist.btnbackup.caption"
-msgid "Backup..."
+msgid "Bac&kup..."
 msgstr "Archiver..."
 
 #: tfrmoptionsdirectoryhotlist.btndelete.caption
 msgctxt "tfrmoptionsdirectoryhotlist.btndelete.caption"
-msgid "Delete..."
-msgstr "Effacer..."
+msgid "De&lete..."
+msgstr "E&ffacer..."
 
 #: tfrmoptionsdirectoryhotlist.btnexport.caption
 msgctxt "tfrmoptionsdirectoryhotlist.btnexport.caption"
-msgid "Export..."
-msgstr "Exportr..."
+msgid "E&xport..."
+msgstr "E&xporter..."
 
 #: tfrmoptionsdirectoryhotlist.btnhelp.caption
 msgctxt "tfrmoptionsdirectoryhotlist.btnhelp.caption"
-msgid "Help"
+msgid "&Help"
 msgstr "Aide"
 
 #: tfrmoptionsdirectoryhotlist.btnimport.caption
 msgctxt "tfrmoptionsdirectoryhotlist.btnimport.caption"
-msgid "Import..."
-msgstr "Importer..."
+msgid "Impo&rt..."
+msgstr "Im&porter..."
 
 #: tfrmoptionsdirectoryhotlist.btninsert.caption
 msgctxt "tfrmoptionsdirectoryhotlist.btninsert.caption"
-msgid "Insert..."
-msgstr "Insérer..."
+msgid "&Insert..."
+msgstr "&Insérer..."
 
 #: tfrmoptionsdirectoryhotlist.btnmiscellaneous.caption
-msgid "Miscellaneous..."
-msgstr "Divers..."
+msgid "&Miscellaneous..."
+msgstr "&Divers..."
 
 #: tfrmoptionsdirectoryhotlist.btnrelativepath.hint
 msgctxt "tfrmoptionsdirectoryhotlist.btnrelativepath.hint"
@@ -4565,24 +4872,24 @@ msgstr "Quelques fonctions pour choisir le chemin approprié pour la cible"
 
 #: tfrmoptionsdirectoryhotlist.btnsort.caption
 msgctxt "tfrmoptionsdirectoryhotlist.btnsort.caption"
-msgid "Sort..."
+msgid "&Sort..."
 msgstr "Trier..."
 
 #: tfrmoptionsdirectoryhotlist.cbaddtarget.caption
-msgid "When adding directory, add also target"
+msgid "&When adding directory, add also target"
 msgstr "Lorsqu'on ajoute un dossier, ajouter aussi une cible"
 
 #: tfrmoptionsdirectoryhotlist.cbfullexpandtree.caption
 msgctxt "tfrmoptionsdirectoryhotlist.cbfullexpandtree.caption"
-msgid "Always expand tree"
+msgid "Alwa&ys expand tree"
 msgstr "Toujours déployer tout l'arbre"
 
 #: tfrmoptionsdirectoryhotlist.cbshowonlyvalidenv.caption
-msgid "Show only valid environment variables"
+msgid "Show only &valid environment variables"
 msgstr "Afficher seulement les variables d'environnement qui semblent valides"
 
 #: tfrmoptionsdirectoryhotlist.cbshowpathinpopup.caption
-msgid "In popup, show [path also]"
+msgid "In pop&up, show [path also]"
 msgstr "Dans le menu, afficher [le chemin]"
 
 #: tfrmoptionsdirectoryhotlist.cbsorthotdirpath.text
@@ -4616,140 +4923,46 @@ msgstr "Chemin :"
 
 #: tfrmoptionsdirectoryhotlist.lbledithotdirtarget.editlabel.caption
 msgctxt "tfrmoptionsdirectoryhotlist.lbledithotdirtarget.editlabel.caption"
-msgid "Target:"
-msgstr "Cible :"
-
-#: tfrmoptionsdirectoryhotlist.miactiveframedirectory.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miactiveframedirectory.caption"
-msgid "directory of the active frame"
-msgstr "dossier du panneau actif"
-
-#: tfrmoptionsdirectoryhotlist.miactiveinactiveframedirectory.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miactiveinactiveframedirectory.caption"
-msgid "directories of the active && inactive frames"
-msgstr "dossiers des panneaux actifs et inactifs"
-
-#: tfrmoptionsdirectoryhotlist.miaddcommand.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miaddcommand.caption"
-msgid "a command"
-msgstr "une commande"
-
-#: tfrmoptionsdirectoryhotlist.miaddcommand2.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miaddcommand2.caption"
-msgid "Add a command"
-msgstr "Ajouter une commande"
-
-#: tfrmoptionsdirectoryhotlist.miaddcopyofselected.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miaddcopyofselected.caption"
-msgid "a copy of the selected entry"
-msgstr "un copie de l'entrée sélectionnée"
-
-#: tfrmoptionsdirectoryhotlist.miaddcopyofselected2.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miaddcopyofselected2.caption"
-msgid "Add a copy of the selected entry"
-msgstr "Ajoute une copie de l'entrée sélectionnée"
-
-#: tfrmoptionsdirectoryhotlist.miaddseparator.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miaddseparator.caption"
-msgid "a separator"
-msgstr "un séparateur"
-
-#: tfrmoptionsdirectoryhotlist.miaddseparator2.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miaddseparator2.caption"
-msgid "Add a separator"
-msgstr "Ajoute un séparateur"
-
-#: tfrmoptionsdirectoryhotlist.miaddsubmenu.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miaddsubmenu.caption"
-msgid "sub-menu"
-msgstr "sous-menu"
-
-#: tfrmoptionsdirectoryhotlist.miaddsubmenu2.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miaddsubmenu2.caption"
-msgid "Add sub-menu"
-msgstr "Ajoute un sous-menu"
-
-#: tfrmoptionsdirectoryhotlist.mibrowsetodirectory.caption
-msgctxt "tfrmoptionsdirectoryhotlist.mibrowsetodirectory.caption"
-msgid "directory I will browse to"
-msgstr "un dossier que je vais parcourir"
-
-#: tfrmoptionsdirectoryhotlist.micollapseall.caption
-msgctxt "tfrmoptionsdirectoryhotlist.micollapseall.caption"
-msgid "Collapse all"
-msgstr "Compacte le tout"
+msgid "&Target:"
+msgstr "Ci&ble :"
 
 #: tfrmoptionsdirectoryhotlist.micurrentlevelofitemonly.caption
 msgctxt "tfrmoptionsdirectoryhotlist.micurrentlevelofitemonly.caption"
-msgid "...current level of item(s) selected only"
+msgid "...current le&vel of item(s) selected only"
 msgstr "...au niveau de l'élément sélectionné seulement"
-
-#: tfrmoptionsdirectoryhotlist.micurrentselectedoractivedirectories.caption
-msgid "current selected or active directories of active frame"
-msgstr "ce qui est choisis présentement dans le dossier actif"
-
-#: tfrmoptionsdirectoryhotlist.micutselection.caption
-msgctxt "tfrmoptionsdirectoryhotlist.micutselection.caption"
-msgid "Cut"
-msgstr "Couper"
-
-#: tfrmoptionsdirectoryhotlist.mideleteallhotdirs.caption
-msgctxt "tfrmoptionsdirectoryhotlist.mideleteallhotdirs.caption"
-msgid "delete all!"
-msgstr "efface tout!"
-
-#: tfrmoptionsdirectoryhotlist.mideletecompletesubmenu.caption
-msgctxt "tfrmoptionsdirectoryhotlist.mideletecompletesubmenu.caption"
-msgid "sub-menu and all its elements"
-msgstr "sous-menu et tous ses éléments"
-
-#: tfrmoptionsdirectoryhotlist.mideletejustsubmenu.caption
-msgctxt "tfrmoptionsdirectoryhotlist.mideletejustsubmenu.caption"
-msgid "just sub-menu but keep elements"
-msgstr "juste le sous-menu mais en conservant ses éléments"
-
-#: tfrmoptionsdirectoryhotlist.mideleteselectedentry.caption
-msgctxt "tfrmoptionsdirectoryhotlist.mideleteselectedentry.caption"
-msgid "selected item"
-msgstr "élément sélectionné"
-
-#: tfrmoptionsdirectoryhotlist.mideleteselectedentry2.caption
-msgctxt "tfrmoptionsdirectoryhotlist.mideleteselectedentry2.caption"
-msgid "Delete selected item"
-msgstr "Efface l'élément sélectionné"
 
 #: tfrmoptionsdirectoryhotlist.midetectifpathexist.caption
 msgctxt "tfrmoptionsdirectoryhotlist.midetectifpathexist.caption"
-msgid "Scan all hotdir's path to validate the ones that actually exist"
+msgid "Scan all &hotdir's path to validate the ones that actually exist"
 msgstr "Parcourir tous les chemins source des dossiers favoris et valider ceux qui existent réellement"
 
 #: tfrmoptionsdirectoryhotlist.midetectifpathtargetexist.caption
 msgctxt "tfrmoptionsdirectoryhotlist.midetectifpathtargetexist.caption"
-msgid "Scan all hotdir's path && target to validate the ones that actually exist"
+msgid "&Scan all hotdir's path && target to validate the ones that actually exist"
 msgstr "Parcourir tous les chemins source et de cible des dossiers favoris et valider ceux qui existent réellement"
 
 #: tfrmoptionsdirectoryhotlist.miexporttohotlistfile.caption
-msgid "to a Directory Hotlist file (.hotlist)"
+msgid "to a Directory &Hotlist file (.hotlist)"
 msgstr "vers le fichier des dossiers favoris (.hotlist)"
 
 #: tfrmoptionsdirectoryhotlist.miexporttototalcommanderk.caption
 msgctxt "tfrmoptionsdirectoryhotlist.miexporttototalcommanderk.caption"
-msgid "to a \"wincmd.ini\" of TC (keep existing)"
+msgid "to a \"wincmd.ini\" of TC (&keep existing)"
 msgstr "vers le fichier \"wincmd.ini\" de TC (en conservant les dossiers favoris existants)"
 
 #: tfrmoptionsdirectoryhotlist.miexporttototalcommandernk.caption
 msgctxt "tfrmoptionsdirectoryhotlist.miexporttototalcommandernk.caption"
-msgid "to a \"wincmd.ini\" of TC (erase existing)"
+msgid "to a \"wincmd.ini\" of TC (&erase existing)"
 msgstr "vers le fichier \"wincmd.ini\" de TC (efface les dossiers favoris existants)"
 
 #: tfrmoptionsdirectoryhotlist.migotoconfiguretcinfo1.caption
 msgctxt "tfrmoptionsdirectoryhotlist.migotoconfiguretcinfo1.caption"
-msgid "Go to configure TC related info"
+msgid "Go to &configure TC related info"
 msgstr "Aller configurer les options relié à TC"
 
 #: tfrmoptionsdirectoryhotlist.migotoconfiguretcinfo2.caption
 msgctxt "tfrmoptionsdirectoryhotlist.migotoconfiguretcinfo2.caption"
-msgid "Go to configure TC related info"
+msgid "Go to &configure TC related info"
 msgstr "Aller configurer les options relié à TC"
 
 #: tfrmoptionsdirectoryhotlist.mihotdirtestmenu.caption
@@ -4757,159 +4970,65 @@ msgid "HotDirTestMenu"
 msgstr "Menu de test pour les dossiers favoris"
 
 #: tfrmoptionsdirectoryhotlist.miimportfromhotlistfile.caption
-msgid "from a Directory Hotlist file (.hotlist)"
+msgid "from a Directory &Hotlist file (.hotlist)"
 msgstr "d'un fichier de dossiers favoris (.hotlist)"
 
 #: tfrmoptionsdirectoryhotlist.miimporttotalcommander.caption
-msgid "from \"wincmd.ini\" of TC"
+msgid "from \"&wincmd.ini\" of TC"
 msgstr "de \"wincmd.ini\" de TC"
 
-#: tfrmoptionsdirectoryhotlist.miopenallbranches.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miopenallbranches.caption"
-msgid "Open all branches"
-msgstr "Déploie toutes les branches"
-
-#: tfrmoptionsdirectoryhotlist.mipasteselection.caption
-msgctxt "tfrmoptionsdirectoryhotlist.mipasteselection.caption"
-msgid "Paste"
-msgstr "Coller"
+#: tfrmoptionsdirectoryhotlist.minavigate.caption
+msgid "&Navigate..."
+msgstr "Navigation"
 
 #: tfrmoptionsdirectoryhotlist.mirestorebackuphotlist.caption
-msgid "Restore a backup of Directory Hotlist"
+msgid "&Restore a backup of Directory Hotlist"
 msgstr "Ramène un fichier de backup d'une liste de dossiers favoris"
 
 #: tfrmoptionsdirectoryhotlist.misavebackuphotlist.caption
-msgid "Save a backup of current Directory Hotlist"
+msgid "&Save a backup of current Directory Hotlist"
 msgstr "Sauvegarder un backup de la liste courante de dossiers favoris"
 
 #: tfrmoptionsdirectoryhotlist.misearchandreplace.caption
 msgctxt "tfrmoptionsdirectoryhotlist.misearchandreplace.caption"
-msgid "Search and replace..."
+msgid "Search and &replace..."
 msgstr "Recherche et remplace..."
-
-#: tfrmoptionsdirectoryhotlist.misearchandreplaceinpath.caption
-msgid "in path..."
-msgstr "dans tous les chemins..."
-
-#: tfrmoptionsdirectoryhotlist.misearchandreplaceintargetpath.caption
-msgid "in target path..."
-msgstr "dans tous les chemins-cible"
-
-#: tfrmoptionsdirectoryhotlist.misearchinreplaceinbothpaths.caption
-msgid "in path and target path..."
-msgstr "dans tout les chemins et les chemins-cible"
-
-#: tfrmoptionsdirectoryhotlist.miseparator1.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miseparator1.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionsdirectoryhotlist.miseparator10.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miseparator10.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionsdirectoryhotlist.miseparator11.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miseparator11.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionsdirectoryhotlist.miseparator12.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miseparator12.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionsdirectoryhotlist.miseparator13.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miseparator13.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionsdirectoryhotlist.miseparator2.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miseparator2.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionsdirectoryhotlist.miseparator3.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miseparator3.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionsdirectoryhotlist.miseparator4.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miseparator4.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionsdirectoryhotlist.miseparator5.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miseparator5.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionsdirectoryhotlist.miseparator6.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miseparator6.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionsdirectoryhotlist.miseparator7.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miseparator7.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionsdirectoryhotlist.miseparator8.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miseparator8.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionsdirectoryhotlist.miseparator9.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miseparator9.caption"
-msgid "-"
-msgstr "-"
 
 #: tfrmoptionsdirectoryhotlist.misorteverything.caption
 msgctxt "tfrmoptionsdirectoryhotlist.misorteverything.caption"
-msgid "...everything, from A to Z!"
+msgid "...everything, from A to &Z!"
 msgstr "...tout, de A à Z!"
 
 #: tfrmoptionsdirectoryhotlist.misortsinglegroup.caption
 msgctxt "tfrmoptionsdirectoryhotlist.misortsinglegroup.caption"
-msgid "...single group of item(s) only"
+msgid "...single &group of item(s) only"
 msgstr "...simple groupe d'items seulement"
-
-#: tfrmoptionsdirectoryhotlist.misortsinglegroup2.caption
-msgctxt "tfrmoptionsdirectoryhotlist.misortsinglegroup2.caption"
-msgid "Sort single group of item(s) only"
-msgstr "Tri un seul groupe d'items"
 
 #: tfrmoptionsdirectoryhotlist.misortsinglesubmenu.caption
 msgctxt "tfrmoptionsdirectoryhotlist.misortsinglesubmenu.caption"
-msgid "...content of submenu(s) selected, no sublevel"
+msgid "...&content of submenu(s) selected, no sublevel"
 msgstr "...le contenu des sous-menu sélectionné, mais pas plus creux"
 
 #: tfrmoptionsdirectoryhotlist.misortsubmenuandsublevel.caption
 msgctxt "tfrmoptionsdirectoryhotlist.misortsubmenuandsublevel.caption"
-msgid "...content of submenu(s) selected and all sublevels"
+msgid "...content of submenu(s) selected and &all sublevels"
 msgstr "...le contenu des sous-menus et de leur descendance"
 
 #: tfrmoptionsdirectoryhotlist.mitestresultinghotlistmenu.caption
 msgctxt "tfrmoptionsdirectoryhotlist.mitestresultinghotlistmenu.caption"
-msgid "Test resulting menu"
+msgid "Test resultin&g menu"
 msgstr "Vérification du menu résultant"
 
-#: tfrmoptionsdirectoryhotlist.mitypethedirectory.caption
-msgctxt "tfrmoptionsdirectoryhotlist.mitypethedirectory.caption"
-msgid "directory I will type"
-msgstr "nom de dossier que je vais taper"
+#: tfrmoptionsdirectoryhotlist.mitweakpath.caption
+msgid "Tweak &path"
+msgstr "Ajuste chemin"
 
-#: tfrmoptionsdirectoryhotlist.mitypethedirectory2.caption
-msgctxt "tfrmoptionsdirectoryhotlist.mitypethedirectory2.caption"
-msgid "Add directory I will type"
-msgstr "Ajoute un dossier dont je vais entrer le nom"
-
-#: tfrmoptionsdirectoryhotlist.mitypethedirectory3.caption
-msgid "Insert directory I will type"
-msgstr "Insère le dossier dont je vais entrer le nom"
+#: tfrmoptionsdirectoryhotlist.mitweaktargetpath.caption
+msgid "Tweak &target path"
+msgstr "Ajuste la cible"
 
 #: tfrmoptionsdirectoryhotlist.rgwheretoadd.caption
-msgid "Addition from main panel:"
+msgid "Addition from main panel"
 msgstr "Ajout du panneau principal"
 
 #: tfrmoptionsdragdrop.cbdraganddropaskformateachtime.caption
@@ -5653,11 +5772,6 @@ msgstr "Ne pas tenir compte du marqueur \"lecture seule\""
 msgid "&Move operation"
 msgstr "Opération de déplacement"
 
-#: tfrmoptionsfileoperations.cbpartialnamesearch.caption
-msgctxt "TFRMOPTIONSFILEOPERATIONS.CBPARTIALNAMESEARCH.CAPTION"
-msgid "&Search for part of file name"
-msgstr "Recherche pour les parties de noms"
-
 #: tfrmoptionsfileoperations.cbprocesscomments.caption
 msgctxt "TFRMOPTIONSFILEOPERATIONS.CBPROCESSCOMMENTS.CAPTION"
 msgid "&Process comments with files/folders"
@@ -5678,18 +5792,9 @@ msgctxt "TFRMOPTIONSFILEOPERATIONS.CBSKIPFILEOPERROR.CAPTION"
 msgid "S&kip file operations errors and write them to log window"
 msgstr "Continuer en cas d'erreurs lors des opérations et les afficher dans la fenêtre du journal"
 
-#: tfrmoptionsfileoperations.dbtextsearch.caption
-msgid "Text search in files"
-msgstr "Recherche de texte dans les fichiers"
-
 #: tfrmoptionsfileoperations.gbexecutingoperations.caption
 msgid "Executing operations"
 msgstr "Exécution des opérations"
-
-#: tfrmoptionsfileoperations.gbfilesearch.caption
-msgctxt "TFRMOPTIONSFILEOPERATIONS.GBFILESEARCH.CAPTION"
-msgid "File search"
-msgstr "Recherche de fichiers"
 
 #: tfrmoptionsfileoperations.gbuserinterface.caption
 msgid "User interface"
@@ -5707,10 +5812,6 @@ msgstr "Taille du tampon pour le calcul de signature (en KB) :"
 msgid "Show operations progress &initially in"
 msgstr "Montre la progression des opérations dans"
 
-#: tfrmoptionsfileoperations.lblsearchdefaulttemplate.caption
-msgid "Default search template:"
-msgstr "Modèle de recherche par défaut :"
-
 #: tfrmoptionsfileoperations.lbltypeofduplicatedrename.caption
 msgctxt "tfrmoptionsfileoperations.lbltypeofduplicatedrename.caption"
 msgid "Duplicated name auto-rename style:"
@@ -5719,16 +5820,6 @@ msgstr "Méthode de renommage automatique des fichiers à dupliquer :"
 #: tfrmoptionsfileoperations.lblwipepassnumber.caption
 msgid "&Number of wipe passes:"
 msgstr "Nombre de cycles de pulvérisation :"
-
-#: tfrmoptionsfileoperations.rbusemmapinsearch.caption
-msgctxt "TFRMOPTIONSFILEOPERATIONS.RBUSEMMAPINSEARCH.CAPTION"
-msgid "Use memory mapping for search te&xt in files"
-msgstr "Utiliser la mémoire pour les recherches dans les fichiers texte"
-
-#: tfrmoptionsfileoperations.rbusestreaminsearch.caption
-msgctxt "TFRMOPTIONSFILEOPERATIONS.RBUSESTREAMINSEARCH.CAPTION"
-msgid "&Use stream for search text in files"
-msgstr "Utiliser un flux pour les recherches dans les fichiers texte"
 
 #: tfrmoptionsfilepanelscolors.btnbackcolor.caption
 msgctxt "TFRMOPTIONSFILEPANELSCOLORS.BTNBACKCOLOR.CAPTION"
@@ -5878,6 +5969,57 @@ msgctxt "TFRMOPTIONSFILEPANELSCOLORS.LBLTEXTCOLOR.CAPTION"
 msgid "T&ext Color:"
 msgstr "Couleur du texte :"
 
+#: tfrmoptionsfilesearch.cbinitiallyclearfilemask.caption
+msgid "When launching file search, clear file mask filter"
+msgstr "Lorsqu'on lanche une recherche de fichier, réinitialser les filtres"
+
+#: tfrmoptionsfilesearch.cbpartialnamesearch.caption
+msgid "&Search for part of file name"
+msgstr "Recherche pour les parties de noms"
+
+#: tfrmoptionsfilesearch.cbshowmenubarinfindfiles.caption
+msgid "Show menu bar in \"Find files\""
+msgstr "Affiche la barre de menu dans la recherche de fichiers"
+
+#: tfrmoptionsfilesearch.dbtextsearch.caption
+msgid "Text search in files"
+msgstr "Recherche de texte dans les fichiers"
+
+#: tfrmoptionsfilesearch.gbfilesearch.caption
+msgctxt "tfrmoptionsfilesearch.gbfilesearch.caption"
+msgid "File search"
+msgstr "Recherche de fichiers"
+
+#: tfrmoptionsfilesearch.lblnewsearchfilters.caption
+msgid "Current filters with \"New search\" button:"
+msgstr "Action sur les filtres lorsqu'on appuis le bouton \"Nouvelle recherche\":"
+
+#: tfrmoptionsfilesearch.lblsearchdefaulttemplate.caption
+msgid "Default search template:"
+msgstr "Modèle de recherche par défaut :"
+
+#: tfrmoptionsfilesearch.rbusemmapinsearch.caption
+msgid "Use memory mapping for search te&xt in files"
+msgstr "Utiliser la mémoire pour les recherches dans les fichiers texte"
+
+#: tfrmoptionsfilesearch.rbusestreaminsearch.caption
+msgid "&Use stream for search text in files"
+msgstr "Utiliser un flux pour les recherches dans les fichiers texte"
+
+#: tfrmoptionsfilesviews.btnaddattribute.caption
+msgctxt "tfrmoptionsfilesviews.btnaddattribute.caption"
+msgid "&Add"
+msgstr "&Ajouter"
+
+#: tfrmoptionsfilesviews.btnattrshelp.caption
+msgctxt "tfrmoptionsfilesviews.btnattrshelp.caption"
+msgid "&Help"
+msgstr "Ai&de"
+
+#: tfrmoptionsfilesviews.cbdblclicktoparent.caption
+msgid "Enable changing to &parent folder when double-clicking on empty part of file view"
+msgstr "Activation du changement vers le répertoire-parent lorsqu'on double-clic dans un espace vide d'un panneau"
+
 #: tfrmoptionsfilesviews.cbdelayloadingtabs.caption
 msgid "Do&n't load file list until a tab is activated"
 msgstr "Ne pas charger la liste des fichiers juqu'au moment où l'onglet est activé"
@@ -5915,14 +6057,33 @@ msgctxt "TFRMOPTIONSFILESVIEWS.CBSPACEMOVESDOWN.CAPTION"
 msgid "&When selecting files with <SPACEBAR>, move down to next file (as with <INSERT>)"
 msgstr "Lors de la sélections des fichiers avec la barre d'espace, se déplacer sur le fichier suivant vers le bas (comme avec <Insér.>)"
 
+#: tfrmoptionsfilesviews.chkmarkmaskfilterwindows.caption
+msgctxt "tfrmoptionsfilesviews.chkmarkmaskfilterwindows.caption"
+msgid "Windows style filter when marking files (\"*.*\" also select files without extension, etc.)"
+msgstr "Interpréter le masque de filtre comme Windows (\"*.*\" sélectionne vraiment tout, même fichiers sans extension, etc.)"
+
+#: tfrmoptionsfilesviews.chkmarkmaskshowattribute.caption
+msgctxt "tfrmoptionsfilesviews.chkmarkmaskshowattribute.caption"
+msgid "Use an independent attribute filter in mask input dialog each time"
+msgstr "Utiliser un filtre d'attribut indépendant à chaque entrée de masque de sélection"
+
 #: tfrmoptionsfilesviews.gbformatting.caption
 msgid "Formatting"
 msgstr "Formatage"
+
+#: tfrmoptionsfilesviews.gbmarking.caption
+msgid "Marking/Unmarking entries"
+msgstr "Sélection/désélection de fichiers"
 
 #: tfrmoptionsfilesviews.gbsorting.caption
 msgctxt "TFRMOPTIONSFILESVIEWS.GBSORTING.CAPTION"
 msgid "Sorting"
 msgstr "Tri"
+
+#: tfrmoptionsfilesviews.lbattributemask.caption
+msgctxt "tfrmoptionsfilesviews.lbattributemask.caption"
+msgid "Default attribute mask value to use:"
+msgstr "Masque d'attribut à utiliser pa défaut:"
 
 #: tfrmoptionsfilesviews.lblcasesensitivity.caption
 msgid "Case s&ensitivity:"
@@ -6084,18 +6245,69 @@ msgctxt "TFRMOPTIONSFONTS.LBLVIEWERFONT.CAPTION"
 msgid "&Viewer font"
 msgstr "Police du lecteur de fichiers"
 
-#: tfrmoptionshotkeys.btnaddhotkey.caption
+#: tfrmoptionshotkeys.actaddhotkey.caption
+msgctxt "tfrmoptionshotkeys.actaddhotkey.caption"
 msgid "Add &hotkey"
-msgstr "Ajoute un raccourci clavier"
+msgstr "Ajoute un raccourci-clavier"
 
-#: tfrmoptionshotkeys.btndeletehotkey.caption
+#: tfrmoptionshotkeys.actcopy.caption
+msgctxt "tfrmoptionshotkeys.actcopy.caption"
+msgid "Copy"
+msgstr "Copier"
+
+#: tfrmoptionshotkeys.actdelete.caption
+msgctxt "tfrmoptionshotkeys.actdelete.caption"
+msgid "Delete"
+msgstr "Supprimer"
+
+#: tfrmoptionshotkeys.actdeletehotkey.caption
+msgctxt "tfrmoptionshotkeys.actdeletehotkey.caption"
 msgid "&Delete hotkey"
-msgstr "Efface le raccourci clavier"
+msgstr "Efface le raccourci-clavier"
 
-#: tfrmoptionshotkeys.btnedithotkey.caption
-msgctxt "tfrmoptionshotkeys.btnedithotkey.caption"
+#: tfrmoptionshotkeys.actedithotkey.caption
+msgctxt "tfrmoptionshotkeys.actedithotkey.caption"
 msgid "&Edit hotkey"
-msgstr "Éditer raccourci clavier"
+msgstr ""
+"Éditer raccourci-\n"
+"clavier\n"
+
+#: tfrmoptionshotkeys.actnextcategory.caption
+msgid "Next category"
+msgstr "Catégorie suivante"
+
+#: tfrmoptionshotkeys.actpopupfilerelatedmenu.caption
+msgid "Make popup the file related menu"
+msgstr "Faire apparaitre le menu relié au fichier"
+
+#: tfrmoptionshotkeys.actpreviouscategory.caption
+msgid "Previous category"
+msgstr "Catégorie précédente"
+
+#: tfrmoptionshotkeys.actrename.caption
+msgctxt "tfrmoptionshotkeys.actrename.caption"
+msgid "Rename"
+msgstr "Renommer"
+
+#: tfrmoptionshotkeys.actrestoredefault.caption
+msgid "Restore DC default"
+msgstr "Ramener valeur par défaut de DC"
+
+#: tfrmoptionshotkeys.actsavenow.caption
+msgid "Save now"
+msgstr "Sauvegarde maintenant"
+
+#: tfrmoptionshotkeys.actsortbycommand.caption
+msgid "Sort by command name"
+msgstr "Tri par commande"
+
+#: tfrmoptionshotkeys.actsortbyhotkeysgrouped.caption
+msgid "Sort by hotkeys (grouped)"
+msgstr "Tri par raccourcis (groupé)"
+
+#: tfrmoptionshotkeys.actsortbyhotkeysoneperline.caption
+msgid "Sort by hotkeys (one per row)"
+msgstr "Tri par raccourcis (une par ligne)"
 
 #: tfrmoptionshotkeys.lbfilter.caption
 msgctxt "TFRMOPTIONSHOTKEYS.LBFILTER.CAPTION"
@@ -6117,34 +6329,27 @@ msgctxt "TFRMOPTIONSHOTKEYS.LBLSCFILES.CAPTION"
 msgid "&Shortcut files:"
 msgstr "Fichiers des raccourcis clavier :"
 
-#: tfrmoptionshotkeys.stgcommands.columns[0].title.caption
-msgctxt "tfrmoptionshotkeys.stgcommands.columns[0].title.caption"
+#: tfrmoptionshotkeys.lblsortorder.caption
+msgid "So&rt order:"
+msgstr "Ordre de tri:"
+
+#: tfrmoptionshotkeys.micategories.caption
+msgid "Categories"
+msgstr "Catégories"
+
+#: tfrmoptionshotkeys.micommands.caption
+msgctxt "tfrmoptionshotkeys.micommands.caption"
 msgid "Command"
 msgstr "Commande"
 
-#: tfrmoptionshotkeys.stgcommands.columns[1].title.caption
-msgctxt "tfrmoptionshotkeys.stgcommands.columns[1].title.caption"
-msgid "Hotkeys"
-msgstr "Raccourcis clavier"
+#: tfrmoptionshotkeys.miseparator1.caption
+msgctxt "tfrmoptionshotkeys.miseparator1.caption"
+msgid "-"
+msgstr "-"
 
-#: tfrmoptionshotkeys.stgcommands.columns[2].title.caption
-msgctxt "tfrmoptionshotkeys.stgcommands.columns[2].title.caption"
-msgid "Description"
-msgstr "Description"
-
-#: tfrmoptionshotkeys.stghotkeys.columns[0].title.caption
-msgctxt "TFRMOPTIONSHOTKEYS.STGHOTKEYS.COLUMNS[0].TITLE.CAPTION"
-msgid "Hotkey"
-msgstr "Raccourci clavier"
-
-#: tfrmoptionshotkeys.stghotkeys.columns[1].title.caption
-msgctxt "TFRMOPTIONSHOTKEYS.STGHOTKEYS.COLUMNS[1].TITLE.CAPTION"
-msgid "Parameters"
-msgstr "Paramètres"
-
-#: tfrmoptionshotkeys.stghotkeys.columns[2].title.caption
-msgid "Controls"
-msgstr "Contrôle"
+#: tfrmoptionshotkeys.misortorder.caption
+msgid "Sort order"
+msgstr "Orde de tri"
 
 #: tfrmoptionsicons.cbiconsexclude.caption
 msgctxt "TFRMOPTIONSICONS.CBICONSEXCLUDE.CAPTION"
@@ -6160,33 +6365,44 @@ msgctxt "tfrmoptionsicons.cbiconsinmenussize.text"
 msgid "16x16"
 msgstr "16x16"
 
+#: tfrmoptionsicons.cbiconsonbuttons.caption
+msgid "Show icons on buttons"
+msgstr "Affiches les icônes sur les boutons"
+
 #: tfrmoptionsicons.cbiconsshowoverlay.caption
 msgctxt "TFRMOPTIONSICONS.CBICONSSHOWOVERLAY.CAPTION"
 msgid "Show o&verlay icons, e.g. for links"
 msgstr "Afficher les icônes \"overlay\", par exemple pour les liens"
 
-#: tfrmoptionsicons.cbiconssize.text
-msgctxt "TFRMOPTIONSICONS.CBICONSSIZE.TEXT"
-msgid "16x16"
-msgstr "16x16"
-
 #: tfrmoptionsicons.gbdisablespecialicons.caption
 msgid "Disable special icons"
 msgstr "Désactiver les icônes spéciales"
-
-#: tfrmoptionsicons.gbiconsinmenus.caption
-msgid "Icons in menus"
-msgstr "Icône dans les menus"
 
 #: tfrmoptionsicons.gbiconssize.caption
 msgctxt "TFRMOPTIONSICONS.GBICONSSIZE.CAPTION"
 msgid " Icon size "
 msgstr " &Taille des icônes "
 
+#: tfrmoptionsicons.gbicontheme.caption
+msgid "Icon theme"
+msgstr "Thème d'icône"
+
+#: tfrmoptionsicons.gbshowicons.caption
+msgid "Show icons"
+msgstr "Affiche les icônes"
+
 #: tfrmoptionsicons.gbshowiconsmode.caption
 msgctxt "TFRMOPTIONSICONS.GBSHOWICONSMODE.CAPTION"
 msgid " Show icons to the left of the filename "
 msgstr "Montrer les icônes à gauche des noms de fichier"
+
+#: tfrmoptionsicons.lbldiskpanel.caption
+msgid "Disk panel:"
+msgstr "Panneau des lecteurs:"
+
+#: tfrmoptionsicons.lblfilepanel.caption
+msgid "File panel:"
+msgstr "Panneau des fichiers:"
 
 #: tfrmoptionsicons.rbiconsshowall.caption
 msgctxt "TFRMOPTIONSICONS.RBICONSSHOWALL.CAPTION"
@@ -6479,10 +6695,6 @@ msgstr "Créer de nouveaux avec le codage :"
 #: tfrmoptionsmisc.chkgotoroot.caption
 msgid "Always &go to the root of a drive when changing drives"
 msgstr "Toujours aller à la racine du lecteur lorsqu'on change de lecteur"
-
-#: tfrmoptionsmisc.chkmarkmaskfilterwindows.caption
-msgid "Windows style filter when marking files (\"*.*\" also select files without extension, etc.)"
-msgstr "Interpréter le masque de filtre comme Windows (\"*.*\" sélectionne vraiment tout, même fichiers sans extension, etc.)"
 
 #: tfrmoptionsmisc.chkshowwarningmessages.caption
 msgctxt "tfrmoptionsmisc.chkshowwarningmessages.caption"
@@ -8232,6 +8444,10 @@ msgstr "&OK"
 msgid "Create symbolic link"
 msgstr "Créer un lien symbolique"
 
+#: tfrmsymlink.chkuserelativepath.caption
+msgid "Use &relative path when possible"
+msgstr ""
+
 #: tfrmsymlink.lblexistingfile.caption
 msgctxt "TFRMSYMLINK.LBLEXISTINGFILE.CAPTION"
 msgid "&Destination that the link will point to"
@@ -8558,6 +8774,10 @@ msgstr "A propos de la visionneuse"
 #: tfrmviewer.actabout.hint
 msgid "Displays the About message"
 msgstr "Affiche le message d'À propos"
+
+#: tfrmviewer.actchangeencoding.caption
+msgid "Change encoding"
+msgstr "Changer encodage"
 
 #: tfrmviewer.actcopyfile.caption
 msgctxt "TFRMVIEWER.ACTCOPYFILE.CAPTION"
@@ -9023,6 +9243,32 @@ msgctxt "TWFXPLUGINCOPYMOVEOPERATIONOPTIONSUI.LBLFILEEXISTS.CAPTION"
 msgid "When file exists"
 msgstr "Quand le fichier existe"
 
+#: uexifreader.rsdatetimeoriginal
+msgid "Date taken"
+msgstr "Date de capture"
+
+#: uexifreader.rsimageheight
+msgctxt "uexifreader.rsimageheight"
+msgid "Height"
+msgstr "Hauteur"
+
+#: uexifreader.rsimagewidth
+msgctxt "uexifreader.rsimagewidth"
+msgid "Width"
+msgstr "Largeur"
+
+#: uexifreader.rsmake
+msgid "Manufacturer"
+msgstr "Manufacturier"
+
+#: uexifreader.rsmodel
+msgid "Camera model"
+msgstr "Appareil"
+
+#: uexifreader.rsorientation
+msgid "Orientation"
+msgstr "Orientation"
+
 #: ulng.msgtrytolocatecrcfile
 msgid ""
 "This file cannot be found and could help to validate final combination of files:\n"
@@ -9084,6 +9330,10 @@ msgstr "Vérifier la signature"
 #: ulng.rschecksumverifytotal
 msgid "Total:"
 msgstr "Total :"
+
+#: ulng.rsclearfiltersornot
+msgid "Do you want to clear filters for this new search?"
+msgstr "Voulez-vous réinitialiser les recherches pour cette nouvelle recherche?"
 
 #: ulng.rsclipboardcontainsinvalidtoolbardata
 msgid "Clipboard doesn't contain any valid toolbar data."
@@ -9242,16 +9492,20 @@ msgid "&Continue"
 msgstr "Continuer"
 
 #: ulng.rsdlgbuttoncopyinto
-msgid "Copy &Into"
+msgid "&Merge"
 msgstr "Copier &dans"
 
 #: ulng.rsdlgbuttoncopyintoall
-msgid "Copy Into &All"
+msgid "Mer&ge All"
 msgstr "Copie tout à l'intérieur"
 
 #: ulng.rsdlgbuttonexitprogram
 msgid "E&xit program"
 msgstr "Sortie de l'application"
+
+#: ulng.rsdlgbuttonignore
+msgid "Ig&nore"
+msgstr "Ig&nore"
 
 #: ulng.rsdlgbuttonignoreall
 msgid "I&gnore All"
@@ -9306,6 +9560,10 @@ msgstr "Reprendre"
 #: ulng.rsdlgbuttonretry
 msgid "Re&try"
 msgstr "Ré-&essayer"
+
+#: ulng.rsdlgbuttonretryadmin
+msgid "As Ad&ministrator"
+msgstr "Comme administrateur"
 
 #: ulng.rsdlgbuttonskip
 msgid "&Skip"
@@ -9442,8 +9700,8 @@ msgid "Exported_from_DC"
 msgstr "Exporté_de_DC"
 
 #: ulng.rsfileopdirectoryexistsoptions
-msgid "Ask;Overwrite;Copy into;Skip"
-msgstr "Demande;Ré-écris;Copie à l'intérieur;Saute"
+msgid "Ask;Merge;Skip"
+msgstr "Demande;Copie à l'intérieur;Saute"
 
 #: ulng.rsfileopfileexistsoptions
 msgid "Ask;Overwrite;Overwrite Older;Skip"
@@ -9641,9 +9899,61 @@ msgctxt "ulng.rshotkeycategoryviewer"
 msgid "Viewer"
 msgstr "Visionneuse"
 
+#: ulng.rshotkeyfilealreadyexists
+msgid ""
+"A setup with that name already exists.\n"
+"Do you want to overwrite it?\n"
+msgstr ""
+"Une configuration avec ce nom existe déjà.\n"
+"Est-ce que tu veux l'écraser?\n"
+
+#: ulng.rshotkeyfileconfirmdefault
+msgid "Are you sure you want to restore default?"
+msgstr "Êtes-vous sûr de vouloir ramener les valeur initiales?"
+
+#: ulng.rshotkeyfileconfirmerasure
+msgid "Are you sure you want to erase setup \"%s\"?"
+msgstr "Êtes-vous sûr de vouloir effacer la configuration \"%s\"?"
+
+#: ulng.rshotkeyfilecopyof
+msgid "Copy of %s"
+msgstr "Copie de %s"
+
+#: ulng.rshotkeyfileinputnewname
+msgid "Input your new name"
+msgstr "Entrez votre nouveau nom"
+
+#: ulng.rshotkeyfilemustkeepone
+msgid "You must keep at least one shortcut file."
+msgstr "Vous devez conserver au moins un fichier de raccourcis."
+
+#: ulng.rshotkeyfilenewname
+msgid "New name"
+msgstr "Nouveau nom"
+
+#: ulng.rshotkeyfilesavemodified
+msgid ""
+"\"%s\" setup has been modified.\n"
+"Do you want to save it now?\n"
+msgstr ""
+"Le fichier de configuration \"%\" a été modifié.\n"
+"Voulez-vous le sauvegarder maintenant?\n"
+
+#: ulng.rshotkeynoscenter
+msgid "No shortcut with \"ENTER\""
+msgstr "Aucun raccourcis avec la touche \"Entrée\""
+
+#: ulng.rshotkeysortorder
+msgid "By command name;By shortcut key (grouped);By shortcut key (one per row)"
+msgstr "Par nom de commande;Par raccourcis-clavier (groupé);Par raccourcis-clavier (un par ligne)"
+
 #: ulng.rsimporttoolbarproblem
 msgid "Cannot find reference to default bar file"
 msgstr "On ne troube pas de rérérence à la barre par défaut"
+
+#: ulng.rslistoffindfileswindows
+msgid "List of \"Find files\" windows"
+msgstr "Liste des fenêtres de recherche de fichiers"
 
 #: ulng.rsmarkminus
 msgid "Unselect mask"
@@ -9677,6 +9987,18 @@ msgstr "Entrez un nom pour la nouvelle colonne personnalisée"
 msgctxt "ulng.rsmnuactions"
 msgid "Actions"
 msgstr "Actions"
+
+#: ulng.rsmnucontentdefault
+msgid "<Default>"
+msgstr ""
+
+#: ulng.rsmnucontentoctal
+msgid "Octal"
+msgstr ""
+
+#: ulng.rsmnucopynetnamestoclip
+msgid "Copy names with UNC path"
+msgstr "Copie les noms avec chemin UNC"
 
 #: ulng.rsmnudisconnectnetworkdrive
 msgid "Disconnect Network Drive..."
@@ -9747,9 +10069,17 @@ msgstr "Voir"
 msgid "Account:"
 msgstr "Compte :"
 
+#: ulng.rsmsgalldcintcmds
+msgid "All Double Commander internal commands"
+msgstr "Toutes les commandes internes de Double Commander"
+
 #: ulng.rsmsgarchivercustomparams
 msgid "Additional parameters for archiver command-line:"
 msgstr "Paramètres additionnels pour la ligne de commande du programme d'archivage :"
+
+#: ulng.rsmsgaskquoteornot
+msgid "Do you want to enclose between quotes?"
+msgstr "Voulez-vous mettre en guillemets"
 
 #: ulng.rsmsgbadcrc32
 msgid ""
@@ -9771,6 +10101,10 @@ msgstr "Vous ne pouvez pas copier/déplacer le fichier \"%s\" sur lui-même !"
 msgid "Cannot delete directory %s"
 msgstr "On ne peut pas effacer le dossier %s"
 
+#: ulng.rsmsgcannotoverwritedirectory
+msgid "Cannot overwrite directory \"%s\" with non-directory \"%s\""
+msgstr "On ne peut pas écraser le répertoire \"%s\" avec de quoi qui n'est pas un répertoire \"%s\""
+
 #: ulng.rsmsgchdirfailed
 msgid "ChDir to [%s] failed!"
 msgstr "Le changement de dossier vers [%s] a échoué !"
@@ -9780,9 +10114,12 @@ msgid "Remove all inactive tabs?"
 msgstr "Fermer tous les onglets inactifs?"
 
 #: ulng.rsmsgcloselockedtab
-#, fuzzy,badformat
 msgid "This tab (%s) is locked! Close anyway?"
-msgstr "Cet onglet est verrouillé! Forcer sa fermeture tout de même?"
+msgstr "Cet onglet (%s) est verrouillé! Forcer sa fermeture tout de même?"
+
+#: ulng.rsmsgcofirmuserparam
+msgid "Confirmation of parameter"
+msgstr "Confirmation de paramètre"
 
 #: ulng.rsmsgconfirmquit
 msgid "Are you sure you want to quit?"
@@ -10078,6 +10415,16 @@ msgstr "Opérations sur les fichiers en cours"
 msgid "Some file operations have not yet finished. Closing Double Commander may result in data loss."
 msgstr "Certaines opérations sur les fichiers ne sont pas encore terminées. Fermer Double Commander peut entraîner la perte de données."
 
+#: ulng.rsmsgfilepathovermaxpath
+msgid ""
+"The target name length (%d) is more than %d characters!\n"
+"%s\n"
+"Most programs will not be able to access a file/directory with such a long name!\n"
+msgstr ""
+"La longueur du nom de fichier-cible (%d) est plus grande que %d caractères!\n"
+"%s\n"
+"La plupart des applications ne seront pas capable d'accéder au dossier/fichier avec un nom long comme cela!\n"
+
 #: ulng.rsmsgfilereadonly
 msgid "File %s is marked as read-only/hidden/system. Delete it?"
 msgstr "Le fichier %s est en lecture seule. Le supprimer quand même?"
@@ -10087,8 +10434,8 @@ msgid "The file size of \"%s\" is too big for destination file system!"
 msgstr "La taille du fichier \"%s\" est supérieure à l'espace disponible sur le système de fichier de destination !"
 
 #: ulng.rsmsgfolderexistsrwrt
-msgid "Folder %s exists, overwrite?"
-msgstr "Le dossier %s existe déjà, l'écraser ?"
+msgid "Folder %s exists, merge?"
+msgstr "Le dossier %s existe déjà, copier à l'intérieur'?"
 
 #: ulng.rsmsgfollowsymlink
 msgid "Follow symlink \"%s\"?"
@@ -10179,8 +10526,8 @@ msgstr "Importe la sélection"
 
 #: ulng.rsmsghotdirjustpath
 msgctxt "ulng.rsmsghotdirjustpath"
-msgid "Path"
-msgstr "Chemin"
+msgid "&Path:"
+msgstr "&Chemin :"
 
 #: ulng.rsmsghotdirlocatehotlistfile
 msgid "Locate \".hotlist\" file to import"
@@ -10226,13 +10573,13 @@ msgstr "(fin de menu)"
 
 #: ulng.rsmsghotdirsimplemenu
 msgctxt "ulng.rsmsghotdirsimplemenu"
-msgid "Menu name:"
-msgstr "Sous-menu :"
+msgid "Menu &name:"
+msgstr "Sous-me&nu :"
 
 #: ulng.rsmsghotdirsimplename
 msgctxt "ulng.rsmsghotdirsimplename"
-msgid "Name:"
-msgstr "Nom :"
+msgid "&Name:"
+msgstr "&Nom :"
 
 #: ulng.rsmsghotdirsimpleseparator
 msgctxt "ulng.rsmsghotdirsimpleseparator"
@@ -10462,6 +10809,10 @@ msgstr "Impossible de supprimer le fichier %s"
 msgid "Not implemented."
 msgstr "Pas encore implémenté."
 
+#: ulng.rsmsgobjectnotexists
+msgid "Object does not exist!"
+msgstr "L'oject n'existe pas!"
+
 #: ulng.rsmsgpanelpreview
 msgctxt "ulng.rsmsgpanelpreview"
 msgid "Below is a preview. You may move cursor and select files to get immediately an actual look and feel of the various settings."
@@ -10492,7 +10843,6 @@ msgid "&Delete %s"
 msgstr "&Supprimer %s"
 
 #: ulng.rsmsgpresetalreadyexists
-#, fuzzy,badformat
 msgid "Preset \"%s\" already exists. Overwrite?"
 msgstr "Écraser la configuration existante ?"
 
@@ -10681,7 +11031,6 @@ msgid "Enter location and filename where to save a TC Toolbar file"
 msgstr "Entrez l'emplacement et le nom de fichier pour la barre d'outil TC à sauvegarder"
 
 #: ulng.rsmsgthisisnowinclipboard
-#, fuzzy,badformat
 msgid "\"%s\" is now in the clipboard"
 msgstr "\"%\" est maintenant dans le presse-papier"
 
@@ -10741,6 +11090,14 @@ msgstr "Nom d'utilisateur :"
 msgid "User name (Firewall):"
 msgstr "Nom d'utilisateur (Firewall) :"
 
+#: ulng.rsmsgverify
+msgid "VERIFICATION:"
+msgstr ""
+
+#: ulng.rsmsgverifywrong
+msgid "The target file is corrupted, checksum mismatch!"
+msgstr ""
+
 #: ulng.rsmsgvolumelabel
 msgid "Volume label:"
 msgstr "Nom de volume :"
@@ -10761,13 +11118,37 @@ msgstr "Lancer l'effacement sécurisé pour la sélection \"%s\" ?"
 msgid "with"
 msgstr "avec"
 
+#: ulng.rsmulrenautorename
+msgid "Do auto-rename to \"name (1).ext\", \"name (2).ext\" etc.?"
+msgstr "Renommage automatique sous forme de \"nom (1).ext\", \"nom (2).ext\", etc.?"
+
 #: ulng.rsmulrenfilenamestylelist
 msgid "No change;UPPERCASE;lowercase;First char uppercase;First Char Of Every Word Uppercase;"
 msgstr "Pas de changement;MAJUSCULE;minuscule;Premier caractère majuscule;Premier Caractère De Chaque Mot Majuscule;"
 
+#: ulng.rsmulrenwarningduplicate
+msgid "Warning, duplicate names!"
+msgstr "Attention, il y a des doubons!"
+
 #: ulng.rsmulrenwronglinesnumber
 msgid "File contains wrong number of lines: %d, should be %d!"
-msgstr ""
+msgstr "Le fichier contient le mauvais nombre de lignes: %d, mais devrait être %d!"
+
+#: ulng.rsnewsearchclearfilteroptions
+msgid "Keep;Clear;Prompt"
+msgstr "Conserver;Réinitialiser;Demander"
+
+#: ulng.rsnoequivalentinternalcommand
+msgid "No internal equivalent command"
+msgstr "Pas commande interne équivalente"
+
+#: ulng.rsnofindfileswindowyet
+msgid "Sorry, no \"Find files\" window yet..."
+msgstr "Désolé, aucune fenêtre de recherche de fichiers..."
+
+#: ulng.rsnootherfindfileswindowtoclose
+msgid "Sorry, no other \"Find files\" window to close and free from memory..."
+msgstr "Désolé, il n'y a pas de fenêtre de recherche à fermer et oublier..."
 
 #: ulng.rsoperaborted
 msgid "Aborted"
@@ -10984,7 +11365,7 @@ msgid "Working"
 msgstr "Dossier de travail"
 
 #: ulng.rsoptaddfrommainpanel
-msgid "Add at beginning;Add at the end;Smart add"
+msgid "Add at &beginning;Add at the end;Smart add"
 msgstr "Ajout au début;Ajout à la fin;Ajout astucieux"
 
 #: ulng.rsoptarchivedelete
@@ -11260,6 +11641,11 @@ msgctxt "ulng.rsoptionseditorfilepanels"
 msgid "File panels"
 msgstr "Panneaux des fichiers"
 
+#: ulng.rsoptionseditorfilesearch
+msgctxt "ulng.rsoptionseditorfilesearch"
+msgid "File search"
+msgstr "Recherche de fichiers"
+
 #: ulng.rsoptionseditorfilesviews
 msgid "Files views"
 msgstr "Affichage des fichiers"
@@ -11512,9 +11898,29 @@ msgstr "RECHERCHE"
 msgid "<unnamed template>"
 msgstr "<modèle sans nom>"
 
+#: ulng.rssearchwithdsxplugininprogress
+msgid ""
+"A file search using DSX plugin is already in progress.\n"
+"We need that one to be completed before to launch a new one.\n"
+msgstr ""
+"Une recherche de fichiers avec un plugin DSX est déjà en cours.\n"
+"Nous devons attendre qu'elle soit complété avant dans lancer une nouvelle .\n"
+
+#: ulng.rssearchwithwdxplugininprogress
+msgid ""
+"A file search using WDX plugin is already in progress.\n"
+"We need that one to be completed before to launch a new one.\n"
+msgstr ""
+"Une recherche de fichiers avec un plugin WDX est déjà en cours.\n"
+"Nous devons attendre qu'elle soit complété avant dans lancer une nouvelle .\n"
+
 #: ulng.rsselectdir
 msgid "Select a directory"
 msgstr "Sélectionner un dossier"
+
+#: ulng.rsselectyoufindfileswindow
+msgid "Select your window"
+msgstr "Choisissez"
 
 #: ulng.rsshowhelpfor
 msgid "&Show help for %s"
@@ -11546,6 +11952,10 @@ msgstr "Nom de fichier"
 #: ulng.rssimplewordfiles
 msgid "files"
 msgstr "fichiers"
+
+#: ulng.rssimplewordletter
+msgid "Letter"
+msgstr "Lettre"
 
 #: ulng.rssimplewordparameter
 msgid "Param"
@@ -11862,8 +12272,8 @@ msgid "Other example of what's possible"
 msgstr "Autres exemples de ce qui est possible"
 
 #: ulng.rsvarpath
-msgid "Path, with ending delimiter"
-msgstr "Chemin, avec le séparateur de dossier à la fin"
+msgid "Path, without ending delimiter"
+msgstr "Chemin, sans le séparateur de dossier à la fin"
 
 #: ulng.rsvarpercentchangetopound
 msgid "From here to the end of the line, the percent-variable indicator is the \"#\" sign"

@@ -5,7 +5,7 @@ unit uFileViewHeader;
 interface
 
 uses
-  Classes, SysUtils, Controls, ExtCtrls, ComCtrls,
+  Classes, SysUtils, Controls, ExtCtrls, ComCtrls, LCLVersion,
   uPathLabel, uFileView, KASPathEdit, uFileSorting;
 
 type
@@ -63,11 +63,16 @@ type
     procedure MouseMove({%H-}Shift: TShiftState; {%H-}X, {%H-}Y: Integer); override;
     procedure MouseUp({%H-}Button: TMouseButton; {%H-}Shift: TShiftState;
                       {%H-}X, {%H-}Y: Integer); override;
+    {$if lcl_fullversion >= 1070000}
+    procedure DoAutoAdjustLayout(const AMode: TLayoutAdjustmentPolicy;
+                const AXProportion, AYProportion: Double); override;
+    {$endif}
   public
     constructor Create(AOwner: TFileView; AParent: TWinControl); reintroduce;
     destructor Destroy; override;
 
     procedure Click; override;
+    procedure DblClick; override;
     procedure UpdateHeader;
     procedure UpdateSorting(Sorting: TFileSortings);
   end;
@@ -109,10 +114,14 @@ begin
         NewPath:= NormalizePathDelimiters(FPathEdit.Text);
         NewPath:= ReplaceEnvVars(ReplaceTilde(NewPath));
         if not mbFileExists(NewPath) then
-          ChooseFileSource(FFileView, NewPath)
+          begin
+            if not ChooseFileSource(FFileView, NewPath, True) then
+              Exit;
+          end
         else
           begin
-            ChooseFileSource(FFileView, ExtractFileDir(NewPath));
+            if not ChooseFileSource(FFileView, ExtractFileDir(NewPath)) then
+              Exit;
             FFileView.SetActiveFile(ExtractFileName(NewPath));
           end;
         FPathEdit.Visible := False;
@@ -130,7 +139,7 @@ end;
 
 procedure TFileViewHeader.PathLabelClick(Sender: TObject);
 var
-  walkPath, dirNameToSelect: String;
+  walkPath, selectedDir, dirNameToSelect: String;
 begin
   FFileView.SetFocus;
 
@@ -138,9 +147,10 @@ begin
   begin
     // User clicked on a subdirectory of the path.
     walkPath := FFileView.CurrentPath;
-    FFileView.CurrentPath := FPathLabel.SelectedDir;
+    selectedDir := FPathLabel.SelectedDir;
+    FFileView.CurrentPath := selectedDir;
 
-    while (Length(walkPath) > Length(FPathLabel.SelectedDir) + 1) do
+    while (Length(walkPath) > Length(selectedDir) + 1) do
     begin
       dirNameToSelect := ExtractFileName(ExcludeTrailingPathDelimiter(walkPath));
       walkPath := FFileView.FileSource.GetParentDir(walkPath);
@@ -431,6 +441,11 @@ begin
   end;
 end;
 
+procedure TFileViewFixedHeader.DblClick;
+begin
+  Click;
+end;
+
 procedure TFileViewFixedHeader.UpdateHeader;
 var
   I: Integer;
@@ -510,6 +525,15 @@ begin
     UpdateState;
   end;
 end;
+
+{$if lcl_fullversion >= 1070000}
+procedure TFileViewFixedHeader.DoAutoAdjustLayout(const AMode: TLayoutAdjustmentPolicy;
+  const AXProportion, AYProportion: Double);
+begin
+  // Don't auto adjust vertical layout
+  inherited DoAutoAdjustLayout(AMode, AXProportion, 1.0);
+end;
+{$endif}
 
 constructor TFileViewFixedHeader.Create(AOwner: TFileView; AParent: TWinControl);
 var

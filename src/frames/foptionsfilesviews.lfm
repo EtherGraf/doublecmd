@@ -3,8 +3,8 @@ inherited frmOptionsFilesViews: TfrmOptionsFilesViews
   Width = 640
   ClientHeight = 550
   ClientWidth = 640
-  DesignLeft = 204
-  DesignTop = 5
+  DesignLeft = 369
+  DesignTop = 91
   object gbSorting: TGroupBox[0]
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Control = Owner
@@ -174,13 +174,13 @@ inherited frmOptionsFilesViews: TfrmOptionsFilesViews
   end
   object gbMisc: TGroupBox[1]
     AnchorSideLeft.Control = Owner
-    AnchorSideTop.Control = gbFormatting
+    AnchorSideTop.Control = gbMarking
     AnchorSideTop.Side = asrBottom
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
     Left = 6
-    Height = 212
-    Top = 263
+    Height = 235
+    Top = 378
     Width = 628
     Anchors = [akTop, akLeft, akRight]
     AutoSize = True
@@ -190,7 +190,7 @@ inherited frmOptionsFilesViews: TfrmOptionsFilesViews
     ChildSizing.VerticalSpacing = 4
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
     ChildSizing.ControlsPerLine = 1
-    ClientHeight = 192
+    ClientHeight = 215
     ClientWidth = 624
     TabOrder = 2
     object cbSpaceMovesDown: TCheckBox
@@ -257,6 +257,14 @@ inherited frmOptionsFilesViews: TfrmOptionsFilesViews
       Caption = 'Enable inplace &renaming when clicking twice on a name'
       TabOrder = 7
     end
+    object cbDblClickToParent: TCheckBox
+      Left = 6
+      Height = 19
+      Top = 190
+      Width = 459
+      Caption = 'Enable changing to &parent folder when double-clicking on empty part of file view'
+      TabOrder = 8
+    end
   end
   object gbFormatting: TGroupBox[2]
     AnchorSideLeft.Control = Owner
@@ -295,15 +303,15 @@ inherited frmOptionsFilesViews: TfrmOptionsFilesViews
       AnchorSideLeft.Side = asrBottom
       AnchorSideTop.Control = lblFileSizeFormat
       AnchorSideTop.Side = asrCenter
-      AnchorSideRight.Control = gbFormatting
-      AnchorSideRight.Side = asrBottom
+      AnchorSideRight.Control = speNumberOfDigits
       Left = 138
       Height = 23
       Top = 31
-      Width = 474
+      Width = 380
       Anchors = [akTop, akLeft, akRight]
       BorderSpacing.Left = 10
       ItemHeight = 15
+      OnChange = cbFileSizeFormatChange
       Style = csDropDownList
       TabOrder = 1
     end
@@ -372,6 +380,159 @@ inherited frmOptionsFilesViews: TfrmOptionsFilesViews
         OnChange = cbDateTimeFormatChange
         TabOrder = 0
       end
+    end
+    object speNumberOfDigits: TSpinEdit
+      AnchorSideLeft.Control = cbFileSizeFormat
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = cbFileSizeFormat
+      AnchorSideTop.Side = asrCenter
+      AnchorSideRight.Control = lblFileSizeExample
+      Left = 524
+      Height = 23
+      Top = 31
+      Width = 50
+      Anchors = [akTop, akRight]
+      MaxValue = 3
+      OnChange = cbFileSizeFormatChange
+      TabOrder = 2
+    end
+    object lblFileSizeExample: TLabel
+      AnchorSideTop.Control = cbFileSizeFormat
+      AnchorSideTop.Side = asrCenter
+      AnchorSideRight.Control = gbFormatting
+      AnchorSideRight.Side = asrBottom
+      Left = 580
+      Height = 12
+      Top = 36
+      Width = 32
+      Alignment = taRightJustify
+      Anchors = [akTop, akRight]
+      Constraints.MinHeight = 12
+      Constraints.MinWidth = 32
+      Font.Style = [fsBold]
+      ParentColor = False
+      ParentFont = False
+    end
+  end
+  object gbMarking: TGroupBox[3]
+    AnchorSideLeft.Control = Owner
+    AnchorSideTop.Control = gbFormatting
+    AnchorSideTop.Side = asrBottom
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    Left = 6
+    Height = 109
+    Top = 263
+    Width = 628
+    Anchors = [akTop, akLeft, akRight]
+    AutoSize = True
+    BorderSpacing.Around = 6
+    Caption = 'Marking/Unmarking entries'
+    ChildSizing.LeftRightSpacing = 12
+    ChildSizing.TopBottomSpacing = 8
+    ChildSizing.HorizontalSpacing = 6
+    ChildSizing.VerticalSpacing = 4
+    ClientHeight = 89
+    ClientWidth = 624
+    TabOrder = 3
+    object chkMarkMaskFilterWindows: TCheckBox
+      AnchorSideLeft.Control = gbMarking
+      AnchorSideTop.Control = gbMarking
+      Left = 12
+      Height = 19
+      Top = 8
+      Width = 463
+      Caption = 'Windows style filter when marking files ("*.*" also select files without extension, etc.)'
+      TabOrder = 0
+    end
+    object pnlDefaultAttribute: TPanel
+      AnchorSideLeft.Control = chkMarkMaskFilterWindows
+      AnchorSideTop.Control = chkMarkMaskFilterWindows
+      AnchorSideTop.Side = asrBottom
+      AnchorSideRight.Control = gbMarking
+      AnchorSideRight.Side = asrBottom
+      Left = 12
+      Height = 27
+      Top = 31
+      Width = 600
+      Anchors = [akTop, akLeft, akRight]
+      BevelOuter = bvNone
+      ChildSizing.HorizontalSpacing = 3
+      ChildSizing.Layout = cclLeftToRightThenTopToBottom
+      ClientHeight = 27
+      ClientWidth = 600
+      TabOrder = 2
+      object lbAttributeMask: TLabel
+        AnchorSideLeft.Control = pnlDefaultAttribute
+        AnchorSideTop.Control = edtDefaultAttribute
+        AnchorSideTop.Side = asrCenter
+        Left = 0
+        Height = 15
+        Top = 6
+        Width = 186
+        Caption = 'Default attribute mask value to use:'
+        ParentColor = False
+      end
+      object edtDefaultAttribute: TEdit
+        AnchorSideLeft.Control = lbAttributeMask
+        AnchorSideLeft.Side = asrBottom
+        AnchorSideTop.Side = asrBottom
+        AnchorSideRight.Control = btnAddAttribute
+        AnchorSideBottom.Side = asrCenter
+        Left = 189
+        Height = 27
+        Top = 0
+        Width = 304
+        Anchors = [akTop, akLeft, akRight]
+        AutoSize = False
+        TabOrder = 0
+      end
+      object btnAttrsHelp: TButton
+        AnchorSideLeft.Side = asrBottom
+        AnchorSideTop.Control = edtDefaultAttribute
+        AnchorSideTop.Side = asrCenter
+        AnchorSideRight.Control = pnlDefaultAttribute
+        AnchorSideRight.Side = asrBottom
+        AnchorSideBottom.Side = asrBottom
+        Left = 547
+        Height = 27
+        Top = 0
+        Width = 53
+        Anchors = [akTop, akRight]
+        AutoSize = True
+        BorderSpacing.InnerBorder = 1
+        Caption = '&Help'
+        Constraints.MinHeight = 26
+        OnClick = btnAttrsHelpClick
+        TabOrder = 1
+      end
+      object btnAddAttribute: TButton
+        AnchorSideLeft.Side = asrBottom
+        AnchorSideTop.Control = edtDefaultAttribute
+        AnchorSideTop.Side = asrCenter
+        AnchorSideRight.Control = btnAttrsHelp
+        Left = 496
+        Height = 26
+        Top = 0
+        Width = 48
+        Anchors = [akTop, akRight]
+        AutoSize = True
+        Caption = '&Add'
+        Constraints.MinHeight = 26
+        OnClick = btnAddAttributeClick
+        TabOrder = 2
+      end
+    end
+    object chkMarkMaskShowAttribute: TCheckBox
+      AnchorSideLeft.Control = chkMarkMaskFilterWindows
+      AnchorSideTop.Control = pnlDefaultAttribute
+      AnchorSideTop.Side = asrBottom
+      Left = 12
+      Height = 19
+      Top = 62
+      Width = 366
+      Caption = 'Use an independent attribute filter in mask input dialog each time'
+      TabOrder = 1
     end
   end
 end

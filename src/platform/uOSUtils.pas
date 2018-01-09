@@ -3,7 +3,7 @@
     -------------------------------------------------------------------------
     This unit contains platform depended functions.
 
-    Copyright (C) 2006-2015 Alexander Koblov (alexx2000@mail.ru)
+    Copyright (C) 2006-2016 Alexander Koblov (alexx2000@mail.ru)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,7 +22,11 @@
 
 unit uOSUtils;
  
-{$mode delphi}{$H+}
+{$mode delphi}
+
+{$IFDEF DARWIN}
+{$modeswitch objectivec1}
+{$ENDIF}
 
 interface
 
@@ -49,7 +53,7 @@ const
   RunInTermCloseCmd = 'cmd.exe'; // default run in terminal command AND Close after command
   RunInTermCloseParams = '/C {command}';
   fmtCommandPath = '%s>';
-  MonoSpaceFont = 'Fixedsys';
+  MonoSpaceFont = 'Courier New';
   {$ELSEIF DEFINED(UNIX)}
   faFolder = S_IFDIR;
   ReversePathDelim = '\';
@@ -84,6 +88,12 @@ type
     constructor Create; reintroduce;
   end;
 
+{$IF DEFINED(MSWINDOWS) and DEFINED(FPC_HAS_CPSTRING)}
+  NativeString = UnicodeString;
+{$ELSE}
+  NativeString = String;
+{$ENDIF}
+
 function NtfsHourTimeDelay(const SourceName, TargetName: String): Boolean;
 function FileIsLinkToFolder(const FileName: String; out LinkTarget: String): Boolean;
 function FileIsLinkToDirectory(const FileName: String; Attr: TFileAttrs): Boolean;
@@ -94,7 +104,7 @@ function ExecCmdFork(sCmd: String): Boolean;
 {en
    Execute external commands
    @param(sCmd The executable)
-   @param(sParams The optional paramters)
+   @param(sParams The optional parameters)
    @param(sStartPath The initial working directory)
    @param(bShowCommandLinePriorToExecute Flag indicating if we want the user to be prompted at the very last
                                          seconds prior to launch execution by offering a dialog window where
@@ -104,6 +114,8 @@ function ExecCmdFork(sCmd: String): Boolean;
 }
 function ExecCmdFork(sCmd: String; sParams: String; sStartPath: String = ''; bShowCommandLinePriorToExecute: Boolean = False;
                      bTerm: Boolean = False; bKeepTerminalOpen: tTerminalEndindMode = termStayOpen): Boolean;
+
+function ExecCmdAdmin(sCmd: String; sParams: String; sStartPath: String = ''): Boolean;
 {en
    Opens a file or URL in the user's preferred application
    @param(URL File name or URL)
@@ -117,27 +129,6 @@ function GetDiskFreeSpace(const Path : String; out FreeSize, TotalSize : Int64) 
    @returns(The maximum file size for a mounted file system)
 }
 function GetDiskMaxFileSize(const Path : String) : Int64;
-{en
-   Create a hard link to a file
-   @param(Path Name of file)
-   @param(LinkName Name of hard link)
-   @returns(The function returns @true if successful, @false otherwise)
-}
-function CreateHardLink(const Path, LinkName: String) : Boolean;
-{en
-   Create a symbolic link
-   @param(Path Name of file)
-   @param(LinkName Name of symbolic link)
-   @returns(The function returns @true if successful, @false otherwise)
-}
-function CreateSymLink(const Path, LinkName: string) : Boolean;
-{en
-   Read destination of symbolic link
-   @param(LinkName Name of symbolic link)
-   @returns(The file name/path the symbolic link name is pointing to.
-            The path may be relative to link's location.)
-}
-function ReadSymLink(const LinkName : String) : String;
 {en
    Reads the concrete file's name that the link points to.
    If the link points to a link then it's resolved recursively
@@ -168,6 +159,7 @@ function GetAppConfigDir: String;
    @returns(The directory for the application's cache files)
 }
 function GetAppCacheDir: String;
+function GetAppDataDir: String;
 function GetTempFolder: String;
 
 { Similar to "GetTempFolder" but that we can unilaterally delete at the end when closin application}
@@ -199,6 +191,10 @@ function mbFileGetAttrNoLinks(const FileName: String): TFileAttrs;
    current locale then use short file name under Windows.
 }
 function mbFileNameToSysEnc(const LongPath: String): String;
+{en
+   Converts file name to native representation
+}
+function mbFileNameToNative(const FileName: String): NativeString; inline;
 function mbGetEnvironmentVariable(const sName: String): String;
 function mbSetEnvironmentVariable(const sName, sValue: String): Boolean;
 {en
@@ -224,6 +220,8 @@ function GetCurrentUserName : String;
 }
 function GetComputerNetName: String;
 
+var
+  AdministratorPrivileges: Boolean = False;
 
 implementation
 
@@ -231,13 +229,15 @@ uses
   StrUtils, uFileProcs, FileUtil, uDCUtils, DCOSUtils, DCStrUtils, uGlobs, uLng,
   fConfirmCommandLine, uLog, DCConvertEncoding, LazUTF8
   {$IF DEFINED(MSWINDOWS)}
-  , JwaWinCon, Windows, uNTFSLinks, uMyWindows, JwaWinNetWk,
-    uShlObjAdditional, shlobj
+  , JwaWinCon, Windows, uMyWindows, JwaWinNetWk,
+    uShlObjAdditional, shlobj, DCWindows
   {$ENDIF}
   {$IF DEFINED(UNIX)}
   , BaseUnix, Unix, uMyUnix, dl
-    {$IF NOT DEFINED(DARWIN)}
-  , uGio, uClipboard
+    {$IF DEFINED(DARWIN)}
+  , CocoaAll, uMyDarwin
+    {$ELSE}
+  , uGio, uClipboard, uXdg, uKde
     {$ENDIF}
   {$ENDIF}
   ;
@@ -408,6 +408,26 @@ begin
 end;
 {$ENDIF}
 
+function ExecCmdAdmin(sCmd: String; sParams: String; sStartPath: String): Boolean;
+{$IF DEFINED(MSWINDOWS)}
+begin
+  sStartPath:= RemoveQuotation(sStartPath);
+
+  if sStartPath = '' then
+    sStartPath:= mbGetCurrentDir;
+
+  sCmd:= NormalizePathDelimiters(sCmd);
+
+  Result:= ShellExecuteW(0, 'runas', PWideChar(UTF8Decode(sCmd)),
+                         PWideChar(UTF8Decode(sParams)),
+                         PWideChar(UTF8Decode(sStartPath)), SW_SHOW) > 32;
+end;
+{$ELSE}
+begin
+  Result:= False;
+end;
+{$ENDIF}
+
 function ShellExecute(URL: String): Boolean;
 {$IF DEFINED(MSWINDOWS)}
 var
@@ -459,8 +479,8 @@ begin
     end
   else
     begin
-      if (DesktopEnv = DE_KDE) and (FindDefaultExecutablePath('kioclient') <> EmptyStr) then
-        sCmdLine:= 'kioclient exec ' + QuoteStr(URL) // Under KDE use "kioclient" to open files
+      if (DesktopEnv = DE_KDE) and (HasKdeOpen = True) then
+        Result:= KioOpen(URL) // Under KDE use "kioclient" to open files
       else if HasGio and (DesktopEnv <> DE_XFCE) then
         Result:= GioOpen(URL) // Under GNOME, Unity and LXDE use "GIO" to open files
       else
@@ -494,10 +514,10 @@ begin
 end;
 {$ELSE}
 var
-  wPath: WideString;
+  wPath: UnicodeString;
 begin
-  wPath:= UTF8Decode(Path);
-  Result:= GetDiskFreeSpaceExW(PWChar(wPath), FreeSize, TotalSize, nil);
+  wPath:= UTF16LongName(Path);
+  Result:= GetDiskFreeSpaceExW(PWideChar(wPath), FreeSize, TotalSize, nil);
 end;
 {$ENDIF}
 
@@ -562,70 +582,6 @@ end;
 {$ELSE}
 begin
   Result:= False;
-end;
-{$ENDIF}
-
-function CreateHardLink(const Path, LinkName: String) : Boolean;
-{$IFDEF MSWINDOWS}
-var
-  wsPath, wsLinkName: WideString;
-begin
-  Result:= True;
-  try
-    wsPath:= UTF8Decode(Path);
-    wsLinkName:= UTF8Decode(LinkName);
-    Result:= uNTFSLinks.CreateHardlink(wsPath, wsLinkName);
-  except
-    Result:= False;
-  end;
-end;
-{$ELSE}
-begin
-  Result := (fplink(PAnsiChar(CeUtf8ToSys(Path)),PAnsiChar(CeUtf8ToSys(LinkName)))=0);
-end;
-{$ENDIF}
-
-function CreateSymLink(const Path, LinkName: string) : Boolean;
-{$IFDEF MSWINDOWS}
-var
-  wsPath, wsLinkName: WideString;
-begin
-  Result := True;
-  try
-    wsPath:= UTF8Decode(Path);
-    wsLinkName:= UTF8Decode(LinkName);
-    Result:= uNTFSLinks.CreateSymlink(wsPath, wsLinkName);
-  except
-    Result := False;
-  end;
-end;
-{$ELSE}
-begin
-  Result := (fpsymlink(PAnsiChar(CeUtf8ToSys(Path)), PAnsiChar(CeUtf8ToSys(LinkName)))=0);
-end;
-{$ENDIF}
-
-(* Get symlink target *)
-
-function ReadSymLink(const LinkName : String) : String;
-{$IFDEF MSWINDOWS}
-var
-  wsLinkName,
-  wsTarget: UnicodeString;
-begin
-  try
-    wsLinkName:= UTF8Decode(LinkName);
-    if uNTFSLinks.ReadSymLink(wsLinkName, wsTarget) then
-      Result := UTF16ToUTF8(wsTarget)
-    else
-      Result := '';
-  except
-    Result := '';
-  end;
-end;
-{$ELSE}
-begin
-  Result := SysToUTF8(fpReadlink(UTF8ToSys(LinkName)));
 end;
 {$ENDIF}
 
@@ -851,7 +807,7 @@ begin
 end;
 {$ELSEIF DEFINED(DARWIN)}
 begin
-  Result:= GetHomeDir + '/Library/Caches/' + ApplicationName;
+  Result:= NSGetFolderPath(NSCachesDirectory);
 end;
 {$ELSE}
 var
@@ -862,6 +818,21 @@ begin
     Result:= CeSysToUtf8(uinfo^.pw_dir) + '/.cache/' + ApplicationName
   else
     Result:= GetHomeDir + '/.cache/' + ApplicationName;
+end;
+{$ENDIF}
+
+function GetAppDataDir: String;
+{$IF DEFINED(MSWINDOWS)}
+begin
+  Result:= GetAppCacheDir;
+end;
+{$ELSEIF DEFINED(DARWIN)}
+begin
+  Result:= NSGetFolderPath(NSApplicationSupportDirectory);
+end;
+{$ELSE}
+begin
+  Result:= IncludeTrailingPathDelimiter(GetUserDataDir) + ApplicationName;
 end;
 {$ENDIF}
 
@@ -999,7 +970,7 @@ begin
 end;
 {$ELSE}
 begin
-  Result:= UTF8ToSys(LongPath);
+  Result:= CeUtf8ToSys(LongPath);
 end;
 {$ENDIF}
 
@@ -1040,7 +1011,7 @@ function mbSetEnvironmentVariable(const sName, sValue: String): Boolean;
 {$IFDEF MSWINDOWS}
 var
   wsName,
-  wsValue: WideString;
+  wsValue: UnicodeString;
 begin
   wsName:= UTF8Decode(sName);
   wsValue:= UTF8Decode(sValue);
@@ -1168,5 +1139,23 @@ begin
   Result:= SysToUTF8(GetHostName);
 end;
 {$ENDIF}
+
+function mbFileNameToNative(const FileName: String): NativeString;
+{$IF DEFINED(MSWINDOWS) and DEFINED(FPC_HAS_CPSTRING)}
+begin
+  Result:= UTF16LongName(FileName);
+end;
+{$ELSE}
+begin
+  Result:= Utf8ToSys(FileName);
+end;
+{$ENDIF}
+
+initialization
+  {$IF DEFINED(UNIX)}
+  AdministratorPrivileges:= True; // (fpGetUID = 0); temporary while ExecCmdAdmin not implemented
+  {$ELSE}
+  AdministratorPrivileges:= IsUserAdmin;
+  {$ENDIF}
 
 end.

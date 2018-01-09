@@ -3,7 +3,7 @@
    -------------------------------------------------------------------------
    Version information about DC, building tools and running environment.
 
-   Copyright (C) 2006-2016  Alexander Koblov (alexx2000@mail.ru)
+   Copyright (C) 2006-2017  Alexander Koblov (alexx2000@mail.ru)
    Copyright (C) 2010       Przemyslaw Nagay (cobines@gmail.com)
 
    This program is free software; you can redistribute it and/or modify
@@ -34,7 +34,7 @@ uses
 {$I revision.inc} // Lazarus revision number
 
 const
-  dcVersion   = '0.8.0 alpha';
+  dcVersion   = '0.9.0 alpha';
   dcBuildDate = {$I %DATE%};
   lazVersion  = lcl_version;         // Lazarus version (major.minor.micro)
   lazRevision = RevisionStr;         // Lazarus SVN revision
@@ -64,30 +64,19 @@ uses
   {$IFDEF LCLQT}
   , qt4
   {$ENDIF}
+  {$IFDEF LCLQT5}
+  , qt5
+  {$ENDIF}
   {$IFDEF LCLGTK2}
   , gtk2
   {$ENDIF}
   {$IFDEF MSWINDOWS}
   , Windows, JwaNative, JwaNtStatus, JwaWinType
   {$ENDIF}
+  {$if lcl_fullversion >= 1070000}
+  , LCLPlatformDef
+  {$endif}
   ;
-
-const
-  // A custom version of InterfaceBase.LCLPlatformDirNames
-  // because we make slight changes to names.
-  LCLPlatform: array[TLCLPlatform] of string = (
-      'gtk1',
-      'gtk2',
-      'gtk3',
-      'win32/win64',
-      'wince',
-      'carbon',
-      'qt4',
-      'fpGUI',
-      'NoGUI',
-      'cocoa',
-      'customdrawn'
-    );
 
 {$IF DEFINED(UNIX)}
 {en
@@ -299,7 +288,7 @@ var
   osvi: TOsVersionInfoExW;
 {$ENDIF}
 begin
-  TargetWS := LCLPlatform[WidgetSet.LCLPlatform];
+  TargetWS := LCLPlatformDirNames[WidgetSet.LCLPlatform];
 
   {$IF DEFINED(MSWINDOWS)}
   OSVersion := 'Windows';
@@ -446,8 +435,8 @@ begin
   end;
   {$ENDIF}
 
-  {$IFDEF LCLQT}
-  WSVersion := 'Qt ' + QtVersion + ', libQt4Pas ';
+  {$IF DEFINED(LCLQT) or DEFINED(LCLQT5)}
+  WSVersion := 'Qt ' + QtVersion + ', libQt' + QtVersion[0] + 'Pas ';
 
   WSVersion := WSVersion + IntToStr((QT_VERSION shr 16) and 255) + '.' +
                            IntToStr((QT_VERSION shr  8) and 255) + '.' +
@@ -462,12 +451,25 @@ begin
 end;
 
 function GetLazarusVersion: String;
+var
+  I: Integer = 1;
 begin
   Result:= lazVersion;
-  if Length(lazRevision) > 0 then begin
-    Result += '-' + lazRevision;
+  while (I <= Length(lazRevision)) and (lazRevision[I] in ['0'..'9']) do
+    Inc(I);
+  if (I > 1) then begin
+    Result += '-' + Copy(lazRevision, 1, I - 1);
   end;
 end;
+
+procedure Initialize;
+begin
+  LCLPlatformDirNames[lpQT]:= 'qt4';
+  LCLPlatformDirNames[lpWin32]:= 'win32/win64';
+end;
+
+initialization
+  Initialize;
 
 end.
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
-    <Version Value="9"/>
+    <Version Value="10"/>
     <PathDelim Value="\"/>
     <General>
       <Flags>
@@ -24,8 +24,8 @@
     </i18n>
     <VersionInfo>
       <UseVersionInfo Value="True"/>
-      <MinorVersionNr Value="8"/>
-      <StringTable FileDescription="Double Commander is a cross platform open source file manager with two panels side by side" InternalName="DOUBLECMD" LegalCopyright="Copyright (C) 2006-2016 Alexander Koblov" ProductName="Double Commander" ProductVersion=""/>
+      <MinorVersionNr Value="9"/>
+      <StringTable FileDescription="Double Commander is a cross platform open source file manager with two panels side by side" InternalName="DOUBLECMD" LegalCopyright="Copyright (C) 2006-2017 Alexander Koblov" ProductName="Double Commander"/>
     </VersionInfo>
     <BuildModes Count="5">
       <Item1 Name="Debug" Default="True"/>
@@ -38,7 +38,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(LazarusDir)\ide;$(ProjOutDir);..\sdk;..\units"/>
-            <OtherUnitFiles Value="platform;platform\$(SrcOS);..\sdk;frames;fileviews;filesources;filesources\filesystem;filesources\multiarchive;filesources\multilist;filesources\searchresult;filesources\tempfilesystem;filesources\vfs;filesources\wcxarchive;filesources\wfxplugin;filesources\winnet;platform\unix\glib;platform\unix\mime;filesources\gio"/>
+            <OtherUnitFiles Value="platform;platform\$(SrcOS);platform\$(SrcOS)\$(TargetOS);..\sdk;frames;fileviews;filesources;filesources\filesystem;filesources\multiarchive;filesources\multilist;filesources\searchresult;filesources\tempfilesystem;filesources\vfs;filesources\wcxarchive;filesources\wfxplugin;filesources\winnet;platform\unix\glib;platform\unix\mime;filesources\gio"/>
             <UnitOutputDirectory Value="..\units\$(TargetCPU)-$(TargetOS)-$(LCLWidgetType)"/>
             <SrcPath Value="$(LazarusDir)\lcl;$(LazarusDir)\lcl\interfaces\$(LCLWidgetType);$(fpcsrcdir)\packages\fcl-base\src"/>
           </SearchPaths>
@@ -81,7 +81,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(LazarusDir)\ide;$(ProjOutDir);..\sdk;..\units"/>
-            <OtherUnitFiles Value="platform;platform\$(SrcOS);..\sdk;frames;fileviews;filesources;filesources\filesystem;filesources\multiarchive;filesources\multilist;filesources\searchresult;filesources\tempfilesystem;filesources\vfs;filesources\wcxarchive;filesources\wfxplugin;filesources\winnet;platform\unix\glib;platform\unix\mime;filesources\gio"/>
+            <OtherUnitFiles Value="platform;platform\$(SrcOS);platform\$(SrcOS)\$(TargetOS);..\sdk;frames;fileviews;filesources;filesources\filesystem;filesources\multiarchive;filesources\multilist;filesources\searchresult;filesources\tempfilesystem;filesources\vfs;filesources\wcxarchive;filesources\wfxplugin;filesources\winnet;platform\unix\glib;platform\unix\mime;filesources\gio"/>
             <UnitOutputDirectory Value="..\units\$(TargetCPU)-$(TargetOS)-$(LCLWidgetType)"/>
             <SrcPath Value="$(LazarusDir)\lcl;$(LazarusDir)\lcl\interfaces\$(LCLWidgetType);$(fpcsrcdir)\packages\fcl-base\src"/>
           </SearchPaths>
@@ -120,7 +120,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(LazarusDir)\ide;$(ProjOutDir);..\sdk;..\units"/>
-            <OtherUnitFiles Value="platform;platform\$(SrcOS);..\sdk;frames;fileviews;filesources;filesources\filesystem;filesources\multiarchive;filesources\multilist;filesources\searchresult;filesources\tempfilesystem;filesources\vfs;filesources\wcxarchive;filesources\wfxplugin;filesources\winnet;platform\unix\glib;platform\unix\mime;filesources\gio"/>
+            <OtherUnitFiles Value="platform;platform\$(SrcOS);platform\$(SrcOS)\$(TargetOS);..\sdk;frames;fileviews;filesources;filesources\filesystem;filesources\multiarchive;filesources\multilist;filesources\searchresult;filesources\tempfilesystem;filesources\vfs;filesources\wcxarchive;filesources\wfxplugin;filesources\winnet;platform\unix\glib;platform\unix\mime;filesources\gio"/>
             <UnitOutputDirectory Value="..\units\$(TargetCPU)-$(TargetOS)-$(LCLWidgetType)"/>
             <SrcPath Value="$(LazarusDir)\lcl;$(LazarusDir)\lcl\interfaces\$(LCLWidgetType);$(fpcsrcdir)\packages\fcl-base\src"/>
           </SearchPaths>
@@ -162,7 +162,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(LazarusDir)\ide;$(ProjOutDir);..\sdk;..\units"/>
-            <OtherUnitFiles Value="platform;platform\$(SrcOS);..\sdk;frames;fileviews;filesources;filesources\filesystem;filesources\multiarchive;filesources\multilist;filesources\searchresult;filesources\tempfilesystem;filesources\vfs;filesources\wcxarchive;filesources\wfxplugin;filesources\winnet;platform\unix\glib;platform\unix\mime;filesources\gio"/>
+            <OtherUnitFiles Value="platform;platform\$(SrcOS);platform\$(SrcOS)\$(TargetOS);..\sdk;frames;fileviews;filesources;filesources\filesystem;filesources\multiarchive;filesources\multilist;filesources\searchresult;filesources\tempfilesystem;filesources\vfs;filesources\wcxarchive;filesources\wfxplugin;filesources\winnet;platform\unix\glib;platform\unix\mime;filesources\gio"/>
             <UnitOutputDirectory Value="..\units\$(TargetCPU)-$(TargetOS)-$(LCLWidgetType)"/>
             <SrcPath Value="$(LazarusDir)\lcl;$(LazarusDir)\lcl\interfaces\$(LCLWidgetType);$(fpcsrcdir)\packages\fcl-base\src"/>
           </SearchPaths>
@@ -175,6 +175,11 @@ if LCLWidgetType &lt;> GetIDEValue('LCLWidgetType') then
 begin
   UnitPath += '$(FallbackOutputRoot)/LazControls/lib/$(TargetCPU)-$(TargetOS)/$(LCLWidgetType);';
   UnitPath += '$(FallbackOutputRoot)/SynEdit/units/$(TargetCPU)-$(TargetOS)/$(LCLWidgetType);';
+end;
+
+if ((LCLWidgetType = 'qt') or (LCLWidgetType = 'qt5')) and (TargetOS &lt;> 'darwin') then
+begin
+  UnitPath += 'platform/$(SrcOS)/qt5;';
 end;"/>
           <Parsing>
             <SyntaxOptions>
@@ -228,48 +233,52 @@ end;"/>
         <LaunchingApplication PathPlusParams="\usr\X11R6\bin\xterm -T 'Lazarus Run Output' -e $(LazarusDir)\tools\runwait.sh $(TargetCmdLine)"/>
       </local>
     </RunParams>
-    <RequiredPackages Count="11">
+    <RequiredPackages Count="12">
       <Item1>
-        <PackageName Value="DateTimeCtrls"/>
+        <PackageName Value="SynUni"/>
+        <MinVersion Major="1" Minor="8" Valid="True"/>
       </Item1>
       <Item2>
-        <PackageName Value="dcpcrypt"/>
+        <PackageName Value="DateTimeCtrls"/>
       </Item2>
       <Item3>
-        <PackageName Value="chsdet"/>
+        <PackageName Value="dcpcrypt"/>
       </Item3>
       <Item4>
-        <PackageName Value="LazControls"/>
-        <MinVersion Valid="True"/>
+        <PackageName Value="chsdet"/>
       </Item4>
       <Item5>
-        <PackageName Value="pkg_gifanim"/>
-        <MinVersion Major="1" Minor="4" Valid="True"/>
+        <PackageName Value="LazControls"/>
+        <MinVersion Valid="True"/>
       </Item5>
       <Item6>
-        <PackageName Value="cmdbox"/>
+        <PackageName Value="pkg_gifanim"/>
+        <MinVersion Major="1" Minor="4" Valid="True"/>
       </Item6>
       <Item7>
-        <PackageName Value="KASComp"/>
-        <MinVersion Major="1" Minor="8" Valid="True"/>
+        <PackageName Value="cmdbox"/>
       </Item7>
       <Item8>
-        <PackageName Value="LCL"/>
-        <MinVersion Major="1" Valid="True"/>
+        <PackageName Value="KASComp"/>
+        <MinVersion Major="1" Minor="8" Valid="True"/>
       </Item8>
       <Item9>
-        <PackageName Value="SynEdit"/>
-        <MinVersion Major="1" Valid="True"/>
+        <PackageName Value="LCL"/>
+        <MinVersion Major="1" Minor="6" Valid="True"/>
       </Item9>
       <Item10>
-        <PackageName Value="viewerpackage"/>
+        <PackageName Value="SynEdit"/>
+        <MinVersion Major="1" Valid="True"/>
       </Item10>
       <Item11>
+        <PackageName Value="viewerpackage"/>
+      </Item11>
+      <Item12>
         <PackageName Value="doublecmd_common"/>
         <MinVersion Minor="3" Valid="True"/>
-      </Item11>
+      </Item12>
     </RequiredPackages>
-    <Units Count="234">
+    <Units Count="237">
       <Unit0>
         <Filename Value="doublecmd.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -1016,6 +1025,7 @@ end;"/>
       <Unit107>
         <Filename Value="filesources\uarchivefilesource.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="uArchiveFileSource"/>
       </Unit107>
       <Unit108>
         <Filename Value="filesources\uarchivefilesourceutil.pas"/>
@@ -1196,6 +1206,7 @@ end;"/>
       <Unit146>
         <Filename Value="filesources\filesystem\ufilesystemmoveoperation.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="uFileSystemMoveOperation"/>
       </Unit146>
       <Unit147>
         <Filename Value="filesources\filesystem\ufilesystemsetfilepropertyoperation.pas"/>
@@ -1246,6 +1257,7 @@ end;"/>
       <Unit157>
         <Filename Value="filesources\multiarchive\umultiarchivefilesource.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="uMultiArchiveFileSource"/>
       </Unit157>
       <Unit158>
         <Filename Value="filesources\multiarchive\umultiarchivelistoperation.pas"/>
@@ -1255,6 +1267,7 @@ end;"/>
       <Unit159>
         <Filename Value="filesources\multiarchive\umultiarchivetestarchiveoperation.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="uMultiArchiveTestArchiveOperation"/>
       </Unit159>
       <Unit160>
         <Filename Value="filesources\multiarchive\umultiarchiveutil.pas"/>
@@ -1308,6 +1321,7 @@ end;"/>
       <Unit170>
         <Filename Value="filesources\wcxarchive\uwcxarchivecalcstatisticsoperation.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="uWcxArchiveCalcStatisticsOperation"/>
       </Unit170>
       <Unit171>
         <Filename Value="filesources\wcxarchive\uwcxarchivecopyinoperation.pas"/>
@@ -1388,10 +1402,12 @@ end;"/>
       <Unit187>
         <Filename Value="filesources\wfxplugin\uwfxpluginmoveoperation.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="uWfxPluginMoveOperation"/>
       </Unit187>
       <Unit188>
         <Filename Value="filesources\wfxplugin\uwfxpluginsetfilepropertyoperation.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="uWfxPluginSetFilePropertyOperation"/>
       </Unit188>
       <Unit189>
         <Filename Value="filesources\wfxplugin\uwfxpluginutil.pas"/>
@@ -1667,6 +1683,24 @@ end;"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="fMultiRenameWait"/>
       </Unit233>
+      <Unit234>
+        <Filename Value="filesources\multiarchive\umultiarchiveparser.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="uMultiArchiveParser"/>
+      </Unit234>
+      <Unit235>
+        <Filename Value="frames\foptionsfilesearch.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmOptionsFileSearch"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="fOptionsFileSearch"/>
+      </Unit235>
+      <Unit236>
+        <Filename Value="uexifreader.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="uExifReader"/>
+      </Unit236>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -1677,7 +1711,7 @@ end;"/>
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(LazarusDir)\ide;$(ProjOutDir);..\sdk;..\units"/>
-      <OtherUnitFiles Value="platform;platform\$(SrcOS);..\sdk;frames;fileviews;filesources;filesources\filesystem;filesources\multiarchive;filesources\multilist;filesources\searchresult;filesources\tempfilesystem;filesources\vfs;filesources\wcxarchive;filesources\wfxplugin;filesources\winnet;platform\unix\glib;platform\unix\mime;filesources\gio"/>
+      <OtherUnitFiles Value="platform;platform\$(SrcOS);platform\$(SrcOS)\$(TargetOS);..\sdk;frames;fileviews;filesources;filesources\filesystem;filesources\multiarchive;filesources\multilist;filesources\searchresult;filesources\tempfilesystem;filesources\vfs;filesources\wcxarchive;filesources\wfxplugin;filesources\winnet;platform\unix\glib;platform\unix\mime;filesources\gio"/>
       <UnitOutputDirectory Value="..\units\$(TargetCPU)-$(TargetOS)-$(LCLWidgetType)"/>
       <SrcPath Value="$(LazarusDir)\lcl;$(LazarusDir)\lcl\interfaces\$(LCLWidgetType);$(fpcsrcdir)\packages\fcl-base\src"/>
     </SearchPaths>
@@ -1698,6 +1732,8 @@ end;"/>
       </Checks>
       <Optimizations>
         <OptimizationLevel Value="0"/>
+        <VariablesInRegisters Value="True"/>
+        <UncertainOptimizations Value="True"/>
       </Optimizations>
     </CodeGeneration>
     <Linking>

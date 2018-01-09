@@ -68,13 +68,15 @@ type
     property OnClose: TNotifyEvent read FOnClose write FOnClose;
   end;
 
-function GetShellContextMenu(Handle: HWND; Files: TFiles; Background: boolean): IContextMenu;
+  procedure PasteFromClipboard(Parent: HWND; const Path: String);
+  function GetShellContextMenu(Handle: HWND; Files: TFiles; Background: boolean): IContextMenu;
 
 implementation
 
 uses
-  graphtype, intfgraphics, Graphics, uPixMapManager, uExts, LCLProc, Dialogs, uLng, uMyWindows, uShellExecute,
-  fMain, uDCUtils, uFormCommands, DCOSUtils, uOSUtils, uShowMsg;
+  graphtype, intfgraphics, Graphics, uPixMapManager, Dialogs, uLng, uMyWindows,
+  uShellExecute, fMain, uDCUtils, uFormCommands, DCOSUtils, uOSUtils, uShowMsg,
+  uExts, uFileSystemFileSource, DCConvertEncoding, LazUTF8;
 
 const
   USER_CMD_ID = $1000;
@@ -143,7 +145,7 @@ begin
     for I := 0 to Files.Count - 1 do
     begin
       if Files[I].Name = EmptyStr then
-        S := EmptyStr
+        S := EmptyWideStr
       else
         S := UTF8Decode(Files[I].Path);
 
@@ -252,7 +254,7 @@ begin
       nShow := SW_NORMAL;
     end;
     Result := FShellMenu.InvokeCommand(cmici);
-    if not (Succeeded(Result) or (Result = COPYENGINE_E_USER_CANCELLED)) then
+    if not (Succeeded(Result) or (Result = COPYENGINE_E_USER_CANCELLED) or (Result = HRESULT_ERROR_CANCELLED)) then
       msgError(Self, mbSysErrorMessage(Result));
   finally
     CoUninitialize;
@@ -556,7 +558,7 @@ begin
   ShellMenu3 := nil;
   // Free internal objects
   FShellMenu1 := nil;
-  FreeThenNil(FFiles);
+  FreeAndNil(FFiles);
   if FShellMenu <> 0 then
     DestroyMenu(FShellMenu);
   inherited Destroy;
@@ -569,9 +571,10 @@ var
   hActionsSubMenu: HMENU = 0;
   cmd: UINT = 0;
   iCmd: integer;
-  cmici: TCMINVOKECOMMANDINFO;
+  cmici: TCMInvokeCommandInfoEx;
+  lpici: TCMINVOKECOMMANDINFO absolute cmici;
   bHandled: boolean = False;
-  ZVerb: array[0..255] of char;
+  ZVerb: array[0..255] of AnsiChar;
   sVerb: string;
   Result: HRESULT;
   FormCommands: IFormCommands;
@@ -712,18 +715,32 @@ begin
 
         if not bHandled then
         begin
-          FillChar(cmici, SizeOf(cmici), #0);
+          if Assigned(FFiles) then
+          begin
+            if FBackground then
+              sVolumeLabel := FFiles[0].FullPath
+            else begin
+              sVolumeLabel := ExcludeTrailingBackslash(FFiles[0].Path);
+            end;
+          end;
+          ZeroMemory(@cmici, SizeOf(cmici));
           with cmici do
           begin
             cbSize := SizeOf(cmici);
             hwnd := FParent.Handle;
-                {$PUSH}{$HINTS OFF}
-            lpVerb := PAnsiChar(PtrUInt(cmd - 1));
-                {$POP}
+            fMask := CMIC_MASK_UNICODE;
+            {$PUSH}{$HINTS OFF}
+            lpVerb  := PAnsiChar(PtrUInt(cmd - 1));
+            {$POP}
             nShow := SW_NORMAL;
+            if Assigned(FFiles) then
+            begin
+              lpDirectory := PAnsiChar(CeUtf8ToSys(sVolumeLabel));
+              lpDirectoryW := PWideChar(UTF8ToUTF16(sVolumeLabel));
+            end;
           end;
 
-          Result := FShellMenu1.InvokeCommand(cmici);
+          Result := FShellMenu1.InvokeCommand(lpici);
           if not (Succeeded(Result) or (Result = COPYENGINE_E_USER_CANCELLED)) then
             OleErrorUTF8(Result);
 
@@ -784,6 +801,29 @@ begin
 
   if Assigned(FOnClose) then
     FOnClose(Self);
+end;
+
+procedure PasteFromClipboard(Parent: HWND; const Path: String);
+var
+  AFile: TFile;
+  Files: TFiles;
+  ShellMenu: IContextMenu;
+begin
+  Files:= TFiles.Create(EmptyStr);
+  try
+    AFile := TFileSystemFileSource.CreateFile(EmptyStr);
+    AFile.FullPath := Path;
+    AFile.Attributes := faFolder;
+    Files.Add(AFile);
+    ShellMenu:= GetShellContextMenu(Parent, Files, True);
+    if Assigned(ShellMenu) then begin
+      TShellThread.Create(Parent, ShellMenu, sCmdVerbPaste).Start;
+    end;
+  except
+    on E: Exception do
+      MessageDlg(E.Message, mtError, [mbOK], 0);
+  end;
+  FreeAndNil(Files);
 end;
 
 end.

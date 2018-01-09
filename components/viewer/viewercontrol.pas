@@ -130,6 +130,7 @@ type
                      veUtf8,
                      veUtf8bom,
                      veAnsi,
+                     veOem,
                      veCp1250,
                      veCp1251,
                      veCp1252,
@@ -165,7 +166,8 @@ const
                    ('Auto-detect',
                     'UTF-8',
                     'UTF-8BOM',
-                    'Ansi',
+                    'ANSI',
+                    'OEM',
                     'CP1250',
                     'CP1251',
                     'CP1252',
@@ -327,17 +329,15 @@ type
     procedure OutBin(x, y: Integer; sText: string; StartPos: PtrInt; DataLength: Integer);
 
     procedure OutCustom(x, y: Integer; sText: string;StartPos: PtrInt; DataLength: Integer);  // render one line
-    procedure WriteCustom;
     function  TransformCustom(var APosition: PtrInt; ALimit: PtrInt;AWithAdditionalData:boolean=True): AnsiString;
     function  TransformCustomBlock(var APosition: PtrInt; DataLength: integer ; ASeparatorsOn, AAlignData:boolean; out AChars:AnsiString): AnsiString;
 
     function HexToValueProc(AChar:AnsiChar;AMaxDigitsCount:integer):AnsiString;
     function DecToValueProc(AChar:AnsiChar;AMaxDigitsCount:integer):AnsiString;
 
-    procedure WriteText;
-    procedure WriteHex; virtual;
-    procedure WriteDec; virtual;
     procedure WriteBin;
+    procedure WriteText;
+    procedure WriteCustom; virtual;
     function  TransformText(const sText: String; const Xoffset: Integer): String;
     function  TransformBin(var aPosition: PtrInt; aLimit: PtrInt): AnsiString;
     function  TransformHex(var aPosition: PtrInt; aLimit: PtrInt): AnsiString;virtual;
@@ -373,7 +373,6 @@ type
     function GetNextCharAsUtf8(const iPosition: PtrInt; out CharLenInBytes: Integer): String;
 
     procedure ReReadFile;
-    function IsFileOpen: Boolean; inline;
 
     {en
        Searches for an ASCII character.
@@ -454,6 +453,7 @@ type
     procedure SelectText(AStart, AEnd: PtrInt);
     procedure CopyToClipboard;
     procedure CopyToClipboardF;
+    function Selection: String;
 
     function IsVisible(const aPosition: PtrInt): Boolean; overload;
     procedure MakeVisible(const aPosition: PtrInt);
@@ -464,6 +464,7 @@ type
                           bCaseSensitive: Boolean; bSearchBackwards: Boolean): PtrInt;
 
     procedure ResetEncoding;
+    function IsFileOpen: Boolean; inline;
     function DetectEncoding: TViewerEncoding;
     procedure GetSupportedEncodings(List: TStrings);
 
@@ -504,18 +505,18 @@ implementation
 
 uses
   LCLType, LCLVersion, Graphics, Forms, LCLProc, Clipbrd, LConvEncoding,
-  UnicodeUtils, LCLIntf
+  DCUnicodeUtils, LCLIntf, LazUTF8, DCOSUtils , DCConvertEncoding
   {$IF DEFINED(UNIX)}
   , BaseUnix, Unix
   {$ELSEIF DEFINED(WINDOWS)}
-  , Windows
+  , Windows, DCWindows
   {$ENDIF};
 
 
 const
   //cTextWidth      = 80;  // wrap on 80 chars
   cBinWidth       = 80;
-  cMaxTextWidth   = 65535; // maximum of chars on one line unwrapped text
+  cMaxTextWidth   = 1024; // maximum of chars on one line unwrapped text
   cTabSpaces      = 8;   // tab stop - allow to set in settings
 
   // These strings must be Ascii only.
@@ -870,7 +871,8 @@ begin
 end;
 
 
-function TViewerControl.TransformCustom(var APosition: PtrInt; aLimit:PtrInt; AWithAdditionalData: boolean=True): AnsiString;
+function TViewerControl.TransformCustom(var APosition: PtrInt; ALimit: PtrInt;
+  AWithAdditionalData: boolean): AnsiString;
 var
   sAscii: string = '';
   sRez  : string = '';
@@ -955,9 +957,9 @@ end;
 
 function TViewerControl.DecToValueProc(AChar:AnsiChar;AMaxDigitsCount:integer):AnsiString;
 begin
-  Result:=IntToStr(ord(AChar));
-  while length(Result)<AMaxDigitsCount do
-        Result:=' '+Result;
+  Result:= IntToStr(Ord(AChar));
+  while Length(Result) < AMaxDigitsCount do
+    Result:= '0' + Result;
 end;
 
 function TViewerControl.HexToValueProc(AChar:AnsiChar;AMaxDigitsCount:integer):AnsiString;
@@ -1383,13 +1385,13 @@ function TViewerControl.MapFile(const sFileName: String): Boolean;
 
 {$IFDEF MSWINDOWS}
 var
-  wFileName: WideString;
+  wFileName: UnicodeString;
 begin
   Result := False;
   if Assigned(FMappedFile) then
     UnMapFile; // if needed
 
-  wFileName   := UTF8Decode(sFileName);
+  wFileName   := UTF16LongName(sFileName);
   FFileHandle := CreateFileW(PWChar(wFileName), GENERIC_READ,
       FILE_SHARE_READ or FILE_SHARE_WRITE or FILE_SHARE_DELETE, nil,
       OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
@@ -1430,7 +1432,7 @@ begin
   if Assigned(FMappedFile) then
     UnMapFile; // if needed
 
-  FFileHandle := fpOpen(PChar(sFileName), O_RDONLY);
+  FFileHandle := mbFileOpen(sFileName, fmOpenRead);
   if FFileHandle = feInvalidHandle then
   begin
     FFileHandle := 0;
@@ -1439,7 +1441,7 @@ begin
 
   if fpFStat(FFileHandle, StatBuf) <> 0 then
   begin
-    fpClose(FFileHandle);
+    FileClose(FFileHandle);
     FFileHandle := 0;
     Exit;
   end;
@@ -1456,7 +1458,7 @@ begin
   if FMappedFile = MAP_FAILED then
   begin
     FMappedFile:= nil;
-    fpClose(FFileHandle);
+    FileClose(FFileHandle);
     FFileHandle := 0;
     Exit;
   end;
@@ -1575,7 +1577,6 @@ begin
   end;
 end;
 
-
 procedure TViewerControl.WriteBin;
 var
   yIndex: Integer;
@@ -1593,19 +1594,6 @@ begin
     if s <> '' then
       OutBin(0, yIndex * FTextHeight, s, LineStart, iPos - LineStart);
   end;
-end;
-
-
-
-procedure TViewerControl.WriteHex;
-begin
-  WriteCustom;
-end;
-
-
-procedure TViewerControl.WriteDec;
-begin
-  WriteCustom;
 end;
 
 function TViewerControl.GetDataAdr: Pointer;
@@ -1692,7 +1680,7 @@ begin
     Invalidate;
 
     // Set new scroll position.
-    if LastLineReached then
+    if LastLineReached and (Value > 0) then
       FScrollBarPosition := 100
     else
       FScrollBarPosition := Percent;
@@ -2696,6 +2684,38 @@ begin
    {$ENDIF}
 end;
 
+function TViewerControl.Selection: String;
+const
+  MAX_LEN = 512;
+var
+  sText: String;
+  AIndex: PtrInt;
+  ALength: PtrInt;
+  CharLenInBytes: Integer;
+begin
+  if (FBlockEnd - FBlockBeg) <= 0 then
+    Exit(EmptyStr);
+  ALength:= FBlockEnd - FBlockBeg;
+  if ALength <= MAX_LEN then
+  begin
+    SetString(sText, GetDataAdr + FBlockBeg, ALength);
+    Result := ConvertToUTF8(sText);
+  end
+  else begin
+    Result:= EmptyStr;
+    AIndex:= FBlockBeg;
+    ALength:= AIndex + MAX_LEN;
+    while AIndex < ALength do
+    begin
+      sText := GetNextCharAsUtf8(AIndex, CharLenInBytes);
+      if CharLenInBytes = 0 then
+        Break;
+      Result:= Result + sText;
+      AIndex:= AIndex + CharLenInBytes;
+    end;
+  end;
+end;
+
 function TViewerControl.GetNextCharAsAscii(const iPosition: PtrInt; out CharLenInBytes: Integer): Cardinal;
 var
   u1, u2: Word;
@@ -2722,7 +2742,7 @@ begin
           CharLenInBytes := 0;
       end;
 
-    veAnsi,
+    veAnsi, veOem,
     veCp1250..veCp950,
     veIso88591,
     veIso88592,
@@ -2844,7 +2864,7 @@ begin
           CharLenInBytes := 0;
       end;
 
-    veAnsi,
+    veAnsi, veOem,
     veCp1250..veCp950,
     veIso88591,
     veIso88592,
@@ -2952,7 +2972,7 @@ begin
       CharLenInBytes := SafeUTF8NextCharLen(GetDataAdr + iPosition,
                                             FHighLimit - iPosition,
                                             InvalidCharLen);
-    veAnsi,
+    veAnsi, veOem,
     veCp1250..veCp950,
     veIso88591,
     veIso88592,
@@ -2998,6 +3018,10 @@ begin
 
   case FEncoding of
     veAutoDetect: ;
+    veAnsi:
+      Result := CeAnsiToUtf8(sText);
+    veOem:
+      Result := CeOemToUtf8(sText);
     veUtf8, veUtf8bom:
       Result := Utf8ReplaceBroken(sText);
     veUtf16be:
@@ -3021,6 +3045,10 @@ begin
 
   case FEncoding of
     veAutoDetect: ;
+    veAnsi:
+      Result := CeUtf8ToAnsi(sText);
+    veOem:
+      Result := CeUtf8ToOem(sText);
     veUtf8, veUtf8bom:
       Result := sText;
     veUtf16be:
@@ -3350,7 +3378,7 @@ procedure TViewerControl.UpdateSelection;
           end;
         end;
 
-      veAnsi,
+      veAnsi, veOem,
       veCp1250..veCp950,
       veIso88591,
       veIso88592,

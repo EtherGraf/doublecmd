@@ -5,7 +5,7 @@ unit uFileViewWithGrid;
 interface
 
 uses
-  Classes, SysUtils, Controls, Grids, Graphics, StdCtrls,
+  Classes, SysUtils, Controls, Grids, Graphics, StdCtrls, LCLVersion,
   uDisplayFile, DCXmlConfig, uFileSorting, uFileProperty,
   uFileViewWithMainCtrl, uFile, uFileViewHeader, uFileView, uFileSource;
 
@@ -19,6 +19,9 @@ type
   protected
     FFileView: TFileViewWithGrid;
   protected
+    {$IF lcl_fullversion < 1080003}
+    function SelectCell(aCol, aRow: Integer): Boolean; override;
+    {$ENDIF}
     procedure RowHeightsChanged; override;
     procedure ColWidthsChanged;  override;
     procedure FinalizeWnd; override;
@@ -39,6 +42,10 @@ type
     procedure CalculateColumnWidth; virtual; abstract;
     function  CellToIndex(ACol, ARow: Integer): Integer; virtual; abstract;
     procedure IndexToCell(Index: Integer; out ACol, ARow: Integer); virtual; abstract;
+    {$if lcl_fullversion >= 1070000}
+    procedure DoAutoAdjustLayout(const AMode: TLayoutAdjustmentPolicy;
+                const AXProportion, AYProportion: Double); override;
+    {$endif}
   public
     constructor Create(AOwner: TComponent; AParent: TWinControl); reintroduce; virtual;
     property BorderWidth: Integer read GetBorderWidth;
@@ -76,7 +83,7 @@ type
     procedure RedrawFile(FileIndex: PtrInt); override;
     procedure RedrawFile(DisplayFile: TDisplayFile); override;
     procedure RedrawFiles; override;
-    procedure SetActiveFile(FileIndex: PtrInt); override;
+    procedure SetActiveFile(FileIndex: PtrInt; ScrollTo: Boolean); override;
     procedure DoFileUpdated(AFile: TDisplayFile; UpdatedProperties: TFilePropertiesTypes = []); override;
     procedure DoHandleKeyDown(var Key: Word; Shift: TShiftState); override;
     procedure UpdateFlatFileName; override;
@@ -102,7 +109,7 @@ type
 implementation
 
 uses
-  LCLIntf, LCLType, LCLVersion, LCLProc, LazUTF8, math,
+  LCLIntf, LCLType, LCLProc, LazUTF8, Math,
   DCStrUtils, uGlobs, uPixmapManager, uKeyboard,
   uDCUtils, fMain,
   uFileFunctions;
@@ -160,9 +167,9 @@ end;
 
 procedure TFileViewGrid.DoOnResize;
 begin
-  inherited DoOnResize;
   CalculateColRowCount;
   CalculateColumnWidth;
+  inherited DoOnResize;
 end;
 
 procedure TFileViewGrid.KeyDown(var Key: Word; Shift: TShiftState);
@@ -178,6 +185,20 @@ begin
 {$ENDIF}
   inherited KeyDown(Key, Shift);
 end;
+
+{$IF lcl_fullversion < 1080003}
+// Workaround for Lazarus issue 31942.
+function TFileViewGrid.SelectCell(aCol, aRow: Integer): Boolean;
+begin
+  Result:= inherited SelectCell(aCol, aRow);
+  // ScrollToCell hangs when Width = 0
+  if Width = 0 then
+  begin
+    Result:= False;
+    SetColRow(aCol, aRow);
+  end;
+end;
+{$ENDIF}
 
 procedure TFileViewGrid.RowHeightsChanged;
 begin
@@ -413,6 +434,15 @@ begin
   Canvas.Font.Color := TextColor;
 end;
 
+{$if lcl_fullversion >= 1070000}
+procedure TFileViewGrid.DoAutoAdjustLayout(const AMode: TLayoutAdjustmentPolicy;
+  const AXProportion, AYProportion: Double);
+begin
+  // Don't auto adjust vertical layout
+  inherited DoAutoAdjustLayout(AMode, AXProportion, 1.0);
+end;
+{$endif}
+
 constructor TFileViewGrid.Create(AOwner: TComponent; AParent: TWinControl);
 begin
   FFileView := AParent as TFileViewWithGrid;
@@ -436,7 +466,10 @@ begin
   DoubleBuffered := True;
   Align := alClient;
   MouseWheelOption:= mwGrid;
-  Options := [goTabs, goThumbTracking, goSmoothScroll];
+{$if lcl_fullversion >= 1080004}
+  AllowOutboundEvents := False;
+{$endif}
+  Options := [goTabs, goThumbTracking];
   TabStop := False;
 
   UpdateView;
@@ -465,7 +498,13 @@ end;
 
 procedure TFileViewWithGrid.MakeColumnsStrings(AFile: TDisplayFile);
 begin
-  AFile.DisplayStrings.Text:= FormatFileFunction('DC().GETFILENAME{}', AFile.FSFile, FileSource);
+  AFile.DisplayStrings.BeginUpdate;
+  try
+    AFile.DisplayStrings.Clear;
+    AFile.DisplayStrings.Add(FormatFileFunction('DC().GETFILENAME{}', AFile.FSFile, FileSource));
+  finally
+    AFile.DisplayStrings.EndUpdate;
+  end;
 end;
 
 procedure TFileViewWithGrid.RedrawFile(FileIndex: PtrInt);
@@ -624,6 +663,7 @@ begin
     for I := 0 to FAllDisplayFiles.Count - 1 do
       MakeColumnsStrings(FAllDisplayFiles[I]);
   end;
+  TabHeader.UpdateSorting(Sorting);
 end;
 
 destructor TFileViewWithGrid.Destroy;
@@ -663,13 +703,17 @@ begin
   TabHeader.UpdateSorting(Sorting);
 end;
 
-procedure TFileViewWithGrid.SetActiveFile(FileIndex: PtrInt);
+procedure TFileViewWithGrid.SetActiveFile(FileIndex: PtrInt; ScrollTo: Boolean);
 var
   ACol, ARow: Integer;
 begin
   dgPanel.IndexToCell(FileIndex, ACol, ARow);
-  dgPanel.Col := ACol;
-  dgPanel.Row := ARow;
+  if not ScrollTo then
+    dgPanel.SetColRow(ACol, ARow)
+  else begin
+    dgPanel.MoveExtend(False, ACol, ARow);
+    dgPanel.Click;
+  end;
 end;
 
 procedure TFileViewWithGrid.SetFilesDisplayItems;

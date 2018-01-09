@@ -3,7 +3,7 @@
    -------------------------------------------------------------------------
    Content plugin search control
 
-   Copyright (C) 2014-2016 Alexander Koblov (alexx2000@mail.ru)
+   Copyright (C) 2014-2017 Alexander Koblov (alexx2000@mail.ru)
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -111,7 +111,7 @@ var
 begin
   if FPlugin.ItemIndex < 0 then Exit;
 
-  FField.Items.Clear;
+  FField.Clear;
   Module:= gWdxPlugins.GetWdxModule(FPlugin.Text);
   if Assigned(Module) then
   for I:= 0 to  Module.FieldList.Count - 1 do
@@ -187,14 +187,22 @@ begin
       end;
     end;
   FT_STRING,
-  FT_STRINGW,
-  FT_FULLTEXT:
+  FT_STRINGW:
     begin
       FValue.Style:= csDropDown;
       FOperator.Items.AddObject('=', TObject(PtrInt(poEqual)));
       FOperator.Items.AddObject('!=', TObject(PtrInt(poNotEqual)));
       FOperator.Items.AddObject('=(case)', TObject(PtrInt(poEqualCase)));
       FOperator.Items.AddObject('!=(case)', TObject(PtrInt(poNotEqualCase)));
+      FOperator.Items.AddObject('contains', TObject(PtrInt(poContains)));
+      FOperator.Items.AddObject('!contains', TObject(PtrInt(poNotContains)));
+      FOperator.Items.AddObject('contains(case)', TObject(PtrInt(poContainsCase)));
+      FOperator.Items.AddObject('!contains(case)', TObject(PtrInt(poNotContainsCase)));
+    end;
+  FT_FULLTEXT,
+  FT_FULLTEXTW:
+    begin
+      FValue.Style:= csDropDown;
       FOperator.Items.AddObject('contains', TObject(PtrInt(poContains)));
       FOperator.Items.AddObject('!contains', TObject(PtrInt(poNotContains)));
       FOperator.Items.AddObject('contains(case)', TObject(PtrInt(poContainsCase)));
@@ -224,7 +232,8 @@ end;
 
 procedure TPluginPanel.SetUnitName(AValue: String);
 begin
-  SetComboBox(FUnit, AValue, Format('Unit %s not found!', [AValue]));
+  if FUnit.Enabled then
+    SetComboBox(FUnit, AValue, Format('Unit %s not found!', [AValue]));
 end;
 
 procedure TPluginPanel.SetValue(AValue: Variant);

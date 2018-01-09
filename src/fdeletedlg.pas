@@ -14,6 +14,7 @@ type
 
   TfrmDeleteDlg = class(TfrmButtonForm)
     lblMessage: TLabel;
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
   private
     { private declarations }
   public
@@ -24,6 +25,9 @@ function ShowDeleteDialog(const Message: String; FileSource: IFileSource; out Qu
 
 implementation
 
+uses
+  LCLType;
+
 function ShowDeleteDialog(const Message: String; FileSource: IFileSource;
   out QueueId: TOperationsManagerQueueIdentifier): Boolean;
 begin
@@ -31,8 +35,6 @@ begin
   begin
     Caption:= Application.Title;
     lblMessage.Caption:= Message;
-    Constraints.MinWidth:= 400;
-    Constraints.MaxWidth:= 800;
     Result:= ShowModal = mrOK;
     QueueId:= QueueIdentifier;
     Free;
@@ -40,6 +42,18 @@ begin
 end;
 
 {$R *.lfm}
+
+{ TfrmDeleteDlg }
+
+procedure TfrmDeleteDlg.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if (Key = VK_RETURN) and (ssShift in Shift) then
+  begin
+    btnOK.Click;
+    Key:= 0;
+  end;
+end;
 
 end.
 

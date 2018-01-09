@@ -1,15 +1,32 @@
 {
-Build-in Editor for Seksi Commander
-----------------------------
-Licence  : GNU GPL v 2.0
-Author   : radek.cervinka@centrum.cz
+   Double Commander
+   -------------------------------------------------------------------------
+   Build-in Editor using SynEdit and his Highlighters
 
-This form used SynEdit and his Highlighters
+   Copyright (C) 2006-2017  Alexander Koblov (alexx2000@mail.ru)
 
-contributors:
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
 
-Copyright (C) 2006-2015 Alexander Koblov (Alexx2000@mail.ru)
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
 
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, write to the Free Software
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+   Legacy comment from its origin:
+     Build-in Editor for Seksi Commander
+     ----------------------------
+     Licence  : GNU GPL v 2.0
+     Author   : radek.cervinka@centrum.cz
+     This form used SynEdit and his Highlighters
+     contributors:
+     Copyright (C) 2006-2015 Alexander Koblov (Alexx2000@mail.ru)
 }
 
 unit fEditor;
@@ -23,15 +40,11 @@ uses
   ComCtrls, SynEditSearch, SynEditHighlighter, uDebug, uOSForms, uShowForm, types, Graphics,
   uFormCommands, uHotkeyManager;
 
-
 const
   HotkeysCategory = 'Editor';
 
-
 type
-
   { TfrmEditor }
-
   TfrmEditor = class(TAloneForm,IFormCommands)
     actEditCut: TAction;
     actEditCopy: TAction;
@@ -46,7 +59,6 @@ type
     actEditLineEndLf: TAction;
     actEditGotoLine: TAction;
     actEditFindPrevious: TAction;
-    ilImageList: TImageList;
     MainMenu1: TMainMenu;
     ActListEdit: TActionList;
     actAbout: TAction;
@@ -121,22 +133,18 @@ type
     tbSeparator3: TToolButton;
     tbConfig: TToolButton;
     tbHelp: TToolButton;
-
     procedure actExecute(Sender: TObject);
     procedure EditorMouseWheelDown(Sender: TObject; Shift: TShiftState;
-      MousePos: TPoint; var Handled: Boolean);
+      {%H-}MousePos: TPoint; var Handled: Boolean);
     procedure EditorMouseWheelUp(Sender: TObject; Shift: TShiftState;
-      MousePos: TPoint; var Handled: Boolean);
-
+      {%H-}MousePos: TPoint; var Handled: Boolean);
     procedure FormCreate(Sender: TObject);
-    procedure EditorKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure EditorReplaceText(Sender: TObject; const ASearch, AReplace: string;
-       Line, Column: integer; var ReplaceAction: TSynReplaceAction);
+       {%H-}Line, {%H-}Column: integer; var ReplaceAction: TSynReplaceAction);
     procedure EditorChange(Sender: TObject);
     procedure EditorStatusChange(Sender: TObject;
-      Changes: TSynStatusChanges);
+      {%H-}Changes: TSynStatusChanges);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
-    procedure EditorKeyPress(Sender: TObject; var Key: Char);
     procedure frmEditorClose(Sender: TObject; var CloseAction: TCloseAction);
   private
     { Private declarations }
@@ -153,11 +161,8 @@ type
     sEncodingIn,
     sEncodingOut,
     sOriginalText: String;
-    FWaitData: TEditorWaitData;
-
-
+    FWaitData: TWaitData;
     FCommands: TFormCommands;
-
 
     property Commands: TFormCommands read FCommands implements IFormCommands;
 
@@ -193,38 +198,31 @@ type
     property FileName: String read FFileName write SetFileName;
 
    published
-     procedure cm_EditFind(const Params:array of string);
-
-
-
-     procedure cm_EditFindNext(const Params:array of string);
-     procedure cm_EditFindPrevious(const Params:array of string);
-     procedure cm_EditGotoLine(const Params:array of string);
-     procedure cm_EditLineEndCr(const Params:array of string);
-     procedure cm_EditLineEndCrLf(const Params:array of string);
-     procedure cm_EditLineEndLf(const Params:array of string);
-     procedure cm_EditDelete(const Params:array of string);
-     procedure cm_EditRedo(const Params:array of string);
-     procedure cm_About(const Params:array of string);
-     procedure cm_EditCopy(const Params:array of string);
-     procedure cm_EditCut(const Params:array of string);
-     procedure cm_EditPaste(const Params:array of string);
-     procedure cm_EditSelectAll(const Params:array of string);
-     procedure cm_FileNew(const Params:array of string);
-     procedure cm_FileOpen(const Params:array of string);
-     procedure cm_EditUndo(const Params:array of string);
-     procedure cm_FileSave(const Params:array of string);
-     procedure cm_FileSaveAs(const Params:array of string);
-     procedure cm_FileExit(const Params:array of string);
-//     procedure cm_Save2(const Params:array of string);
-     procedure cm_ConfHigh(const Params:array of string);
-
-     procedure cm_EditRplc(const Params:array of string);
-
+     procedure cm_EditFind(const {%H-}Params:array of string);
+     procedure cm_EditFindNext(const {%H-}Params:array of string);
+     procedure cm_EditFindPrevious(const {%H-}Params:array of string);
+     procedure cm_EditGotoLine(const {%H-}Params:array of string);
+     procedure cm_EditLineEndCr(const {%H-}Params:array of string);
+     procedure cm_EditLineEndCrLf(const {%H-}Params:array of string);
+     procedure cm_EditLineEndLf(const {%H-}Params:array of string);
+     procedure cm_EditDelete(const {%H-}Params:array of string);
+     procedure cm_EditRedo(const {%H-}Params:array of string);
+     procedure cm_About(const {%H-}Params:array of string);
+     procedure cm_EditCopy(const {%H-}Params:array of string);
+     procedure cm_EditCut(const {%H-}Params:array of string);
+     procedure cm_EditPaste(const {%H-}Params:array of string);
+     procedure cm_EditSelectAll(const {%H-}Params:array of string);
+     procedure cm_FileNew(const {%H-}Params:array of string);
+     procedure cm_FileOpen(const {%H-}Params:array of string);
+     procedure cm_EditUndo(const {%H-}Params:array of string);
+     procedure cm_FileSave(const {%H-}Params:array of string);
+     procedure cm_FileSaveAs(const {%H-}Params:array of string);
+     procedure cm_FileExit(const {%H-}Params:array of string);
+     procedure cm_ConfHigh(const {%H-}Params:array of string);
+     procedure cm_EditRplc(const {%H-}Params:array of string);
   end;
 
-  procedure ShowEditor(WaitData: TEditorWaitData);
-  function ShowEditor(const sFileName: String): TfrmEditor;
+  procedure ShowEditor(const sFileName: String; WaitData: TWaitData = nil);
 
 implementation
 
@@ -235,27 +233,22 @@ uses
   uLng, uShowMsg, fEditSearch, uGlobs, fOptions, DCClassesUtf8,
   uOSUtils, uConvEncoding, fOptionsToolsEditor, uDCUtils, uClipboard;
 
-function ShowEditor(const sFileName: String): TfrmEditor;
-begin
-  Result := TfrmEditor.Create(Application);
-
-  if sFileName = '' then
-    Result.cm_FileNew([''])
-  else
-  begin
-    if not Result.OpenFile(sFileName) then
-      Exit;
-  end;
-
-  Result.ShowOnTop;
-end;
-
-procedure ShowEditor(WaitData: TEditorWaitData);
+procedure ShowEditor(const sFileName: String; WaitData: TWaitData = nil);
 var
   Editor: TfrmEditor;
 begin
-  Editor:= ShowEditor(WaitData.FileName);
-  Editor.FWaitData:= WaitData
+  Editor := TfrmEditor.Create(Application);
+  Editor.FWaitData := WaitData;
+
+  if sFileName = '' then
+    Editor.cm_FileNew([''])
+  else
+  begin
+    if not Editor.OpenFile(sFileName) then
+      Exit;
+  end;
+
+  Editor.ShowOnTop;
 end;
 
 procedure TfrmEditor.FormCreate(Sender: TObject);
@@ -267,6 +260,8 @@ var
 begin
   InitPropStorage(Self);
 
+  Menu.Images:= dmComData.ilEditorImages;
+
   Editor.Options:= gEditorSynEditOptions;
   FontOptionsToFont(gFonts[dcfEditor], Editor.Font);
 
@@ -275,7 +270,7 @@ begin
   for i:=0 to dmHighl.SynHighlighterList.Count - 1 do
     begin
       mi:=TMenuItem.Create(miHighlight);
-      mi.Caption:=TSynCustomHighlighter(dmHighl.SynHighlighterList.Objects[i]).GetLanguageName;
+      mi.Caption:=TSynCustomHighlighter(dmHighl.SynHighlighterList.Objects[i]).LanguageName;
       mi.Tag:=i;
 //      mi.Name:='miHigh'+IntToStr(i);
       mi.Enabled:=True;
@@ -443,7 +438,7 @@ begin
   end;
 
   // set up highlighter
-  Highlighter := dmHighl.GetHighlighterByExt(ExtractFileExt(aFileName));
+  Highlighter := dmHighl.GetHighlighter(Editor, ExtractFileExt(aFileName));
   UpdateHighlighter(Highlighter);
   FileName := aFileName;
   bChanged := False;
@@ -533,8 +528,9 @@ end;
 
 destructor TfrmEditor.Destroy;
 begin
+  HotMan.UnRegister(Self);
   inherited Destroy;
-  if Assigned(FWaitData) then EditDone(FWaitData);
+  if Assigned(FWaitData) then FWaitData.Done;
 end;
 
 
@@ -554,65 +550,6 @@ begin
     end;
   end;
 end;
-
-procedure TfrmEditor.EditorKeyDown(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
-begin
-// this is hack, action hot key not work yet
-  {
-  case Key of
-
-   VK_F2:
-     begin
-       cm_FileSave(['']);
-       Key:=0;
-     end;
-  // To prevent else one editor or viewer open on key F4 in viewer
-  VK_F4:
-    begin
-      if Shift <> [ssAlt] then
-        Key:=0;
-    end;
-  VK_F3:
-    begin
-      cm_EditFindNext;
-      Key:=0;
-    end;
-   VK_N:
-     begin
-       if Shift=[ssCtrl] then
-       begin
-         cm_FileNew;
-         Key:=0;
-       end;
-     end;
-   VK_S:
-     begin
-       if Shift=[ssCtrl] then
-       begin
-         cm_FileSave;
-         Key:=0;
-       end;
-     end;
-   VK_F:
-     begin
-       if Shift=[ssCtrl] then
-       begin
-         cm_EditFind;
-         Key:=0;
-       end;
-     end;
-
-   VK_ESCAPE:
-     begin
-       Close;
-       Key:=0;
-     end;
-
-  end;
-  }
-end;
-
 
 procedure TfrmEditor.SetHighLighter(Sender:TObject);
 var
@@ -743,28 +680,21 @@ end;
 procedure TfrmEditor.UpdateHighlighter(Highlighter: TSynCustomHighlighter);
 begin
   dmHighl.SetHighlighter(Editor, Highlighter);
-  StatusBar.Panels[3].Text:= Highlighter.GetLanguageName;
+  StatusBar.Panels[3].Text:= Highlighter.LanguageName;
 end;
-
 
 procedure TfrmEditor.FormCloseQuery(Sender: TObject;
   var CanClose: Boolean);
 begin
-  inherited;
-  CanClose:=False;
+  CanClose:= False;
   if bChanged then
     case msgYesNoCancel(Format(rsMsgFileChangedSave,[FileName])) of
       mmrYes: cm_FileSave(['']);
-      mmrNo: bChanged:=False;
+      mmrNo: bChanged:= False;
     else
       Exit;
     end;
-  CanClose:=True;
-end;
-
-procedure TfrmEditor.EditorKeyPress(Sender: TObject; var Key: Char);
-begin
-//  inherited;
+  CanClose:= True;
 end;
 
 procedure TfrmEditor.DoSearchReplaceText(AReplace: boolean;
@@ -816,6 +746,7 @@ begin
     SearchCaseSensitive := bSearchCaseSensitive;
     SearchFromCursor := bSearchFromCaret;
     SearchInSelectionOnly := bSearchSelectionOnly;
+    SearchRegExp := bSearchRegExp;
     // start with last search text
     SearchText := sSearchText;
 {    if fSearchTextAtCaret then begin}
@@ -929,8 +860,6 @@ begin
   Editor.Lines.TextLineBreakStyle:= tlbsLF;
 end;
 
-
-
 procedure TfrmEditor.cm_About(const Params:array of string);
 begin
   msgOK(rsEditAboutText);
@@ -969,31 +898,35 @@ begin
 end;
 
 procedure TfrmEditor.cm_FileNew(const Params:array of string);
+var
+  CanClose: Boolean = False;
 begin
-  inherited;
+  FormCloseQuery(Self, CanClose);
+  if not CanClose then Exit;
   FileName := rsMsgNewFile;
   Editor.Lines.Clear;
-  bChanged:=False;
-  bNoname:=True;
+  bChanged:= False;
+  bNoname:= True;
   UpdateStatus;
 end;
 
 procedure TfrmEditor.cm_FileOpen(const Params:array of string);
+var
+  CanClose: Boolean = False;
 begin
-  dmComData.OpenDialog.Filter:='*.*';
+  FormCloseQuery(Self, CanClose);
+  if not CanClose then Exit;
+  dmComData.OpenDialog.Filter:= '*.*';
   if not dmComData.OpenDialog.Execute then Exit;
   if OpenFile(dmComData.OpenDialog.FileName) then
     UpdateStatus;
 end;
 
-
 procedure TfrmEditor.cm_EditUndo(const Params:array of string);
 begin
-  inherited;
   Editor.Undo;
   UpdateStatus;
 end;
-
 
 procedure TfrmEditor.cm_FileSave(const Params:array of string);
 begin
@@ -1022,7 +955,7 @@ begin
   bNoname:=False;
 
   UpdateStatus;
-  Highlighter:= dmHighl.GetHighlighterByExt(ExtractFileExt(FileName));
+  Highlighter:= dmHighl.GetHighlighter(Editor, ExtractFileExt(FileName));
   UpdateHighlighter(Highlighter);
 end;
 
@@ -1031,13 +964,6 @@ begin
   Close;
 end;
 
-{
-procedure TfrmEditor.cm_Save2(const Params:array of string);
-begin
-  inherited;
-  actFileSave.Execute;
-end;
-}
 procedure TfrmEditor.cm_ConfHigh(const Params:array of string);
 begin
   ShowOptions(TfrmOptionsEditor);
@@ -1048,13 +974,11 @@ begin
   ShowSearchReplaceDialog(True);
 end;
 
-
 procedure TfrmEditor.frmEditorClose(Sender: TObject;
   var CloseAction: TCloseAction);
 begin
   CloseAction:=caFree;
 end;
-
 
 procedure TfrmEditor.ChooseEncoding(mnuMenuItem: TMenuItem; sEncoding: String);
 var

@@ -41,8 +41,13 @@ type
     cbFileMaskHistory: TCheckBox;
     chkSaveConfiguration: TCheckBox;
     chkSearchReplaceHistory: TCheckBox;
+    edtThumbCache: TEdit;
+    edtIconThemes: TEdit;
     gbLocConfigFiles: TGroupBox;
     gbSaveOnExit: TGroupBox;
+    gbDirectories: TGroupBox;
+    lblIconThemes: TLabel;
+    lblThumbCache: TLabel;
     lblCmdLineConfigDir: TLabel;
     gbSortOrderConfigurationOption: TRadioGroup;
     rbProgramDir: TRadioButton;
@@ -86,10 +91,7 @@ end;
 
 procedure TfrmOptionsConfiguration.btnConfigEditClick(Sender: TObject);
 begin
-  if Assigned(gIni) then
-    ShowEditorByGlob(gpCfgDir + 'doublecmd.ini')
-  else
-    ShowEditorByGlob(gpCfgDir + 'doublecmd.xml');
+  ShowEditorByGlob(gpCfgDir + 'doublecmd.xml');
   btnConfigApply.Enabled:= True;
 end;
 
@@ -143,6 +145,13 @@ begin
     rbProgramDir.Checked := True
   else
     rbUserHomeDir.Checked := True;
+
+  edtThumbCache.Text:= gpThumbCacheDir;
+  if not gUseConfigInProgramDir then begin
+    edtIconThemes.Text:= IncludeTrailingBackslash(GetAppDataDir) + 'pixmaps' + PathSep;
+  end;
+  edtIconThemes.Text:= edtIconThemes.Text + ExcludeTrailingPathDelimiter(gpPixmapPath);
+
   chkSaveConfiguration.Checked:= gSaveConfiguration;
   chkSearchReplaceHistory.Checked:= gSaveSearchReplaceHistory;
   cbDirHistory.Checked := gSaveDirHistory;

@@ -4,10 +4,7 @@
    WLX-API implementation (TC WLX-API v2.0).
 
    Copyright (C) 2008  Dmitry Kolomiets (B4rr4cuda@rambler.ru)
-
-   contributors:
-
-   Copyright (C) 2009-2013 Alexander Koblov (alexx2000@mail.ru)
+   Copyright (C) 2009-2017 Alexander Koblov (alexx2000@mail.ru)
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -45,6 +42,9 @@ uses
   {$IFDEF LCLQT}
   , qt4, qtwidgets
   // The Qt widgetset must be used to load plugins on qt
+  {$ENDIF}
+  {$IFDEF LCLQT5}
+  , qt5, qtwidgets
   {$ENDIF}
   ;
 
@@ -128,9 +128,7 @@ type
     //---------------------
     procedure Clear;
     procedure Exchange(Index1, Index2: Integer);
-    procedure Load(Ini: TIniFileEx); overload;
     procedure Load(AConfig: TXmlConfig; ANode: TXmlNode); overload;
-    procedure Save(Ini: TIniFileEx); overload;
     procedure Save(AConfig: TXmlConfig; ANode: TXmlNode); overload;
     procedure DeleteItem(Index: Integer);
     //---------------------
@@ -186,7 +184,7 @@ procedure WlxPrepareContainer(var ParentWin: HWND);
 begin
 {$IF DEFINED(LCLGTK) or DEFINED(LCLGTK2)}
   ParentWin := HWND(GetFixedWidget(Pointer(ParentWin)));
-{$ELSEIF DEFINED(LCLQT)}
+{$ELSEIF DEFINED(LCLQT) or DEFINED(LCLQT5)}
   ParentWin := HWND(TQtWidget(ParentWin).GetContainerWidget);
 {$ENDIF}
 end;
@@ -253,7 +251,7 @@ end;
 
 procedure TWlxModule.UnloadModule;
 begin
-{$IF NOT (DEFINED(LCLQT) or DEFINED(LCLGTK2))}
+{$IF NOT (DEFINED(LCLQT) or DEFINED(LCLQT5) or DEFINED(LCLGTK2))}
 {$IF (not DEFINED(LINUX)) or ((FPC_VERSION > 2) or ((FPC_VERSION=2) and (FPC_RELEASE >= 5)))}
   if FModuleHandle <> 0 then
     FreeLibrary(FModuleHandle);
@@ -326,7 +324,7 @@ begin
     else DestroyWindow(FPluginWindow)
 {$ELSEIF DEFINED(LCLGTK) or DEFINED(LCLGTK2)}
     else gtk_widget_destroy(PGtkWidget(FPluginWindow));
-{$ELSEIF DEFINED(LCLQT)}
+{$ELSEIF DEFINED(LCLQT) or DEFINED(LCLQT5)}
     else QWidget_Destroy(QWidgetH(FPluginWindow));
 {$ENDIF}
   finally
@@ -392,7 +390,7 @@ procedure TWlxModule.SetFocus;
 begin
   {$IF DEFINED(LCLWIN32)}
   Windows.SetFocus(FPluginWindow);
-  {$ELSEIF DEFINED(LCLQT)}
+  {$ELSEIF DEFINED(LCLQT) or DEFINED(LCLQT5)}
   QWidget_setFocus(QWidgetH(FPluginWindow));
   {$ELSEIF DEFINED(LCLGTK2)}
   gtk_widget_grab_focus(PGtkWidget(FPluginWindow));
@@ -406,7 +404,7 @@ begin
   begin
     {$IF DEFINED(LCLWIN32)}
     MoveWindow(FPluginWindow, Left, Top, Right - Left, Bottom - Top, True);
-    {$ELSEIF DEFINED(LCLQT)}
+    {$ELSEIF DEFINED(LCLQT) or DEFINED(LCLQT5)}
     QWidget_move(QWidgetH(FPluginWindow), Left, Top);
     QWidget_resize(QWidgetH(FPluginWindow), Right - Left, Bottom - Top);
     {$ELSEIF DEFINED(LCLGTK2)}
@@ -498,28 +496,6 @@ begin
   FList.Exchange(Index1, Index2);
 end;
 
-procedure TWLXModuleList.Load(Ini: TIniFileEx);
-var
-  xCount, I: Integer;
-  tmp: String;
-begin
-  Self.Clear;
-  xCount := Ini.ReadInteger('Lister Plugins', 'PluginCount', 0);
-  if xCount = 0 then
-    Exit;
-
-  for i := 0 to xCount - 1 do
-  begin
-    tmp := Ini.ReadString('Lister Plugins', 'Plugin' + IntToStr(I + 1) + 'Name', '');
-    Flist.AddObject(UpCase(tmp), TWlxModule.Create);
-    TWlxModule(Flist.Objects[I]).Name := tmp;
-    TWlxModule(Flist.Objects[I]).DetectStr :=
-      Ini.ReadString('Lister Plugins', 'Plugin' + IntToStr(I + 1) + 'Detect', '');
-    TWlxModule(Flist.Objects[I]).FileName :=
-      GetCmdDirFromEnvVar(Ini.ReadString('Lister Plugins', 'Plugin' + IntToStr(I + 1) + 'Path', ''));
-  end;
-end;
-
 procedure TWLXModuleList.Load(AConfig: TXmlConfig; ANode: TXmlNode);
 var
   AName, APath: String;
@@ -550,23 +526,6 @@ begin
       end;
       ANode := ANode.NextSibling;
     end;
-  end;
-end;
-
-procedure TWLXModuleList.Save(Ini: TIniFileEx);
-var
-  i: Integer;
-begin
-  Ini.EraseSection('Lister Plugins');
-  Ini.WriteInteger('Lister Plugins', 'PluginCount', Flist.Count);
-  for i := 0 to Flist.Count - 1 do
-  begin
-    Ini.WriteString('Lister Plugins', 'Plugin' + IntToStr(I + 1) + 'Name',
-      TWlxModule(Flist.Objects[I]).Name);
-    Ini.WriteString('Lister Plugins', 'Plugin' + IntToStr(I + 1) + 'Detect',
-      TWlxModule(Flist.Objects[I]).DetectStr);
-    Ini.WriteString('Lister Plugins', 'Plugin' + IntToStr(I + 1) + 'Path',
-      SetCmdDirAsEnvVar(TWlxModule(Flist.Objects[I]).FileName));
   end;
 end;
 

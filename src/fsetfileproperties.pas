@@ -108,6 +108,7 @@ type
     procedure ShowMode(Mode: TFileAttrs);
     procedure ShowAttr(Attr: TFileAttrs);
     procedure UpdateAllowGrayed(AllowGrayed: Boolean);
+    function FormatUnixAttributesEx(iAttr: TFileAttrs): String;
     function GetModeFromForm(out ExcludeAttrs: TFileAttrs): TFileAttrs;
     function GetAttrFromForm(out ExcludeAttrs: TFileAttrs): TFileAttrs;
   public
@@ -183,16 +184,21 @@ end;
 
 procedure TfrmSetFileProperties.cbChangeModeClick(Sender: TObject);
 var
-  ExcludeAttrs: TFileAttrs;
+  AMode, ExcludeAttrs: TFileAttrs;
   CheckBox: TCheckBox absolute Sender;
 begin
   if FChangeTriggersEnabled then
   begin
     FChangeTriggersEnabled := False;
     if CheckBox.State = cbGrayed then
-      edtOctal.Text:= EmptyStr
+    begin
+      edtOctal.Text:= EmptyStr;
+      lblAttrText.Caption:= EmptyStr;
+    end
     else begin
-      edtOctal.Text:= DecToOct(GetModeFromForm(ExcludeAttrs));
+      AMode:= GetModeFromForm(ExcludeAttrs);
+      edtOctal.Text:= DecToOct(AMode);
+      lblAttrText.Caption:= FormatUnixAttributesEx(AMode);
     end;
     FChangeTriggersEnabled := True;
   end;
@@ -205,17 +211,21 @@ end;
 
 procedure TfrmSetFileProperties.edtOctalKeyPress(Sender: TObject; var Key: char);
 begin
-  if not ((Key in ['0'..'7']) or (Key = Chr(VK_BACK))) then
+  if not ((Key in ['0'..'7']) or (Key = Chr(VK_BACK)) or (Key = Chr(VK_DELETE))) then
     Key:= #0;
 end;
 
 procedure TfrmSetFileProperties.edtOctalKeyUp(Sender: TObject; var Key: Word;
   Shift: TShiftState);
+var
+  AMode: TFileAttrs;
 begin
   if FChangeTriggersEnabled then
   begin
     FChangeTriggersEnabled := False;
-    ShowMode(OctToDec(edtOctal.Text));
+    AMode:= OctToDec(edtOctal.Text);
+    lblAttrText.Caption:= FormatUnixAttributesEx(AMode);
+    ShowMode(AMode);
     FChangeTriggersEnabled := True;
   end;
 end;
@@ -268,6 +278,11 @@ begin
     if gbUnixAttributes.Controls[Index] is TCheckBox then
       TCheckBox(gbUnixAttributes.Controls[Index]).AllowGrayed:= AllowGrayed;
   end;
+end;
+
+function TfrmSetFileProperties.FormatUnixAttributesEx(iAttr: TFileAttrs): String;
+begin
+  Result:= Copy(FormatUnixAttributes(iAttr), 2, MaxInt);
 end;
 
 function TfrmSetFileProperties.GetModeFromForm(out ExcludeAttrs: TFileAttrs): TFileAttrs;

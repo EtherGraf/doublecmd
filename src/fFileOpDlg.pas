@@ -201,7 +201,7 @@ begin
     EventsListeners[Event] := TFPList.Create;
 end;
 
-procedure Finalize;
+procedure Terminate;
 var
   Event: TOperationProgressWindowEvent;
   Item: PEventsListItem;
@@ -748,7 +748,12 @@ begin
     begin
       if RemainingTime > 0 then
         begin
-          sEstimated := FormatDateTime('HH:MM:SS', RemainingTime);
+          // Normal view, less than 24 hours of estimated time
+          if RemainingTime < 1.0 then
+            sEstimated := FormatDateTime('HH:MM:SS', RemainingTime)
+          else begin
+            sEstimated := IntToStr(Trunc(RemainingTime)) + '``' + FormatDateTime('HH:MM:SS', RemainingTime);
+          end;
           sEstimated := Format(rsDlgSpeedTime, [Speed, sEstimated]);
         end
       else
@@ -858,7 +863,7 @@ end;
 
 procedure TfrmFileOp.InitializeCalcChecksumOperation(OpManItem: TOperationsManagerItem);
 begin
-  InitializeControls(OpManItem, [fodl_current_pb, fodl_total_pb]);
+  InitializeControls(OpManItem, [fodl_from_lbl, fodl_current_pb, fodl_total_pb]);
 end;
 
 procedure TfrmFileOp.InitializeTestArchiveOperation(OpManItem: TOperationsManagerItem);
@@ -1143,10 +1148,7 @@ end;
 initialization
   Initialize;
 
-// Workaround: Internal error 200130121
-{$IF (FPC_FULLVERSION < 030000) or (not DEFINED(WIN64))}
 finalization
-  Finalize;
-{$ENDIF}
+  Terminate;
 
 end.

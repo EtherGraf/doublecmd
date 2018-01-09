@@ -67,6 +67,7 @@ type
     FRenamingFiles: Boolean;
     FRenamingRootDir: Boolean;
     FRootDir: TFile;
+    FVerify,
     FReserveSpace,
     FCheckFreeSpace: Boolean;
     FSkipAllBigFiles: Boolean;
@@ -77,6 +78,8 @@ type
     FAutoRenameItSelf: Boolean;
     FCorrectSymLinks: Boolean;
     FCopyAttributesOptions: TCopyAttributesOptions;
+    FMaxPathOption: TFileSourceOperationUIResponse;
+    FDeleteFileOption: TFileSourceOperationUIResponse;
     FFileExistsOption: TFileSourceOperationOptionFileExists;
     FDirExistsOption: TFileSourceOperationOptionDirectoryExists;
 
@@ -84,14 +87,16 @@ type
     AbortOperation: TAbortOperationFunction;
     CheckOperationState: TCheckOperationStateFunction;
     UpdateStatistics: TUpdateStatisticsFunction;
+    AppProcessMessages: TAppProcessMessagesFunction;
     MoveOrCopy: TFileSystemOperationHelperMoveOrCopy;
 
     procedure ShowError(sMessage: String);
     procedure LogMessage(sMessage: String; logOptions: TLogOptions; logMsgType: TLogMsgType);
 
+    function CheckFileHash(const FileName, Hash: String; Size: Int64): Boolean;
     function CopyFile(SourceFile: TFile; TargetFileName: String; Mode: TFileSystemOperationHelperCopyMode): Boolean;
     function MoveFile(SourceFile: TFile; TargetFileName: String; Mode: TFileSystemOperationHelperCopyMode): Boolean;
-    procedure CopyProperties(SourceFileName, TargetFileName: String);
+    procedure CopyProperties(SourceFile: TFile; TargetFileName: String);
 
     function ProcessNode(aFileTreeNode: TFileTreeNode; CurrentTargetPath: String): Boolean;
     function ProcessDirectory(aNode: TFileTreeNode; AbsoluteTargetFileName: String): Boolean;
@@ -113,6 +118,7 @@ type
   public
     constructor Create(AskQuestionFunction: TAskQuestionFunction;
                        AbortOperationFunction: TAbortOperationFunction;
+                       AppProcessMessagesFunction: TAppProcessMessagesFunction;
                        CheckOperationStateFunction: TCheckOperationStateFunction;
                        UpdateStatisticsFunction: TUpdateStatisticsFunction;
                        OperationThread: TThread;
@@ -125,6 +131,7 @@ type
 
     procedure ProcessTree(aFileTree: TFileTree);
 
+    property Verify: Boolean read FVerify write FVerify;
     property FileExistsOption: TFileSourceOperationOptionFileExists read FFileExistsOption write FFileExistsOption;
     property DirExistsOption: TFileSourceOperationOptionDirectoryExists read FDirExistsOption write FDirExistsOption;
     property CheckFreeSpace: Boolean read FCheckFreeSpace write FCheckFreeSpace;
@@ -142,7 +149,7 @@ implementation
 uses
   uDebug, uOSUtils, DCStrUtils, FileUtil, uFindEx, DCClassesUtf8, uFileProcs, uLng,
   DCBasicTypes, uFileSource, uFileSystemFileSource, uFileProperty,
-  StrUtils, DCDateTimeUtils, uShowMsg, Forms;
+  StrUtils, DCDateTimeUtils, uShowMsg, Forms, LazUTF8, uHash;
 
 function ApplyRenameMask(aFile: TFile; NameMask: String; ExtMask: String): String; overload;
 begin
@@ -231,13 +238,13 @@ function FileExistsMessage(const TargetName, SourceName: String;
 var
   TargetInfo: TSearchRec;
 begin
-  Result:= rsMsgFileExistsOverwrite + LineEnding + TargetName + LineEnding;
+  Result:= rsMsgFileExistsOverwrite + LineEnding + WrapTextSimple(TargetName, 100) + LineEnding;
   if mbFileGetAttr(TargetName, TargetInfo) then
   begin
     Result:= Result + Format(rsMsgFileExistsFileInfo, [Numb2USA(IntToStr(TargetInfo.Size)),
                              DateTimeToStr(FileDateToDateTime(TargetInfo.Time))]) + LineEnding;
   end;
-  Result:= Result + LineEnding + rsMsgFileExistsWithFile + LineEnding + SourceName + LineEnding +
+  Result:= Result + LineEnding + rsMsgFileExistsWithFile + LineEnding + WrapTextSimple(SourceName, 100) + LineEnding +
            Format(rsMsgFileExistsFileInfo, [Numb2USA(IntToStr(SourceSize)), DateTimeToStr(SourceTime)]);
 end;
 
@@ -302,17 +309,18 @@ end;
 
 // ----------------------------------------------------------------------------
 
-constructor TFileSystemOperationHelper.Create(AskQuestionFunction: TAskQuestionFunction;
-                                         AbortOperationFunction: TAbortOperationFunction;
-                                         CheckOperationStateFunction: TCheckOperationStateFunction;
-                                         UpdateStatisticsFunction: TUpdateStatisticsFunction;
-                                         OperationThread: TThread;
-                                         Mode: TFileSystemOperationHelperMode;
-                                         TargetPath: String;
-                                         StartingStatistics: TFileSourceCopyOperationStatistics);
+constructor TFileSystemOperationHelper.Create(
+  AskQuestionFunction: TAskQuestionFunction;
+  AbortOperationFunction: TAbortOperationFunction;
+  AppProcessMessagesFunction: TAppProcessMessagesFunction;
+  CheckOperationStateFunction: TCheckOperationStateFunction;
+  UpdateStatisticsFunction: TUpdateStatisticsFunction;
+  OperationThread: TThread; Mode: TFileSystemOperationHelperMode;
+  TargetPath: String; StartingStatistics: TFileSourceCopyOperationStatistics);
 begin
   AskQuestion := AskQuestionFunction;
   AbortOperation := AbortOperationFunction;
+  AppProcessMessages := AppProcessMessagesFunction;
   CheckOperationState := CheckOperationStateFunction;
   UpdateStatistics := UpdateStatisticsFunction;
 
@@ -423,6 +431,8 @@ var
   BytesRead, BytesToRead, BytesWrittenTry, BytesWritten: Int64;
   TotalBytesToRead: Int64 = 0;
   NewPos: Int64;
+  Hash: String;
+  Context: THashContext;
   DeleteFile: Boolean = False;
 
   procedure OpenSourceFile;
@@ -486,30 +496,32 @@ var
       end;
     end;
   var
+    Flags: LongWord = 0;
     bRetry: Boolean = True;
   begin
     while bRetry do
     begin
       bRetry := False;
+      if FVerify then Flags := fmOpenSync;
       try
         TargetFileStream.Free; // In case stream was created but 'while' loop run again
         case Mode of
         fsohcmAppend:
           begin
-            TargetFileStream := TFileStreamEx.Create(TargetFileName, fmOpenReadWrite);
+            TargetFileStream := TFileStreamEx.Create(TargetFileName, fmOpenReadWrite or Flags);
             TargetFileStream.Seek(0, soFromEnd); // seek to end
             TotalBytesToRead := SourceFileStream.Size;
           end;
         fsohcmResume:
           begin
-            TargetFileStream := TFileStreamEx.Create(TargetFileName, fmOpenReadWrite);
+            TargetFileStream := TFileStreamEx.Create(TargetFileName, fmOpenReadWrite or Flags);
             NewPos := TargetFileStream.Seek(0, soFromEnd);
             SourceFileStream.Seek(NewPos, soFromBeginning);
             TotalBytesToRead := SourceFileStream.Size - NewPos;
           end
         else
           begin
-            TargetFileStream := TFileStreamEx.Create(TargetFileName, fmCreate);
+            TargetFileStream := TFileStreamEx.Create(TargetFileName, fmCreate or Flags);
             TotalBytesToRead := SourceFileStream.Size;
             if FReserveSpace then
             begin
@@ -565,9 +577,10 @@ begin
     end;
   end;
 
-  BytesToRead := FBufferSize;
   SourceFileStream := nil;
   TargetFileStream := nil; // for safety exception handling
+  BytesToRead := FBufferSize;
+  if FVerify then HashInit(Context, HASH_SHA3_224);
   try
     try
       OpenSourceFile;
@@ -592,6 +605,8 @@ begin
 
             if (BytesRead = 0) then
               Raise EReadError.Create(mbSysErrorMessage(GetLastOSError));
+
+            if FVerify then HashUpdate(Context, FBuffer^, BytesRead);
 
             TotalBytesToRead := TotalBytesToRead - BytesRead;
             BytesWritten := 0;
@@ -687,8 +702,15 @@ begin
           UpdateStatistics(FStatistics);
         end;
 
+        AppProcessMessages;
         CheckOperationState; // check pause and stop
       end;//while
+
+      if FVerify then
+      begin
+        HashFinal(Context, Hash);
+        TargetFileStream.Flush;
+      end;
 
       Result:= True;
 
@@ -703,6 +725,7 @@ begin
 
   finally
     FreeAndNil(SourceFileStream);
+    if FVerify then Context.Free;
     if Assigned(TargetFileStream) then
     begin
       FreeAndNil(TargetFileStream);
@@ -717,20 +740,39 @@ begin
           mbDeleteFile(TargetFileName);
         end;
       end;
+      if Result and FVerify then begin
+        Result:= CheckFileHash(TargetFileName, Hash, SourceFile.Size);
+      end;
     end;
   end;
 
-  CopyProperties(SourceFile.FullPath, TargetFileName);
+  if Result then CopyProperties(SourceFile, TargetFileName);
 end;
 
-procedure TFileSystemOperationHelper.CopyProperties(SourceFileName, TargetFileName: String);
+procedure TFileSystemOperationHelper.CopyProperties(SourceFile: TFile;
+  TargetFileName: String);
 var
-  CopyAttrResult: TCopyAttributesOptions;
   Msg: String = '';
+  ACopyTime: Boolean;
+  CopyAttrResult: TCopyAttributesOptions;
+  ACopyAttributesOptions: TCopyAttributesOptions;
 begin
   if FCopyAttributesOptions <> [] then
   begin
-    CopyAttrResult := mbFileCopyAttr(SourceFileName, TargetFileName, FCopyAttributesOptions);
+    ACopyAttributesOptions := FCopyAttributesOptions;
+    ACopyTime := (FMode = fsohmMove) and (caoCopyTime in ACopyAttributesOptions);
+    if ACopyTime then ACopyAttributesOptions -= [caoCopyTime];
+    if ACopyAttributesOptions <> [] then begin
+      CopyAttrResult := mbFileCopyAttr(SourceFile.FullPath, TargetFileName, ACopyAttributesOptions);
+    end;
+    if ACopyTime then
+    begin
+      // Copy time from properties because move operation change time of original folder
+      if not mbFileSetTime(TargetFileName, DateTimeToFileTime(SourceFile.ModificationTime),
+                   {$IF DEFINED(MSWINDOWS)}DateTimeToFileTime(SourceFile.CreationTime){$ELSE}0{$ENDIF},
+                                           DateTimeToFileTime(SourceFile.LastAccessTime)) then
+        CopyAttrResult += [caoCopyTime];
+    end;
     if CopyAttrResult <> [] then
     begin
       case FSetPropertyError of
@@ -740,13 +782,13 @@ begin
         fsoospeNone:
           begin
             if caoCopyAttributes in CopyAttrResult then
-              AddStrWithSep(Msg, Format(rsMsgErrSetAttribute, [SourceFileName]), LineEnding);
+              AddStrWithSep(Msg, Format(rsMsgErrSetAttribute, [SourceFile.FullPath]), LineEnding);
             if caoCopyTime in CopyAttrResult then
-              AddStrWithSep(Msg, Format(rsMsgErrSetDateTime, [SourceFileName]), LineEnding);
+              AddStrWithSep(Msg, Format(rsMsgErrSetDateTime, [SourceFile.FullPath]), LineEnding);
             if caoCopyOwnership in CopyAttrResult then
-              AddStrWithSep(Msg, Format(rsMsgErrSetOwnership, [SourceFileName]), LineEnding);
+              AddStrWithSep(Msg, Format(rsMsgErrSetOwnership, [SourceFile.FullPath]), LineEnding);
             if caoCopyPermissions in CopyAttrResult then
-              AddStrWithSep(Msg, Format(rsMsgErrSetPermissions, [SourceFileName]), LineEnding);
+              AddStrWithSep(Msg, Format(rsMsgErrSetPermissions, [SourceFile.FullPath]), LineEnding);
 
             case AskQuestion(Msg, '',
                              [fsourSkip, fsourSkipAll, fsourIgnoreAll, fsourAbort],
@@ -770,15 +812,31 @@ end;
 
 function TFileSystemOperationHelper.MoveFile(SourceFile: TFile; TargetFileName: String;
   Mode: TFileSystemOperationHelperCopyMode): Boolean;
+var
+  Message: String;
+  RetryDelete: Boolean = True;
 begin
   if (Mode in [fsohcmAppend, fsohcmResume]) or
      (not mbRenameFile(SourceFile.FullPath, TargetFileName)) then
   begin
+    if FVerify then FStatistics.TotalBytes += SourceFile.Size;
     if CopyFile(SourceFile, TargetFileName, Mode) then
     begin
-      if FileIsReadOnly(SourceFile.Attributes) then
-        mbFileSetReadOnly(SourceFile.FullPath, False);
-      Result := mbDeleteFile(SourceFile.FullPath)
+      repeat
+        if FileIsReadOnly(SourceFile.Attributes) then
+          mbFileSetReadOnly(SourceFile.FullPath, False);
+        Result := mbDeleteFile(SourceFile.FullPath);
+        if (not Result) and (FDeleteFileOption = fsourInvalid) then
+        begin
+          RetryDelete := True;
+          Message := Format(rsMsgNotDelete, [WrapTextSimple(SourceFile.FullPath, 100)]) + LineEnding + LineEnding + mbSysErrorMessage;
+          case AskQuestion('', Message, [fsourSkip, fsourRetry, fsourAbort, fsourSkipAll], fsourSkip, fsourAbort) of
+            fsourAbort: AbortOperation;
+            fsourRetry: RetryDelete := False;
+            fsourSkipAll: FDeleteFileOption := fsourSkipAll;
+          end;
+        end;
+      until RetryDelete;
     end
     else
       Result := False;
@@ -791,10 +849,11 @@ function TFileSystemOperationHelper.ProcessNode(aFileTreeNode: TFileTreeNode;
                                                 CurrentTargetPath: String): Boolean;
 var
   aFile: TFile;
-  ProcessedOk: Boolean;
   TargetName: String;
+  ProcessedOk: Boolean;
   CurrentFileIndex: Integer;
   CurrentSubNode: TFileTreeNode;
+  AskResult: TFileSourceOperationUIResponse;
 begin
   Result := True;
 
@@ -834,11 +893,40 @@ begin
             begin
               Result := False;
               CountStatistics(CurrentSubNode);
+              AppProcessMessages;
               CheckOperationState;
               Continue;
             end;
         end;
     end;
+
+    // Check MAX_PATH
+    if UTF8Length(TargetName) > MAX_PATH - 1 then
+    begin
+      if FMaxPathOption <> fsourInvalid then
+        AskResult := FMaxPathOption
+      else begin
+        AskResult := AskQuestion(Format(rsMsgFilePathOverMaxPath,
+                         [UTF8Length(TargetName), MAX_PATH - 1, LineEnding + WrapTextSimple(TargetName, 100) + LineEnding]), '',
+                         [fsourIgnore, fsourSkip, fsourAbort, fsourIgnoreAll, fsourSkipAll], fsourIgnore, fsourSkip);
+      end;
+      case AskResult of
+        fsourAbort: AbortOperation();
+        fsourSkip,
+        fsourSkipAll:
+          begin
+            Result := False;
+            FMaxPathOption := fsourSkip;
+            CountStatistics(CurrentSubNode);
+            AppProcessMessages;
+            CheckOperationState;
+            Continue;
+          end;
+        fsourIgnore: ;
+        fsourIgnoreAll: FMaxPathOption := fsourIgnore;
+      end;
+    end;
+
     if aFile.IsDirectory then
       ProcessedOk := ProcessDirectory(CurrentSubNode, TargetName)
     else if aFile.IsLink then
@@ -847,8 +935,19 @@ begin
       ProcessedOk := ProcessFile(CurrentSubNode, TargetName);
 
     if not ProcessedOk then
-      Result := False;
+      Result := False
+    // Process comments if need
+    else if gProcessComments then
+    begin
+      case FMode of
+        fsohmCopy:
+          FDescription.CopyDescription(CurrentSubNode.TheFile.FullPath, TargetName);
+        fsohmMove:
+          FDescription.MoveDescription(CurrentSubNode.TheFile.FullPath, TargetName);
+      end;
+    end;
 
+    AppProcessMessages;
     CheckOperationState;
   end;
 end;
@@ -894,7 +993,7 @@ begin
             // Copy/Move all files inside.
             Result := ProcessNode(aNode, IncludeTrailingPathDelimiter(AbsoluteTargetFileName));
             // Copy attributes after copy/move directory contents, because this operation can change date/time
-            CopyProperties(aNode.TheFile.FullPath, AbsoluteTargetFileName);
+            CopyProperties(aNode.TheFile, AbsoluteTargetFileName);
           end
           else
           begin
@@ -974,7 +1073,7 @@ begin
 
             if CreateSymlink(LinkTarget, AbsoluteTargetFileName) then
             begin
-              CopyProperties(aFile.FullPath, AbsoluteTargetFileName);
+              CopyProperties(aFile, AbsoluteTargetFileName);
             end
             else
             begin
@@ -1047,17 +1146,6 @@ begin
     begin
       LogMessage(Format(rsMsgLogSuccess+FLogCaption, [aNode.TheFile.FullPath + ' -> ' + AbsoluteTargetFileName]),
                  [log_cp_mv_ln], lmtSuccess);
-
-      // process comments if need
-      if gProcessComments then
-      begin
-        case FMode of
-          fsohmCopy:
-            FDescription.CopyDescription(aNode.TheFile.FullPath, AbsoluteTargetFileName);
-          fsohmMove:
-            FDescription.MoveDescription(aNode.TheFile.FullPath, AbsoluteTargetFileName);
-        end;
-      end;
     end
   else
     begin
@@ -1088,10 +1176,7 @@ var
         Exit(fsoterSkip);
       fsoodeDelete:
         begin
-          if FPS_ISLNK(Attrs) then
-            mbDeleteFile(AbsoluteTargetFileName)
-          else
-            DelTree(AbsoluteTargetFileName);
+          mbDeleteFile(AbsoluteTargetFileName);
           Exit(fsoterDeleted);
         end;
       fsoodeCopyInto:
@@ -1155,13 +1240,6 @@ var
               (IsLinkFollowed and aNode.SubNodes[0].TheFile.IsDirectory);
   end;
 
-  function AllowDeleteDirectory: Boolean;
-  begin
-    Result := (not (SourceFile.AttributesProperty.IsDirectory or
-                   (IsLinkFollowed and aNode.SubNodes[0].TheFile.IsDirectory))) or
-              gOverwriteFolder;
-  end;
-
 begin
   Attrs := mbFileGetAttr(AbsoluteTargetFileName);
   if Attrs <> faInvalidAttributes then
@@ -1169,24 +1247,24 @@ begin
     SourceFile := aNode.TheFile;
 
     // Target exists - ask user what to do.
-    if FPS_ISDIR(Attrs) then
-    begin
-      Result := DoDirectoryExists(AllowCopyInto, AllowDeleteDirectory)
-    end
-    else if FPS_ISLNK(Attrs) then
+    if FPS_ISLNK(Attrs) then
     begin
       // Check if target of the link exists.
       LinkTargetAttrs := mbFileGetAttrNoLinks(AbsoluteTargetFileName);
       if (LinkTargetAttrs <> faInvalidAttributes) then
       begin
         if FPS_ISDIR(LinkTargetAttrs) then
-          Result := DoDirectoryExists(AllowCopyInto, AllowDeleteDirectory)
+          Result := DoDirectoryExists(AllowCopyInto, False)
         else
           Result := DoFileExists(AllowAppendFile);
       end
       else
         // Target of link doesn't exist. Treat link as file and don't allow append.
         Result := DoFileExists(False);
+    end
+    else if FPS_ISDIR(Attrs) then
+    begin
+      Result := DoDirectoryExists(AllowCopyInto, False)
     end
     else
       // Existing target is a file.
@@ -1202,6 +1280,7 @@ function TFileSystemOperationHelper.DirExists(
              AllowCopyInto: Boolean;
              AllowDelete: Boolean): TFileSourceOperationOptionDirectoryExists;
 var
+  Message: String;
   PossibleResponses: array of TFileSourceOperationUIResponse = nil;
   DefaultOkResponse: TFileSourceOperationUIResponse;
 
@@ -1212,61 +1291,68 @@ var
   end;
 
 begin
-  case FDirExistsOption of
-    fsoodeNone:
+  if (FDirExistsOption = fsoodeNone) or
+     ((FDirExistsOption = fsoodeDelete) and (AllowDelete = False)) or
+     ((FDirExistsOption = fsoodeCopyInto) and (AllowCopyInto = False)) then
+    begin
+      if AllowDelete then
+        AddResponse(fsourOverwrite);
+      if AllowCopyInto then
       begin
-        if AllowDelete then
-          AddResponse(fsourOverwrite);
-        if AllowCopyInto then
-        begin
-          AddResponse(fsourCopyInto);
-          AddResponse(fsourCopyIntoAll);
-        end;
-        AddResponse(fsourSkip);
-        if AllowDelete then
-          AddResponse(fsourOverwriteAll);
-        AddResponse(fsourSkipAll);
-        AddResponse(fsourCancel);
-
-        if AllowCopyInto then
-          DefaultOkResponse := fsourCopyInto
-        else if AllowDelete then
-          DefaultOkResponse := fsourOverwrite
-        else
-          DefaultOkResponse := fsourSkip;
-
-        case AskQuestion(Format(rsMsgFolderExistsRwrt, [AbsoluteTargetFileName]), '',
-                         PossibleResponses, DefaultOkResponse, fsourSkip) of
-          fsourOverwrite:
-            Result := fsoodeDelete;
-          fsourCopyInto:
-            Result := fsoodeCopyInto;
-          fsourCopyIntoAll:
-            begin
-              FDirExistsOption := fsoodeCopyInto;
-              Result := fsoodeCopyInto;
-            end;
-          fsourSkip:
-            Result := fsoodeSkip;
-          fsourOverwriteAll:
-            begin
-              FDirExistsOption := fsoodeDelete;
-              Result := fsoodeDelete;
-            end;
-          fsourSkipAll:
-            begin
-              FDirExistsOption := fsoodeSkip;
-              Result := fsoodeSkip;
-            end;
-          fsourNone,
-          fsourCancel:
-            AbortOperation;
-        end;
+        AddResponse(fsourCopyInto);
+        AddResponse(fsourCopyIntoAll);
       end;
+      AddResponse(fsourSkip);
+      if AllowDelete then
+        AddResponse(fsourOverwriteAll);
+      if AllowCopyInto or AllowDelete then
+        AddResponse(fsourSkipAll);
+      AddResponse(fsourCancel);
+
+      if AllowCopyInto then
+        DefaultOkResponse := fsourCopyInto
+      else if AllowDelete then
+        DefaultOkResponse := fsourOverwrite
+      else
+        DefaultOkResponse := fsourSkip;
+
+      if AllowCopyInto or AllowDelete then
+        Message:= Format(rsMsgFolderExistsRwrt, [AbsoluteTargetFileName])
+      else begin
+        Message:= Format(rsMsgCannotOverwriteDirectory, [AbsoluteTargetFileName, aFile.FullPath]);
+      end;
+
+      case AskQuestion(Message, '',
+                       PossibleResponses, DefaultOkResponse, fsourSkip) of
+        fsourOverwrite:
+          Result := fsoodeDelete;
+        fsourCopyInto:
+          Result := fsoodeCopyInto;
+        fsourCopyIntoAll:
+          begin
+            FDirExistsOption := fsoodeCopyInto;
+            Result := fsoodeCopyInto;
+          end;
+        fsourSkip:
+          Result := fsoodeSkip;
+        fsourOverwriteAll:
+          begin
+            FDirExistsOption := fsoodeDelete;
+            Result := fsoodeDelete;
+          end;
+        fsourSkipAll:
+          begin
+            FDirExistsOption := fsoodeSkip;
+            Result := fsoodeSkip;
+          end;
+        fsourNone,
+        fsourCancel:
+          AbortOperation;
+      end;
+    end
 
     else
       Result := FDirExistsOption;
-  end;
 end;
 
 function TFileSystemOperationHelper.FileExists(aFile: TFile;
@@ -1436,6 +1522,115 @@ begin
   if logOptions <= gLogOptions then
   begin
     logWrite(FOperationThread, sMessage, logMsgType);
+  end;
+end;
+
+function TFileSystemOperationHelper.CheckFileHash(const FileName, Hash: String;
+  Size: Int64): Boolean;
+const
+  BLOCK_SIZE = $20000;
+var
+  Handle: THandle;
+  FileHash: String;
+  bRetryRead: Boolean;
+  Context: THashContext;
+  Buffer, Aligned: Pointer;
+  TotalBytesToRead: Int64 = 0;
+  BytesRead, BytesToRead: Int64;
+begin
+  Result := False;
+  FStatistics.CurrentFileDoneBytes:= 0;
+  // Flag fmOpenDirect requires: file access sizes must be for a number of bytes
+  // that is an integer multiple of the volume block size, file access buffer
+  // addresses for read and write operations should be physical block size aligned
+  BytesToRead:= BLOCK_SIZE;
+  Buffer:= GetMem(BytesToRead * 2 - 1);
+  {$PUSH}{$HINTS OFF}{$WARNINGS OFF}
+  Aligned:= Pointer(PtrUInt(Buffer + BytesToRead - 1) and not (BytesToRead - 1));
+  {$POP}
+  HashInit(Context, HASH_SHA3_224);
+  try
+    Handle:= mbFileOpen(FileName, fmOpenRead or fmShareDenyWrite or fmOpenSync or fmOpenDirect);
+
+    if Handle = feInvalidHandle then
+    begin
+      case AskQuestion(rsMsgVerify, rsMsgErrEOpen + ' ' + FileName,
+                       [fsourSkip, fsourAbort],
+                       fsourAbort, fsourSkip) of
+        fsourAbort:
+          AbortOperation();
+        fsourSkip:
+          Exit(False);
+      end; // case
+    end
+    else begin
+      TotalBytesToRead := Size;
+
+      while TotalBytesToRead > 0 do
+      begin
+        repeat
+          try
+            bRetryRead := False;
+            BytesRead := FileRead(Handle, Aligned^, BytesToRead);
+
+            if (BytesRead <= 0) then
+              Raise EReadError.Create(mbSysErrorMessage(GetLastOSError));
+
+            TotalBytesToRead := TotalBytesToRead - BytesRead;
+
+            HashUpdate(Context, Aligned^, BytesRead);
+
+          except
+            on E: EReadError do
+              begin
+                case AskQuestion(rsMsgVerify + ' ' + rsMsgErrERead + ' ' + FileName + LineEnding,
+                                 E.Message,
+                                 [fsourRetry, fsourSkip, fsourAbort],
+                                 fsourRetry, fsourSkip) of
+                  fsourRetry:
+                    bRetryRead := True;
+                  fsourAbort:
+                    AbortOperation();
+                  fsourSkip:
+                    Exit(False);
+                end; // case
+              end;
+          end;
+        until not bRetryRead;
+
+        with FStatistics do
+        begin
+          CurrentFileDoneBytes := CurrentFileDoneBytes + BytesRead;
+          DoneBytes := DoneBytes + BytesRead;
+
+          UpdateStatistics(FStatistics);
+        end;
+
+        CheckOperationState; // check pause and stop
+      end; // while
+
+      Result := True;
+    end;
+  finally
+    FreeMem(Buffer);
+    HashFinal(Context, FileHash);
+    if Handle <> feInvalidHandle then
+    begin
+      FileClose(Handle);
+    end;
+    if Result then
+    begin
+      Result:= SameText(Hash, FileHash);
+      if not Result then
+      begin
+        case AskQuestion(rsMsgVerify, rsMsgVerifyWrong + LineEnding + FileName,
+                         [fsourSkip, fsourAbort],
+                         fsourAbort, fsourSkip) of
+          fsourAbort:
+            AbortOperation();
+        end; // case
+      end;
+    end;
   end;
 end;
 

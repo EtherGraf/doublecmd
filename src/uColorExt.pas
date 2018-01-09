@@ -4,7 +4,7 @@
    Load colors of files in file panels
 
    Copyright (C) 2003-2004 Radek Cervinka (radek.cervinka@centrum.cz)
-   Copyright (C) 2006-2009  Koblov Alexander (Alexx2000@mail.ru)
+   Copyright (C) 2006-2017 Alexander Koblov (alexx2000@mail.ru)
    Copyright (C) 2008  Dmitry Kolomiets (B4rr4cuda@rambler.ru)
 
    This program is free software; you can redistribute it and/or modify
@@ -30,27 +30,33 @@ unit uColorExt;
 interface
 
 uses
-  Classes, Graphics, uFile, DCXmlConfig;
+  Classes, Graphics, uFile, uMasks, DCXmlConfig;
 
 type
 
   { TMaskItem }
 
   TMaskItem = class
+  private
+    FExt: String;
+    FMaskList: TMaskList;
+    procedure SetExt(const AValue: String);
   public
-    sExt: String;
+    sName: String;
     sModeStr: String;
     cColor: TColor;
-    sName: String;
+
+    constructor Create;
+    destructor Destroy; override;
 
     procedure Assign(ASource: TMaskItem);
+    property sExt: String read FExt write SetExt;
   end;
 
   { TColorExt }
 
   TColorExt = class
   private
-    fOldCount: Integer;
     lslist: TList;
 
     function GetCount: Integer;
@@ -65,8 +71,6 @@ type
     function GetColorByExt(const sExt: String): TColor;
     function GetColorByAttr(const sModeStr: String): TColor;
     function GetColorBy(const AFile: TFile): TColor;
-    procedure LoadIni;
-    procedure SaveIni;
     procedure Load(AConfig: TXmlConfig; ANode: TXmlNode);
     procedure Save(AConfig: TXmlConfig; ANode: TXmlNode);
 
@@ -77,9 +81,27 @@ type
 implementation
 
 uses
-  SysUtils, uDebug, uGlobs, uMasks, uFileProperty;
+  SysUtils, uDebug, uGlobs, uFileProperty;
 
 { TMaskItem }
+
+procedure TMaskItem.SetExt(const AValue: String);
+begin
+  FExt:= AValue;
+  FreeAndNil(FMaskList);
+  FMaskList:= TMaskList.Create(FExt);
+end;
+
+constructor TMaskItem.Create;
+begin
+  FMaskList:= TMaskList.Create(FExt);
+end;
+
+destructor TMaskItem.Destroy;
+begin
+  FreeAndNil(FMaskList);
+  inherited Destroy;
+end;
 
 procedure TMaskItem.Assign(ASource: TMaskItem);
 begin
@@ -159,40 +181,49 @@ end;
 
 function TColorExt.GetColorBy(const AFile: TFile): TColor;
 var
+  Attr: String;
   I, J: Integer;
   MaskItem: TMaskItem;
 begin
   Result:= clDefault;
+  if not (fpAttributes in AFile.SupportedProperties) then
+    Attr:= EmptyStr
+  else begin
+    Attr:= AFile.Properties[fpAttributes].AsString;
+  end;
   for I:= 0 to lslist.Count-1 do
   begin
-     MaskItem:= TMaskItem(lslist[I]);
-     // get color by search template
-     if MaskItem.sExt[1] = '>' then
-       for J:= 0 to gSearchTemplateList.Count - 1 do
-         with gSearchTemplateList do
-         begin
-           if (Templates[J].TemplateName = PChar(MaskItem.sExt)+1) and
-              Templates[J].CheckFile(AFile) then
-             begin
-               Result:= MaskItem.cColor;
-               Exit;
-             end;
-         end;
+    MaskItem:= TMaskItem(lslist[I]);
 
-     // Get color by extension and attribute.
-     // If attributes field is empty then don't match directories.
-     if ((MaskItem.sExt = '') or
-          (((MaskItem.sModeStr <> '') or
-            not (AFile.IsDirectory or AFile.IsLinkToDirectory)) and
-           MatchesMaskList(AFile.Name, MaskItem.sExt, ';')))
-        and
-        ((MaskItem.sModeStr = '') or
-          not (fpAttributes in AFile.SupportedProperties) or
-          MatchesMaskList(AFile.Properties[fpAttributes].AsString, MaskItem.sModeStr, ';')) then
-       begin
-         Result:= MaskItem.cColor;
-         Exit;
-       end;
+    // Get color by search template
+    if MaskItem.sExt[1] = '>' then
+    begin
+      for J:= 0 to gSearchTemplateList.Count - 1 do
+        with gSearchTemplateList do
+        begin
+          if (Templates[J].TemplateName = PChar(MaskItem.sExt)+1) and
+             Templates[J].CheckFile(AFile) then
+            begin
+              Result:= MaskItem.cColor;
+              Exit;
+            end;
+        end;
+      Continue;
+    end;
+
+    // Get color by extension and attribute.
+    // If attributes field is empty then don't match directories.
+    if ((MaskItem.sExt = '') or
+         (((MaskItem.sModeStr <> '') or
+           not (AFile.IsDirectory or AFile.IsLinkToDirectory)) and
+          MaskItem.FMaskList.Matches(AFile.Name)))
+       and
+       ((MaskItem.sModeStr = '') or (Length(Attr) = 0) or
+         MatchesMaskList(Attr, MaskItem.sModeStr, ';')) then
+      begin
+        Result:= MaskItem.cColor;
+        Exit;
+      end;
   end;
 end;
 
@@ -240,61 +271,6 @@ Added Attributes:
 !!! The "?" and other regular expressions DOES NOT SUPPORTED
 
 }
-
-procedure TColorExt.LoadIni;
-var
-  sExtMask,
-  sAttr,
-  sName: String;
-  iColor,
-  I : Integer;
-begin
-  I := 1;
-
-  Clear;
-
-  while gIni.ReadString('Colors', 'ColorFilter' + IntToStr(I), '') <> '' do
-    begin
-      sExtMask := gIni.ReadString('Colors', 'ColorFilter' + IntToStr(I), '');
-      iColor := gIni.ReadInteger('Colors', 'ColorFilter' + IntToStr(I) + 'Color', clWindowText);
-      sName:=gIni.ReadString('Colors', 'ColorFilter' + IntToStr(I)+'Name', '');
-      sAttr := gIni.ReadString('Colors', 'ColorFilter' + IntToStr(I) + 'Attributes', '');
-
-      lsList.Add(TMaskItem.Create);
-      TMaskItem(lsList[lsList.Count-1]).sName:=sName;
-      TMaskItem(lsList[lsList.Count-1]).cColor:=iColor;
-      TMaskItem(lsList[lsList.Count-1]).sExt:=sExtMask;
-      TMaskItem(lsList[lsList.Count-1]).sModeStr:=sAttr;
-
-      fOldCount := I;
-      Inc(I);
-    end; // while gIni.ReadString();
-end;
-
-procedure TColorExt.SaveIni;
-var
-  I : Integer;
-begin
-
-  if (not assigned(lslist))  then exit;
-
-  for I:=0 to lslist.Count - 1 do
-    begin
-      gIni.WriteString('Colors', 'ColorFilter' + IntToStr(I+1), TMaskItem(lsList[I]).sExt);
-      gIni.WriteInteger('Colors', 'ColorFilter' + IntToStr(I+1) + 'Color', TMaskItem(lsList[I]).cColor);
-      gIni.WriteString('Colors', 'ColorFilter' + IntToStr(I+1)+'Name', TMaskItem(lsList[I]).sName);
-      gIni.WriteString('Colors', 'ColorFilter' + IntToStr(I+1) + 'Attributes', TMaskItem(lsList[I]).sModeStr);
-    end;
-
-  // delete old not used filters
-  for I := lslist.Count + 1 to fOldCount do
-    begin
-      gIni.DeleteKey('Colors', 'ColorFilter' + IntToStr(I));
-      gIni.DeleteKey('Colors', 'ColorFilter' + IntToStr(I) + 'Color');
-      gIni.DeleteKey('Colors', 'ColorFilter' + IntToStr(I)+'Name');
-      gIni.DeleteKey('Colors', 'ColorFilter' + IntToStr(I) + 'Attributes');
-    end;
-end;
 
 procedure TColorExt.Load(AConfig: TXmlConfig; ANode: TXmlNode);
 var

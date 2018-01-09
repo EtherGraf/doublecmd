@@ -20,7 +20,7 @@ object frmMain: TfrmMain
   SessionProperties = 'nbConsole.Height;seLogWindow.Height;TreePanel.Width'
   ShowHint = True
   ShowInTaskBar = stAlways
-  LCLVersion = '1.7'
+  LCLVersion = '1.6.0.4'
   Visible = True
   object MainToolBar: TKASToolBar
     AnchorSideTop.Control = Owner
@@ -52,6 +52,7 @@ object frmMain: TfrmMain
     Align = alLeft
     BevelOuter = bvNone
     TabOrder = 0
+    Visible = False
   end
   object TreeSplitter: TSplitter
     Left = 121
@@ -193,6 +194,7 @@ object frmMain: TfrmMain
           ClientHeight = 24
           ClientWidth = 511
           TabOrder = 0
+          Visible = False
           object btnLeftDrive: TSpeedButton
             Left = 0
             Height = 24
@@ -319,6 +321,7 @@ object frmMain: TfrmMain
           ClientHeight = 24
           ClientWidth = 123
           TabOrder = 0
+          Visible = False
           object btnRightDrive: TSpeedButton
             Left = 0
             Height = 24
@@ -435,6 +438,7 @@ object frmMain: TfrmMain
     AutoSize = True
     BevelOuter = bvNone
     TabOrder = 2
+    Visible = False
   end
   object ConsoleSplitter: TSplitter
     Cursor = crVSplit
@@ -1147,6 +1151,12 @@ object frmMain: TfrmMain
       object mnuCmdSearch: TMenuItem
         Action = actSearch
       end
+      object mnuCmdAddNewSearch: TMenuItem
+        Action = actAddNewSearch
+      end
+      object mnuCmdViewSearches: TMenuItem
+        Action = actViewSearches
+      end
       object mnuCmdDirHotlist: TMenuItem
         Action = actDirHotList
       end
@@ -1394,6 +1404,12 @@ object frmMain: TfrmMain
       object mnuConfigFolderTabs: TMenuItem
         Action = actConfigFolderTabs
       end
+      object miLine55: TMenuItem
+        Caption = '-'
+      end
+      object mnuConfigSaveSettings: TMenuItem
+        Action = actConfigSaveSettings
+      end
     end
     object mnuHelp: TMenuItem
       Caption = '&Help'
@@ -1509,6 +1525,27 @@ object frmMain: TfrmMain
       Tag = 18
       Category = 'Tools'
       Caption = '&Search...'
+      HelpType = htKeyword
+      OnExecute = actExecute
+    end
+    object actAddNewSearch: TAction
+      Tag = 18
+      Category = 'Tools'
+      Caption = 'New search instance...'
+      HelpType = htKeyword
+      OnExecute = actExecute
+    end
+    object actViewSearches: TAction
+      Tag = 18
+      Category = 'Tools'
+      Caption = 'View current search instances'
+      HelpType = htKeyword
+      OnExecute = actExecute
+    end
+    object actDeleteSearches: TAction
+      Tag = 18
+      Category = 'Tools'
+      Caption = 'For all searches, cancel, close and free memory'
       HelpType = htKeyword
       OnExecute = actExecute
     end
@@ -1633,6 +1670,12 @@ object frmMain: TfrmMain
       HelpType = htKeyword
       OnExecute = actExecute
     end
+    object actBenchmark: TAction
+      Tag = 7
+      Category = 'Miscellaneous'
+      Caption = '&Benchmark'
+      OnExecute = actExecute
+    end
     object actNewTab: TAction
       Tag = 21
       Category = 'Tabs'
@@ -1672,6 +1715,30 @@ object frmMain: TfrmMain
       HelpType = htKeyword
       OnExecute = actExecute
     end
+    object actMarkCurrentPath: TAction
+      Tag = 10
+      Category = 'Mark'
+      Caption = 'Select all in same path'
+      OnExecute = actExecute
+    end
+    object actUnmarkCurrentPath: TAction
+      Tag = 10
+      Category = 'Mark'
+      Caption = 'Unselect all in same path'
+      OnExecute = actExecute
+    end
+    object actMarkCurrentName: TAction
+      Tag = 10
+      Category = 'Mark'
+      Caption = 'Select all files with same name'
+      OnExecute = actExecute
+    end
+    object actUnmarkCurrentName: TAction
+      Tag = 10
+      Category = 'Mark'
+      Caption = 'Unselect all files with same name'
+      OnExecute = actExecute
+    end
     object actMarkCurrentExtension: TAction
       Tag = 10
       Category = 'Mark'
@@ -1682,6 +1749,18 @@ object frmMain: TfrmMain
       Tag = 10
       Category = 'Mark'
       Caption = 'Unselect All with the Same Ex&tension'
+      OnExecute = actExecute
+    end
+    object actMarkCurrentNameExt: TAction
+      Tag = 10
+      Category = 'Mark'
+      Caption = 'Select all files with same name and extension'
+      OnExecute = actExecute
+    end
+    object actUnmarkCurrentNameExt: TAction
+      Tag = 10
+      Category = 'Mark'
+      Caption = 'Unselect all files with same name and extension'
       OnExecute = actExecute
     end
     object actCompareDirectories: TAction
@@ -2554,6 +2633,39 @@ object frmMain: TfrmMain
       Tag = 5
       Category = 'Configuration'
       Caption = 'Configuration of Tree View Menu Colors'
+      OnExecute = actExecute
+    end
+    object actConfigSearches: TAction
+      Tag = 5
+      Category = 'Configuration'
+      Caption = 'Configuration of searches'
+      HelpType = htKeyword
+      OnExecute = actExecute
+    end
+    object actConfigHotKeys: TAction
+      Tag = 5
+      Category = 'Configuration'
+      Caption = 'Configuration of hot keys'
+      HelpType = htKeyword
+      OnExecute = actExecute
+    end
+    object actConfigSaveSettings: TAction
+      Tag = 5
+      Category = 'Configuration'
+      Caption = 'Save Settings'
+      OnExecute = actExecute
+    end
+    object actExecuteScript: TAction
+      Tag = 7
+      Category = 'Miscellaneous'
+      Caption = 'Execute Script'
+      OnExecute = actExecute
+    end
+    object actFocusSwap: TAction
+      Tag = 14
+      Category = 'Navigation'
+      Caption = 'Swap focus'
+      Hint = 'Switch between left and right file list'
       OnExecute = actExecute
     end
   end

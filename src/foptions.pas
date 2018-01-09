@@ -31,8 +31,8 @@ unit fOptions;
 interface
 
 uses
-  SysUtils, Classes, Controls, Forms, Dialogs, ExtCtrls, ComCtrls, Buttons,
-  StdCtrls, fgl, uGlobs, fOptionsFrame, uDCUtils;
+  ActnList,  SysUtils, Classes, Controls, Forms, Dialogs, ExtCtrls, ComCtrls,
+  Buttons, StdCtrls, fgl, uGlobs, fOptionsFrame, uDCUtils;
 
 type
 
@@ -61,6 +61,8 @@ type
     sboxOptionsEditor: TScrollBox;
     tvTreeView: TTreeView;
     splOptionsSplitter: TSplitter;
+    alOptionsActionList: TActionList;
+    actCloseWithEscape: TAction;
     procedure btnCancelClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
@@ -69,6 +71,7 @@ type
     procedure btnApplyClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure tvTreeViewChange(Sender: TObject; Node: TTreeNode);
+    procedure actCloseWithEscapeExecute(Sender: TObject);
   private
     FOptionsEditorList: TOptionsEditorViews;
     FOldEditor: TOptionsEditorView;
@@ -79,6 +82,7 @@ type
     procedure SelectEditor(EditorClassName: String);
     function CompareTwoNodeOfConfigurationOptionTree(Node1, Node2: TTreeNode): integer;
     function CycleThroughOptionEditors(bForceSaving:boolean):boolean;
+    procedure MakeVisible(Data: PtrInt);
   public
     constructor Create(TheOwner: TComponent); override;
     constructor Create(TheOwner: TComponent; EditorClass: TOptionsEditorClass); overload;
@@ -159,7 +163,7 @@ end;
 
 procedure TfrmOptions.FormCloseQuery(Sender: TObject; var CanClose: boolean);
 begin
-  CanClose := CycleThroughOptionEditors(False);
+  CanClose := (ModalResult in [mrOK, mrCancel]) or CycleThroughOptionEditors(False);
 end;
 
 procedure TfrmOptions.btnCancelClick(Sender: TObject);
@@ -294,6 +298,7 @@ begin
       if Assigned(FOptionsEditorList[I].TreeNode) then
       begin
         FOptionsEditorList[I].TreeNode.Selected := True;
+        Application.QueueAsyncCall(@MakeVisible, PtrInt(FOptionsEditorList[I].TreeNode));
         Break;
       end;
   end;
@@ -427,6 +432,20 @@ begin
                             // But let's do it for two reasons:
                             //  1st) Previously with "SaveConfig" it was updating it no matter what.
                             //  2nd) The little delay and visual blink it gives to user is a good feedback to him confirming him he just saved settings.
+end;
+
+procedure TfrmOptions.MakeVisible(Data: PtrInt);
+var
+  TreeNode: TTreeNode absolute Data;
+begin
+  TreeNode.MakeVisible;
+end;
+
+{ TfrmOptions.actCloseWithEscapeExecute }
+procedure TfrmOptions.actCloseWithEscapeExecute(Sender: TObject);
+begin
+  // Closing with the "Escape" key this way won't set the modalresult to mrCancel so this way, if an unsaved modification has been made, we'll be able to prompt confirmation from user who attempt to quit by hitting "Escape".
+  close;
 end;
 
 end.

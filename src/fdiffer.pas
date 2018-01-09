@@ -3,7 +3,7 @@
    -------------------------------------------------------------------------
    Internal diff and merge tool
 
-   Copyright (C) 2010-2014  Alexander Koblov (alexx2000@mail.ru)
+   Copyright (C) 2010-2017 Alexander Koblov (alexx2000@mail.ru)
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public License as
@@ -16,9 +16,7 @@
    General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   in a file called COPYING along with this program; if not, write to
-   the Free Software Foundation, Inc., 675 Mass Ave, Cambridge, MA
-   02139, USA.
+   along with this program. If not, see <http://www.gnu.org/licenses/>.
 }
 
 unit fDiffer;
@@ -31,7 +29,7 @@ uses
   Classes, SysUtils, FileUtil, Forms, Controls, Dialogs, Menus, ComCtrls,
   ActnList, ExtCtrls, EditBtn, Buttons, SynEdit, uSynDiffControls,
   uPariterControls, uDiffOND, uFormCommands, uHotkeyManager, uOSForms,
-  uBinaryDiffViewer;
+  uBinaryDiffViewer, uShowForm;
 
 type
 
@@ -191,8 +189,10 @@ type
     procedure edtFileNameLeftAcceptFileName(Sender: TObject; var Value: String);
     procedure edtFileNameRightAcceptFileName(Sender: TObject; var Value: String);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure FormRestoreProperties(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormResize(Sender: TObject);
   private
@@ -214,6 +214,7 @@ type
     EncodingList: TStringList;
     ScrollLock: LongInt;
     FShowIdentical: Boolean;
+    FWaitData: TWaitData;
     FCommands: TFormCommands;
     procedure ShowIdentical;
     procedure Clear(bLeft, bRight: Boolean);
@@ -248,7 +249,7 @@ type
     procedure cm_SaveRight(const Params: array of string);
   end; 
 
-procedure ShowDiffer(const FileNameLeft, FileNameRight: String);
+procedure ShowDiffer(const FileNameLeft, FileNameRight: String; WaitData: TWaitData = nil);
 
 implementation
 
@@ -256,19 +257,20 @@ implementation
 
 uses
   LCLType, LazFileUtils, LConvEncoding, SynEditTypes, uHash, uLng, uGlobs,
-  uShowMsg, DCClassesUtf8, dmCommonData, DCOSUtils;
+  uShowMsg, DCClassesUtf8, dmCommonData, DCOSUtils, uConvEncoding;
 
 const
   HotkeysCategory = 'Differ';
 
-procedure ShowDiffer(const FileNameLeft, FileNameRight: String);
+procedure ShowDiffer(const FileNameLeft, FileNameRight: String; WaitData: TWaitData = nil);
 begin
   with TfrmDiffer.Create(Application) do
   begin
+    FWaitData := WaitData;
     edtFileNameLeft.Text:= FileNameLeft;
     edtFileNameRight.Text:= FileNameRight;
     FShowIdentical:= actAutoCompare.Checked;
-    actBinaryCompare.Checked:= not (FileIsText(FileNameLeft) or FileIsText(FileNameRight));
+    actBinaryCompare.Checked:= not (FileIsText(FileNameLeft) and FileIsText(FileNameRight));
     if actBinaryCompare.Checked then
       actBinaryCompareExecute(actBinaryCompare)
     else begin
@@ -441,7 +443,7 @@ begin
   dmComData.SaveDialog.FileName:= edtFileNameRight.FileName;
   if dmComData.SaveDialog.Execute then
   begin
-    SaveToFile(SynDiffEditLeft, dmComData.SaveDialog.FileName);
+    SaveToFile(SynDiffEditRight, dmComData.SaveDialog.FileName);
     edtFileNameRight.FileName:= dmComData.SaveDialog.FileName;
   end;
 end;
@@ -645,22 +647,19 @@ begin
   BinaryViewerLeft.Align:= alClient;
   BinaryViewerRight.Align:= alClient;
 
-  BinaryViewerLeft.Font.Name:= gFonts[dcfViewer].Name;
-  BinaryViewerLeft.Font.Size:= gFonts[dcfViewer].Size;
-  BinaryViewerLeft.Font.Style:= gFonts[dcfViewer].Style;
-
-  BinaryViewerRight.Font.Name:= gFonts[dcfViewer].Name;
-  BinaryViewerRight.Font.Size:= gFonts[dcfViewer].Size;
-  BinaryViewerRight.Font.Style:= gFonts[dcfViewer].Style;
-
   BinaryViewerLeft.SecondViewer:= BinaryViewerRight;
   BinaryViewerRight.SecondViewer:= BinaryViewerLeft;
 
-  // Initialize property storage
-  InitPropStorage(Self);
+  FontOptionsToFont(gFonts[dcfEditor], SynDiffEditLeft.Font);
+  FontOptionsToFont(gFonts[dcfEditor], SynDiffEditRight.Font);
+  FontOptionsToFont(gFonts[dcfViewer], BinaryViewerLeft.Font);
+  FontOptionsToFont(gFonts[dcfViewer], BinaryViewerRight.Font);
 
-  // Initialize mode
-  actKeepScrollingExecute(actKeepScrolling);
+  // Initialize property storage
+  with InitPropStorage(Self) do
+  begin
+    OnRestoreProperties:= @FormRestoreProperties;
+  end;
 
   // Fill encoding menu
   EncodingList:= TStringList.Create;
@@ -676,6 +675,13 @@ procedure TfrmDiffer.FormDestroy(Sender: TObject);
 begin
   FreeAndNil(Diff);
   FreeAndNil(BinaryDiffList);
+end;
+
+procedure TfrmDiffer.FormRestoreProperties(Sender: TObject);
+begin
+  // Initialize mode
+  actKeepScrollingExecute(actKeepScrolling);
+  actPaintBackgroundExecute(actPaintBackground);
 end;
 
 procedure TfrmDiffer.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -726,6 +732,30 @@ end;
 procedure TfrmDiffer.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
   CloseAction:= caFree;
+end;
+
+procedure TfrmDiffer.FormCloseQuery(Sender: TObject; var CanClose: boolean);
+var
+  Result: TMyMsgResult;
+begin
+  if SynDiffEditLeft.Modified then
+  begin
+    Result:= msgYesNoCancel(Format(rsMsgFileChangedSave, [edtFileNameLeft.FileName]));
+    CanClose:= Result <> mmrCancel;
+    if Result = mmrYes then
+      actSaveLeft.Execute
+    else if Result = mmrCancel then
+      Exit;
+  end;
+  if SynDiffEditRight.Modified then
+  begin
+    Result:= msgYesNoCancel(Format(rsMsgFileChangedSave, [edtFileNameRight.FileName]));
+    CanClose:= Result <> mmrCancel;
+    if Result = mmrYes then
+      actSaveRight.Execute
+    else if Result = mmrCancel then
+      Exit;
+  end;
 end;
 
 procedure TfrmDiffer.Clear(bLeft, bRight: Boolean);
@@ -789,7 +819,7 @@ begin
       BinaryDiffIndex:= 0;
       BinaryViewerLeft.Position:= PtrInt(BinaryDiffList[BinaryDiffIndex]);
       if not actKeepScrolling.Checked then
-        BinaryViewerRight.Position:= BinaryViewerLeft.Position;
+        BinaryViewerRight.Position:= PtrInt(BinaryDiffList[BinaryDiffIndex]);
     end;
   end
   else begin
@@ -822,7 +852,7 @@ begin
       BinaryDiffIndex:= BinaryDiffList.Count - 1;
       BinaryViewerLeft.Position:= PtrInt(BinaryDiffList[BinaryDiffIndex]);
       if not actKeepScrolling.Checked then
-        BinaryViewerRight.Position:= BinaryViewerLeft.Position;
+        BinaryViewerRight.Position:= PtrInt(BinaryDiffList[BinaryDiffIndex]);
     end;
   end
   else begin
@@ -856,7 +886,7 @@ begin
       BinaryDiffIndex:= BinaryDiffIndex + 1;
       BinaryViewerLeft.Position:= PtrInt(BinaryDiffList[BinaryDiffIndex]);
       if not actKeepScrolling.Checked then
-        BinaryViewerRight.Position:= BinaryViewerLeft.Position;
+        BinaryViewerRight.Position:= PtrInt(BinaryDiffList[BinaryDiffIndex]);
     end;
   end
   else begin
@@ -895,7 +925,7 @@ begin
       BinaryDiffIndex:= BinaryDiffIndex - 1;
       BinaryViewerLeft.Position:= PtrInt(BinaryDiffList[BinaryDiffIndex]);
       if not actKeepScrolling.Checked then
-        BinaryViewerRight.Position:= BinaryViewerLeft.Position;
+        BinaryViewerRight.Position:= PtrInt(BinaryDiffList[BinaryDiffIndex]);
     end;
   end
   else begin
@@ -956,6 +986,7 @@ begin
   BinaryViewerRight.SecondViewer:= nil;
   HotMan.UnRegister(Self);
   inherited Destroy;
+  if Assigned(FWaitData) then FWaitData.Done;
 end;
 
 procedure TfrmDiffer.BuildHashList(bLeft, bRight: Boolean);
@@ -1032,7 +1063,7 @@ begin
       SynDiffEdit.Lines.LoadFromStream(fsFileStream);
       if Length(SynDiffEdit.Encoding) = 0 then
       begin
-        SynDiffEdit.Encoding:= GuessEncoding(SynDiffEdit.Lines.Text);
+        SynDiffEdit.Encoding:= DetectEncoding(SynDiffEdit.Lines.Text);
         ChooseEncoding(SynDiffEdit);
       end;
       SynDiffEdit.Lines.Text:= ConvertEncoding(SynDiffEdit.Lines.Text, SynDiffEdit.Encoding, EncodingUTF8);
@@ -1041,13 +1072,9 @@ begin
       FreeAndNil(fsFileStream);
     end;
   except
-    on EFOpenError do
+    on E: Exception do
     begin
-      msgError(rsMsgErrEOpen + ': ' + FileName);
-    end;
-    on EReadError do
-    begin
-      msgError(rsMsgErrERead + ': ' + FileName);
+      msgError(E.Message + LineEnding + FileName);
     end;
   end;
 end;

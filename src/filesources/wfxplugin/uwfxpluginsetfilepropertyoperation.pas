@@ -44,7 +44,7 @@ type
 implementation
 
 uses
-  DCBasicTypes, DCStrUtils, WfxPlugin, uWfxPluginUtil, DCDateTimeUtils;
+  DCFileAttributes, Forms, DCBasicTypes, DCStrUtils, WfxPlugin, uWfxPluginUtil, DCDateTimeUtils;
 
 constructor TWfxPluginSetFilePropertyOperation.Create(aTargetFileSource: IFileSource;
                                                       var theTargetFiles: TFiles;
@@ -117,15 +117,13 @@ begin
     else
       aTemplateFile := nil;
 
-    SetProperties(aFile, aTemplateFile);
+    SetProperties(CurrentFileIndex, aFile, aTemplateFile);
 
     with FStatistics do
     begin
       DoneFiles := DoneFiles + 1;
       UpdateStatistics(FStatistics);
     end;
-
-    AppProcessMessages;
 
     CheckOperationState;
   end;
@@ -140,7 +138,7 @@ end;
 function TWfxPluginSetFilePropertyOperation.SetNewProperty(aFile: TFile;
                                                            aTemplateProperty: TFileProperty): TSetFilePropertyResult;
 var
-  FileName: String;
+  AFileName: String;
   NewAttributes: TFileAttrs;
   ftTime: TFileTime;
 begin
@@ -161,17 +159,17 @@ begin
          (aFile.Properties[fpAttributes] as TFileAttributesProperty).Value then
       begin
         NewAttributes := (aTemplateProperty as TFileAttributesProperty).Value;
-        FileName := aFile.FullPath;
+        AFileName := aFile.FullPath;
 
         with FWfxPluginFileSource.WfxModule do
           if aTemplateProperty is TNtfsFileAttributesProperty then
           begin
-            if not WfxSetAttr(FileName, NewAttributes) then
+            if not WfxSetAttr(AFileName, NewAttributes) then
               Result := sfprError;
           end
           else if aTemplateProperty is TUnixFileAttributesProperty then
           begin
-            if WfxExecuteFile(0, FileName, 'chmod' + #32 + DecToOct(NewAttributes)) <> FS_EXEC_OK then
+            if WfxExecuteFile(Application.MainForm.Tag, AFileName, 'chmod' + #32 + DecToOct(NewAttributes AND (not S_IFMT))) <> FS_EXEC_OK then
               Result := sfprError;
           end
           else

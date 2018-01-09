@@ -67,7 +67,7 @@ procedure SetChangeVolProc(hArcData : TArcHandle; ChangeVolProc : TChangeVolProc
 implementation
 
 uses
-  SysUtils, DCDateTimeUtils, DCBasicTypes;
+  SysUtils, DCDateTimeUtils, DCBasicTypes, DCFileAttributes;
 
 function GetArchiveID(hArcData : THandle) : Integer;
 var
@@ -210,8 +210,8 @@ begin
         if Result = E_SUCCESS then
           begin
             copy_str2buf(TStrBuf(ArcName), arec^.fname);
-            FileAttr := faArchive;
-            FileTime := LongInt(UnixFileTimeToDosTime(TUnixFileTime(arec^.info.buildtime)));
+            FileAttr := GENERIC_ATTRIBUTE_FILE;
+            FileTime := UnixFileTimeToWcxTime(TUnixFileTime(arec^.info.buildtime));
             Inc(arec^.headers);
           end;
       end;
@@ -335,7 +335,7 @@ begin
           Result := E_SUCCESS;
         if not testonly then begin
           if result = E_SUCCESS then
-            FileSetDate(tfilerec(rpm_file).handle, LongInt(UnixFileTimeToDosTime(TUnixFileTime(arec^.info.buildtime))));
+            FileSetDate(tfilerec(rpm_file).handle, UnixFileTimeToWcxTime(TUnixFileTime(arec^.info.buildtime)));
           CloseFile(rpm_file);
           if result <> E_SUCCESS then
             Erase(rpm_file);

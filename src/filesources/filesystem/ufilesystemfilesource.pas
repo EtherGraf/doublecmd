@@ -65,7 +65,7 @@ type
                                            const FileNamesList: TStringList;
                                            OmitNotExisting: Boolean = False): TFiles;
 
-    procedure RetrieveProperties(AFile: TFile; PropertiesToSet: TFilePropertiesTypes); override;
+    procedure RetrieveProperties(AFile: TFile; PropertiesToSet: TFilePropertiesTypes; AVariantProperties: array of String); override;
 
     class function GetFileSource: IFileSystemFileSource;
 
@@ -125,14 +125,18 @@ implementation
 uses
   uOSUtils, DCOSUtils, DCDateTimeUtils, uGlobs, uGlobsPaths, uLog, uLng,
 {$IFDEF MSWINDOWS}
-  uMyWindows, Windows,
+  DCWindows, uMyWindows, Windows,
 {$ENDIF}
 {$IFDEF UNIX}
   BaseUnix, uUsersGroups, LazUTF8, uMyUnix,
   {$IFDEF DARWIN}
   uMyDarwin,
   {$ENDIF}
+  {$IFDEF LINUX}
+  statx,
+  {$ENDIF}
 {$ENDIF}
+  uFileFunctions,
   uFileSystemListOperation,
   uFileSystemCopyOperation,
   uFileSystemMoveOperation,
@@ -240,6 +244,7 @@ begin
       if LinkProperty.IsValid then
       begin
         LinkProperty.IsLinkToDirectory := FPS_ISDIR(LinkStatInfo.st_mode);
+        if LinkProperty.IsLinkToDirectory then SizeProperty.Value := 0;
       end;
     end;
   end;
@@ -357,7 +362,7 @@ begin
 
 {$IF DEFINED(MSWINDOWS)}
 
-  FindHandle := FindFirstFileW(PWideChar(UTF8Decode(aFilePath)), @FindData);
+  FindHandle := FindFirstFileW(PWideChar(UTF16LongName(aFilePath)), @FindData);
   if FindHandle = INVALID_HANDLE_VALUE then
     raise EFileNotFound.Create(aFilePath);
   Windows.FindClose(FindHandle);
@@ -425,11 +430,18 @@ begin
   end;
 end;
 
-procedure TFileSystemFileSource.RetrieveProperties(AFile: TFile; PropertiesToSet: TFilePropertiesTypes);
+procedure TFileSystemFileSource.RetrieveProperties(AFile: TFile;
+  PropertiesToSet: TFilePropertiesTypes; AVariantProperties: array of String);
 var
+  AIndex: Integer;
   sFullPath: String;
   Attrs: TFileAttrs;
+  AProp: TFilePropertyType;
   AProps: TFilePropertiesTypes;
+  AVariant: TFileVariantProperty;
+{$IF DEFINED(LINUX)}
+  StatXInfo: TStatX;
+{$ENDIF}
 {$IF DEFINED(UNIX)}
   StatInfo, LinkInfo: BaseUnix.Stat; //buffer for stat info
 {$ELSEIF DEFINED(MSWINDOWS)}
@@ -463,7 +475,7 @@ begin
          fpLastAccessTime] * PropertiesToSet <> []) or
        ((fpLink in PropertiesToSet) and (not (fpAttributes in AProps))) then
     begin
-      FindHandle := FindFirstFileW(PWideChar(UTF8Decode(sFullPath)), @FindData);
+      FindHandle := FindFirstFileW(PWideChar(UTF16LongName(sFullPath)), @FindData);
       if FindHandle = INVALID_HANDLE_VALUE then
         raise EFileNotFound.Create(sFullPath);
       Windows.FindClose(FindHandle);
@@ -526,6 +538,12 @@ begin
       CompressedSizeProperty.Value := mbGetCompressedFileSize(sFullPath);
     end;
 
+    if fpChangeTime in PropertiesToSet then
+    begin
+      ChangeTimeProperty := TFileChangeDateTimeProperty.Create;
+      if mbGetFileChangeTime(sFullPath, FindData.ftCreationTime) then
+        ChangeTimeProperty.Value := WinFileTimeToDateTime(FindData.ftCreationTime);
+    end;
 {$ELSEIF DEFINED(UNIX)}
 
     if ([fpAttributes,
@@ -600,6 +618,20 @@ begin
       {$ENDIF}
     end;
 
+    {$IF DEFINED(LINUX)}
+    if fpCreationTime in PropertiesToSet then
+    begin
+      if HasStatX and (fpstatx(0, sFullPath, 0, STATX_BTIME, @StatXInfo) >= 0) then
+      begin
+        if (StatXInfo.stx_mask and STATX_BTIME <> 0) and (StatXInfo.stx_btime.tv_sec > 0) then
+        begin
+          CreationTimeProperty := TFileCreationDateTimeProperty.Create(
+                                       FileTimeToDateTime(DCBasicTypes.TFileTime(StatXInfo.stx_btime.tv_sec)));
+        end;
+      end;
+    end;
+    {$ENDIF}
+
 {$ELSE}
 
     if FindFirstEx(sFullPath, 0, SearchRec) = -1 then
@@ -631,6 +663,18 @@ begin
     begin
       CommentProperty := TFileCommentProperty.Create;
       CommentProperty.Value := FDescr.ReadDescription(sFullPath);
+    end;
+
+    PropertiesToSet:= PropertiesToSet * fpVariantAll;
+    for AProp in PropertiesToSet do
+    begin
+      AIndex:= Ord(AProp) - Ord(fpVariant);
+      if (AIndex >= 0) and (AIndex <= High(AVariantProperties)) then
+      begin
+        AVariant:= TFileVariantProperty.Create(AVariantProperties[AIndex]);
+        AVariant.Value:= GetVariantFileProperty(AVariantProperties[AIndex], AFile, Self);
+        Properties[AProp]:= AVariant;
+      end;
     end;
   end;
 end;
@@ -667,7 +711,7 @@ end;
 function TFileSystemFileSource.GetProperties: TFileSourceProperties;
 begin
   Result := [
-    fspDirectAccess, fspListFlatView
+    fspDirectAccess, fspListFlatView, fspNoneParent
 {$IFDEF UNIX}
   , fspCaseSensitive
 {$ENDIF}
@@ -764,9 +808,8 @@ begin
              fpModificationTime,
              {$IF DEFINED(MSWINDOWS)}
              fpCreationTime,
-             {$ELSE}
-             fpChangeTime,
              {$ENDIF}
+             fpChangeTime,
              fpLastAccessTime,
              uFileProperty.fpLink,
              fpOwner,
@@ -775,7 +818,10 @@ begin
              {$IF DEFINED(MSWINDOWS)}
              , fpCompressedSize
              {$ENDIF}
-             ];
+             ] + fpVariantAll;
+{$IF DEFINED(LINUX)}
+  if HasStatX then Result += [fpCreationTime];
+{$ENDIF}
 end;
 
 function TFileSystemFileSource.CreateListOperation(TargetPath: String): TFileSourceOperation;

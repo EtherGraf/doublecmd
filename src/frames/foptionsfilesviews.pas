@@ -27,7 +27,7 @@ unit fOptionsFilesViews;
 interface
 
 uses
-  Classes, SysUtils, StdCtrls, Graphics, ExtCtrls,
+  Classes, SysUtils, StdCtrls, Graphics, ExtCtrls, Spin,
   fOptionsFrame;
 
 type
@@ -35,7 +35,10 @@ type
   { TfrmOptionsFilesViews }
 
   TfrmOptionsFilesViews = class(TOptionsEditor)
+    btnAddAttribute: TButton;
+    btnAttrsHelp: TButton;
     cbDateTimeFormat: TComboBox;
+    cbDblClickToParent: TCheckBox;
     cbHighlightUpdatedFiles: TCheckBox;
     cbDirBrackets: TCheckBox;
     cbListFilesInThread: TCheckBox;
@@ -53,6 +56,7 @@ type
     gbFormatting: TGroupBox;
     gbSorting: TGroupBox;
     gbMisc: TGroupBox;
+    lblFileSizeExample: TLabel;
     lblDateTimeExample: TLabel;
     lblUpdatedFilesPosition: TLabel;
     lblSortFolderMode: TLabel;
@@ -62,9 +66,20 @@ type
     lblSortMethod: TLabel;
     lblFileSizeFormat: TLabel;
     pnlDateTime: TPanel;
+    pnlDefaultAttribute: TPanel;
+    chkMarkMaskFilterWindows: TCheckBox;
+    gbMarking: TGroupBox;
+    lbAttributeMask: TLabel;
+    edtDefaultAttribute: TEdit;
+    chkMarkMaskShowAttribute: TCheckBox;
+    speNumberOfDigits: TSpinEdit;
+    procedure btnAddAttributeClick(Sender: TObject);
+    procedure btnAttrsHelpClick(Sender: TObject);
     procedure cbDateTimeFormatChange(Sender: TObject);
+    procedure cbFileSizeFormatChange(Sender: TObject);
   private
     FIncorrectFormatMessage: string;
+    procedure OnAddAttribute(Sender: TObject);
   protected
     procedure Init; override;
     procedure Load; override;
@@ -80,7 +95,10 @@ implementation
 {$R *.lfm}
 
 uses
-  DCStrUtils, uGlobs, uLng, uTypes;
+  HelpIntfs, fAttributesEdit, DCStrUtils, uGlobs, uLng, uTypes, uDCUtils;
+
+const
+  cFileSizeExample = 1335875825;
 
 { TfrmOptionsFilesViews }
 
@@ -96,6 +114,13 @@ begin
       lblDateTimeExample.Font.Color := clRed;
     end;
   end;
+end;
+
+procedure TfrmOptionsFilesViews.cbFileSizeFormatChange(Sender: TObject);
+begin
+  lblFileSizeExample.Caption:= cnvFormatFileSize(cFileSizeExample,
+                                 TFileSizeFormat(cbFileSizeFormat.ItemIndex),
+                                 speNumberOfDigits.Value);
 end;
 
 procedure TfrmOptionsFilesViews.Init;
@@ -136,6 +161,7 @@ begin
     ufpSortedPosition: cbUpdatedFilesPosition.ItemIndex := 2;
   end;
   cbFileSizeFormat.ItemIndex := Ord(gFileSizeFormat);
+  speNumberOfDigits.Value:= gFileSizeDigits;
   cbDateTimeFormat.Text := gDateTimeFormat;
   lblDateTimeExample.Caption:= FormatDateTime(cbDateTimeFormat.Text, Now);
   cbSpaceMovesDown.Checked := gSpaceMovesDown;
@@ -152,6 +178,17 @@ begin
   cbDelayLoadingTabs.Checked:= gDelayLoadingTabs;
   cbHighlightUpdatedFiles.Checked:= gHighlightUpdatedFiles;
   cbInplaceRename.Checked := gInplaceRename;
+  cbDblClickToParent.Checked := gDblClickToParent;
+
+  chkMarkMaskFilterWindows.Checked := gMarkMaskFilterWindows;
+  chkMarkMaskShowAttribute.Checked := gMarkShowWantedAttribute;
+  edtDefaultAttribute.Text := gMarkDefaultWantedAttribute;
+
+  with lblFileSizeExample do begin
+    Constraints.MinWidth:= Canvas.TextWidth(cnvFormatFileSize(cFileSizeExample,
+                                            fsfKilo, speNumberOfDigits.MaxValue));
+  end;
+  cbFileSizeFormatChange(cbFileSizeFormat);
 end;
 
 function TfrmOptionsFilesViews.Save: TOptionsEditorSaveFlags;
@@ -179,7 +216,7 @@ begin
     2: gUpdatedFilesPosition := ufpSortedPosition;
   end;
   gFileSizeFormat := TFileSizeFormat(cbFileSizeFormat.ItemIndex);
-
+  gFileSizeDigits := speNumberOfDigits.Value;
   gDateTimeFormat := GetValidDateTimeFormat(cbDateTimeFormat.Text, gDateTimeFormat);
 
   gSpaceMovesDown := cbSpaceMovesDown.Checked;
@@ -190,6 +227,11 @@ begin
   gDelayLoadingTabs := cbDelayLoadingTabs.Checked;
   gHighlightUpdatedFiles := cbHighlightUpdatedFiles.Checked;
   gInplaceRename := cbInplaceRename.Checked;
+  gDblClickToParent := cbDblClickToParent.Checked;
+
+  gMarkMaskFilterWindows := chkMarkMaskFilterWindows.Checked;
+  gMarkShowWantedAttribute := chkMarkMaskShowAttribute.Checked;
+  gMarkDefaultWantedAttribute := edtDefaultAttribute.Text;
 
   Result := [];
 end;
@@ -209,6 +251,39 @@ end;
 class function TfrmOptionsFilesViews.GetTitle: String;
 begin
   Result := rsOptionsEditorFilesViews;
+end;
+
+
+procedure TfrmOptionsFilesViews.btnAddAttributeClick(Sender: TObject);
+var
+  FFrmAttributesEdit: TfrmAttributesEdit;
+begin
+  FFrmAttributesEdit := TfrmAttributesEdit.Create(Self);
+  try
+  FFrmAttributesEdit.OnOk := @OnAddAttribute;
+  FFrmAttributesEdit.Reset;
+  FFrmAttributesEdit.ShowModal;
+  finally
+    FFrmAttributesEdit.Free;
+  end;
+end;
+
+procedure TfrmOptionsFilesViews.btnAttrsHelpClick(Sender: TObject);
+begin
+  ShowHelpOrErrorForKeyword('', edtDefaultAttribute.HelpKeyword);
+end;
+
+
+procedure TfrmOptionsFilesViews.OnAddAttribute(Sender: TObject);
+var
+  sAttr: String;
+begin
+  sAttr := edtDefaultAttribute.Text;
+  if edtDefaultAttribute.SelStart > 0 then
+    Insert((Sender as TfrmAttributesEdit).AttrsAsText, sAttr, edtDefaultAttribute.SelStart + 1) // Insert at caret position.
+  else
+    sAttr := sAttr + (Sender as TfrmAttributesEdit).AttrsAsText;
+  edtDefaultAttribute.Text := sAttr;
 end;
 
 end.

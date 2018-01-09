@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Double Commander 0.8.0 alpha\n"
+"Project-Id-Version: Double Commander 0.9.0 alpha\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2016-06-23 16:38+0400\n"
+"PO-Revision-Date: 2017-12-06 10:27+0300\n"
 "Last-Translator: Alexander Koblov <alexx2000@mail.ru>\n"
 "Language-Team: \n"
 "Language: ru\n"
@@ -77,6 +77,10 @@ msgstr "С&ледовать ссылкам"
 #: tfilesystemcopymoveoperationoptionsui.cbreservespace.caption
 msgid "&Reserve space"
 msgstr "Р&езервировать место"
+
+#: tfilesystemcopymoveoperationoptionsui.chkverify.caption
+msgid "&Verify"
+msgstr "Проверить после &завершения"
 
 #: tfilesystemcopymoveoperationoptionsui.cmbsetpropertyerror.hint
 msgctxt "tfilesystemcopymoveoperationoptionsui.cmbsetpropertyerror.hint"
@@ -281,6 +285,26 @@ msgctxt "TFRMATTRIBUTESEDIT.LBLWRITE.CAPTION"
 msgid "Write"
 msgstr "Запись"
 
+#: tfrmbenchmark.caption
+msgid "Benchmark"
+msgstr "Тест производительности"
+
+#: tfrmbenchmark.lblbenchmarksize.caption
+msgid "Benchmark data size: %d MB"
+msgstr "Объем данных теста: %d Мб"
+
+#: tfrmbenchmark.stgresult.columns[0].title.caption
+msgid "Hash"
+msgstr "Хэш-функция"
+
+#: tfrmbenchmark.stgresult.columns[1].title.caption
+msgid "Time (ms)"
+msgstr "Время (мс)"
+
+#: tfrmbenchmark.stgresult.columns[2].title.caption
+msgid "Speed (MB/s)"
+msgstr "Скорость (Мб/с)"
+
 #: tfrmchecksumcalc.caption
 msgctxt "tfrmchecksumcalc.caption"
 msgid "Calculate checksum..."
@@ -431,7 +455,7 @@ msgstr "О программе"
 
 #: tfrmdiffer.actautocompare.caption
 msgid "Auto Compare"
-msgstr "Автоматическое сравнение"
+msgstr "Сравнить автоматически"
 
 #: tfrmdiffer.actbinarycompare.caption
 msgid "Binary Mode"
@@ -526,7 +550,7 @@ msgstr "Не учитывать пробелы"
 
 #: tfrmdiffer.actkeepscrolling.caption
 msgid "Keep Scrolling"
-msgstr "Одновременная прокрутка"
+msgstr "Синхронная прокрутка"
 
 #: tfrmdiffer.actlastdifference.caption
 msgctxt "tfrmdiffer.actlastdifference.caption"
@@ -759,11 +783,11 @@ msgstr "&Файл"
 #: tfrmdiffer.mnuoptions.caption
 msgctxt "TFRMDIFFER.MNUOPTIONS.CAPTION"
 msgid "&Options"
-msgstr "&Настройка"
+msgstr "&Настройки"
 
 #: tfrmedithotkey.btnaddshortcut.hint
 msgid "Add new shortcut to sequence"
-msgstr "Добавить новое сочетание клавиш к последовательности"
+msgstr "Добавить новое сочетание клавиш"
 
 #: tfrmedithotkey.btncancel.caption
 msgctxt "TFRMEDITHOTKEY.BTNCANCEL.CAPTION"
@@ -777,7 +801,11 @@ msgstr "&ОК"
 
 #: tfrmedithotkey.btnremoveshortcut.hint
 msgid "Remove last shortcut from sequence"
-msgstr "Удалить последнее сочетание клавиш из последовательности"
+msgstr "Удалить последнее сочетание клавиш из списка"
+
+#: tfrmedithotkey.btnselectfromlist.hint
+msgid "Select shortcut from list of remaining free available keys"
+msgstr "Выберите из списка оставшихся свободных доступных клавиш"
 
 #: tfrmedithotkey.cghkcontrols.caption
 msgctxt "tfrmedithotkey.cghkcontrols.caption"
@@ -804,7 +832,7 @@ msgstr "О программе..."
 
 #: tfrmeditor.actconfhigh.caption
 msgid "&Configuration"
-msgstr "&Настройка"
+msgstr "&Настройки"
 
 #: tfrmeditor.actconfhigh.hint
 msgctxt "tfrmeditor.actconfhigh.hint"
@@ -1096,13 +1124,13 @@ msgctxt "TFRMEDITOR.N5.CAPTION"
 msgid "-"
 msgstr "-"
 
-#: tfrmeditsearchreplace.btncancel.caption
-msgctxt "TFRMEDITSEARCHREPLACE.BTNCANCEL.CAPTION"
+#: tfrmeditsearchreplace.buttonpanel.cancelbutton.caption
+msgctxt "tfrmeditsearchreplace.buttonpanel.cancelbutton.caption"
 msgid "&Cancel"
 msgstr "О&тмена"
 
-#: tfrmeditsearchreplace.btnok.caption
-msgctxt "TFRMEDITSEARCHREPLACE.BTNOK.CAPTION"
+#: tfrmeditsearchreplace.buttonpanel.okbutton.caption
+msgctxt "tfrmeditsearchreplace.buttonpanel.okbutton.caption"
 msgid "&OK"
 msgstr "&ОК"
 
@@ -1271,6 +1299,10 @@ msgctxt "TFRMFILEPROPERTIES.CBSUID.CAPTION"
 msgid "SUID"
 msgstr "SUID"
 
+#: tfrmfileproperties.chkexecutable.caption
+msgid "Allow &executing file as program"
+msgstr "&Разрешить исполнять как программу"
+
 #: tfrmfileproperties.gbowner.caption
 msgctxt "TFRMFILEPROPERTIES.GBOWNER.CAPTION"
 msgid "Owner"
@@ -1320,6 +1352,10 @@ msgctxt "TFRMFILEPROPERTIES.LBLEXEC.CAPTION"
 msgid "Execute"
 msgstr "Выполнение"
 
+#: tfrmfileproperties.lblexecutable.caption
+msgid "Execute:"
+msgstr "Запуск:"
+
 #: tfrmfileproperties.lblfile.caption
 msgctxt "TFRMFILEPROPERTIES.LBLFILE.CAPTION"
 msgid "File name"
@@ -1329,11 +1365,6 @@ msgstr "Имя файла"
 msgctxt "TFRMFILEPROPERTIES.LBLFILENAME.CAPTION"
 msgid "???"
 msgstr "???"
-
-#: tfrmfileproperties.lblfilenamestr.caption
-msgctxt "TFRMFILEPROPERTIES.LBLFILENAMESTR.CAPTION"
-msgid "Name:"
-msgstr "Имя:"
 
 #: tfrmfileproperties.lblfilestr.caption
 msgctxt "TFRMFILEPROPERTIES.LBLFILESTR.CAPTION"
@@ -1430,10 +1461,25 @@ msgctxt "TFRMFILEPROPERTIES.LBLWRITE.CAPTION"
 msgid "Write"
 msgstr "Запись"
 
+#: tfrmfileproperties.sgimage.columns[0].title.caption
+msgctxt "tfrmfileproperties.sgimage.columns[0].title.caption"
+msgid "Name"
+msgstr "Имя"
+
+#: tfrmfileproperties.sgimage.columns[1].title.caption
+msgctxt "tfrmfileproperties.sgimage.columns[1].title.caption"
+msgid "Value"
+msgstr "Значение"
+
 #: tfrmfileproperties.tsattributes.caption
 msgctxt "TFRMFILEPROPERTIES.TSATTRIBUTES.CAPTION"
 msgid "Attributes"
 msgstr "Атрибуты"
+
+#: tfrmfileproperties.tsplugins.caption
+msgctxt "tfrmfileproperties.tsplugins.caption"
+msgid "Plugins"
+msgstr "Плагины"
 
 #: tfrmfileproperties.tsproperties.caption
 msgctxt "TFRMFILEPROPERTIES.TSPROPERTIES.CAPTION"
@@ -1442,30 +1488,43 @@ msgstr "Свойства"
 
 #: tfrmfinddlg.actcancel.caption
 msgctxt "tfrmfinddlg.actcancel.caption"
-msgid "Cancel"
-msgstr "Отмена"
+msgid "C&ancel"
+msgstr "&Отмена"
 
 #: tfrmfinddlg.actcancelclose.caption
 msgid "Cancel search and close window"
-msgstr "Отменить поиск и зыкрыть окно поиска"
+msgstr "Остановить поиск или закрыть окно"
 
 #: tfrmfinddlg.actclose.caption
 msgctxt "tfrmfinddlg.actclose.caption"
-msgid "Close"
-msgstr "Закрыть"
+msgid "&Close"
+msgstr "&Закрыть"
+
+#: tfrmfinddlg.actconfigfilesearchhotkeys.caption
+msgctxt "tfrmfinddlg.actconfigfilesearchhotkeys.caption"
+msgid "Configuration of hot keys"
+msgstr "Настройка горячих клавиш"
 
 #: tfrmfinddlg.actedit.caption
 msgctxt "tfrmfinddlg.actedit.caption"
-msgid "Edit"
-msgstr "Редактровать"
+msgid "&Edit"
+msgstr "Пр&авка"
 
 #: tfrmfinddlg.actfeedtolistbox.caption
-msgid "Feed to listbox"
-msgstr "Файлы на панель"
+msgid "Feed to &listbox"
+msgstr "Фай&лы на панель"
+
+#: tfrmfinddlg.actfreefrommem.caption
+msgid "Cancel search, close and free from memory"
+msgstr "Остановить поиск и закрыть окно"
+
+#: tfrmfinddlg.actfreefrommemallothers.caption
+msgid "For all other \"Find files\", cancel, close and free from memory"
+msgstr "Остановить и закрыть все другие окна \"Поиск файлов\""
 
 #: tfrmfinddlg.actgotofile.caption
-msgid "Go to file"
-msgstr "Перейти к файлу"
+msgid "&Go to file"
+msgstr "Пере&йти к файлу"
 
 #: tfrmfinddlg.actintellifocus.caption
 msgctxt "tfrmfinddlg.actintellifocus.caption"
@@ -1473,12 +1532,16 @@ msgid "Find Data"
 msgstr "С текстом"
 
 #: tfrmfinddlg.actlastsearch.caption
-msgid "Last search"
-msgstr "Последний поиск"
+msgid "&Last search"
+msgstr "&Предыдущий поиск"
 
 #: tfrmfinddlg.actnewsearch.caption
-msgid "New search"
-msgstr "Новый поиск"
+msgid "&New search"
+msgstr "Н&овый поиск"
+
+#: tfrmfinddlg.actnewsearchclearfilters.caption
+msgid "New search (clear filters)"
+msgstr "Новый поиск (очистить фильтры)"
 
 #: tfrmfinddlg.actpageadvanced.caption
 msgid "Go to page \"Advanced\""
@@ -1488,13 +1551,21 @@ msgstr "Перейти к вкладке \"Расширенный\""
 msgid "Go to page \"Load/Save\""
 msgstr "Перейти к вкладке \"Загрузить/Сохранить\""
 
+#: tfrmfinddlg.actpagenext.caption
+msgid "Switch to Nex&t Page"
+msgstr "Перейти &на следующую вкладку"
+
 #: tfrmfinddlg.actpageplugins.caption
 msgid "Go to page \"Plugins\""
 msgstr "Перейти к вкладке \"Плагины\""
 
+#: tfrmfinddlg.actpageprev.caption
+msgid "Switch to &Previous Page"
+msgstr "Перейти н&а предыдущую вкладку"
+
 #: tfrmfinddlg.actpageresults.caption
 msgid "Go to page \"Results\""
-msgstr "Перейти к вкладке \"Загрузить/Сохранить\""
+msgstr "Перейти к вкладке \"Результаты\""
 
 #: tfrmfinddlg.actpagestandard.caption
 msgid "Go to page \"Standard\""
@@ -1502,13 +1573,13 @@ msgstr "Перейти к вкладке \"Стандартный\""
 
 #: tfrmfinddlg.actstart.caption
 msgctxt "tfrmfinddlg.actstart.caption"
-msgid "Start"
-msgstr "Старт"
+msgid "&Start"
+msgstr "&Старт"
 
 #: tfrmfinddlg.actview.caption
 msgctxt "tfrmfinddlg.actview.caption"
-msgid "View"
-msgstr "Просмотр"
+msgid "&View"
+msgstr "П&росмотр"
 
 #: tfrmfinddlg.btnaddattribute.caption
 msgctxt "tfrmfinddlg.btnaddattribute.caption"
@@ -1519,29 +1590,6 @@ msgstr "&Добавить"
 msgctxt "TFRMFINDDLG.BTNATTRSHELP.CAPTION"
 msgid "&Help"
 msgstr "Помощ&ь"
-
-#: tfrmfinddlg.btnclose.caption
-msgctxt "TFRMFINDDLG.BTNCLOSE.CAPTION"
-msgid "&Close"
-msgstr "&Закрыть"
-
-#: tfrmfinddlg.btnedit.caption
-msgctxt "tfrmfinddlg.btnedit.caption"
-msgid "&Edit"
-msgstr "Пр&авка"
-
-#: tfrmfinddlg.btngotopath.caption
-msgid "&Go to file"
-msgstr "Пере&йти к файлу"
-
-#: tfrmfinddlg.btnlastsearch.caption
-msgctxt "tfrmfinddlg.btnlastsearch.caption"
-msgid "&Last search"
-msgstr "&Предыдущий поиск"
-
-#: tfrmfinddlg.btnnewsearch.caption
-msgid "&New search"
-msgstr "Н&овый поиск"
 
 #: tfrmfinddlg.btnsavetemplate.caption
 msgctxt "TFRMFINDDLG.BTNSAVETEMPLATE.CAPTION"
@@ -1569,28 +1617,9 @@ msgstr "Сох&ранить с \"Начинать с каталога\""
 msgid "If saved then \"Start in directory\" will be restored when loading template. Use it if you want to fix searching to a certain directory"
 msgstr "При нажатии сохраняется значение \"Начинать с каталога\". Используйте, если хотите начинать поиск только с определенного каталога"
 
-#: tfrmfinddlg.btnstart.caption
-msgctxt "tfrmfinddlg.btnstart.caption"
-msgid "&Start"
-msgstr "&Старт"
-
-#: tfrmfinddlg.btnstop.caption
-msgctxt "TFRMFINDDLG.BTNSTOP.CAPTION"
-msgid "C&ancel"
-msgstr "&Отмена"
-
 #: tfrmfinddlg.btnusetemplate.caption
 msgid "Use template"
 msgstr "Использовать шаблон"
-
-#: tfrmfinddlg.btnview.caption
-msgctxt "TFRMFINDDLG.BTNVIEW.CAPTION"
-msgid "&View"
-msgstr "П&росмотр"
-
-#: tfrmfinddlg.btnworkwithfound.caption
-msgid "Feed to &listbox"
-msgstr "Фай&лы на панель"
 
 #: tfrmfinddlg.caption
 msgctxt "tfrmfinddlg.caption"
@@ -1638,7 +1667,7 @@ msgstr "Файлы, &НЕ содержащие этот текст"
 
 #: tfrmfinddlg.cbnotolderthan.caption
 msgid "N&ot older than:"
-msgstr "Н&е старше чем:"
+msgstr "Н&е старше:"
 
 #: tfrmfinddlg.cbopenedtabs.caption
 msgid "Opened tabs"
@@ -1679,20 +1708,15 @@ msgstr "&Использовать поисковый плагин:"
 
 #: tfrmfinddlg.cmbexcludedirectories.hint
 msgid "Enter directories names that should be excluded from search separated with \";\""
-msgstr "Введите имена каталогов, которые должны быть исключены из поиска, разделённых символом \";\""
+msgstr "Введите имена каталогов, которые должны быть исключены из поиска, разделённые символом \";\""
 
 #: tfrmfinddlg.cmbexcludefiles.hint
 msgid "Enter files names that should be excluded from search separated with \";\""
-msgstr "Введите имена файлов, которые должны быть исключены из поиска, разделённых символом \";\""
+msgstr "Введите имена файлов, которые должны быть исключены из поиска, разделённые символом \";\""
 
 #: tfrmfinddlg.cmbfindfilemask.hint
 msgid "Enter files names separated with \";\""
-msgstr "Введите имена файлов, разделённых символом \";\""
-
-#: tfrmfinddlg.cmbfindfilemask.text
-msgctxt "TFRMFINDDLG.CMBFINDFILEMASK.TEXT"
-msgid "*"
-msgstr "*"
+msgstr "Введите имена файлов, разделённые символом \";\""
 
 #: tfrmfinddlg.gbdirectories.caption
 msgctxt "tfrmfinddlg.gbdirectories.caption"
@@ -1721,11 +1745,11 @@ msgstr "Ко&дировка:"
 
 #: tfrmfinddlg.lblexcludedirectories.caption
 msgid "E&xclude subdirectories"
-msgstr "Искл&ючать подкаталоги"
+msgstr "Искл&ючить подкаталоги"
 
 #: tfrmfinddlg.lblexcludefiles.caption
 msgid "&Exclude files"
-msgstr "&Исключать файлы:"
+msgstr "&Исключить файлы:"
 
 #: tfrmfinddlg.lblfindfilemask.caption
 msgid "&File mask"
@@ -1743,13 +1767,40 @@ msgstr "Глубина вло&женности подкаталогов:"
 msgid "&Previous searches:"
 msgstr "Сохранённые &шаблоны поиска:"
 
+#: tfrmfinddlg.miaction.caption
+msgid "&Action"
+msgstr "&Действие"
+
+#: tfrmfinddlg.mifreefrommemallothers.caption
+msgid "For all others, cancel, close and free from memory"
+msgstr "Остановить и закрыть все другие окна"
+
 #: tfrmfinddlg.miopeninnewtab.caption
 msgid "Open In New Tab(s)"
 msgstr "Открыть в новой вкладке(ах)"
 
+#: tfrmfinddlg.mioptions.caption
+msgctxt "tfrmfinddlg.mioptions.caption"
+msgid "Options"
+msgstr "Настройки"
+
 #: tfrmfinddlg.miremovefromllist.caption
 msgid "Remove from list"
 msgstr "Убрать из списка"
+
+#: tfrmfinddlg.miresult.caption
+msgid "&Result"
+msgstr "&Результат"
+
+#: tfrmfinddlg.miseparator1.caption
+msgctxt "tfrmfinddlg.miseparator1.caption"
+msgid "-"
+msgstr "-"
+
+#: tfrmfinddlg.miseparator2.caption
+msgctxt "tfrmfinddlg.miseparator2.caption"
+msgid "-"
+msgstr "-"
 
 #: tfrmfinddlg.mishowallfound.caption
 msgid "Show all found items"
@@ -1762,6 +1813,11 @@ msgstr "Показать в редакторе"
 #: tfrmfinddlg.mishowinviewer.caption
 msgid "Show In Viewer"
 msgstr "Просмотр"
+
+#: tfrmfinddlg.miviewtab.caption
+msgctxt "tfrmfinddlg.miviewtab.caption"
+msgid "&View"
+msgstr "&Вид"
 
 #: tfrmfinddlg.tsadvanced.caption
 msgid "Advanced"
@@ -1845,11 +1901,11 @@ msgstr "Выделите элементы для импорта"
 #: tfrmhotdirexportimport.lbhint.caption
 msgctxt "tfrmhotdirexportimport.lbhint.caption"
 msgid "When clicking a sub-menu, it will select the whole menu"
-msgstr "При выборе подменю, будет выделено всё меню"
+msgstr "При выборе подменю, будет выделено всё подменю"
 
 #: tfrmhotdirexportimport.lblhintholdcontrol.caption
 msgid "Hold CTRL and click entries to select multiple ones"
-msgstr "Удерживая CTRL и нажимая на объекты, можно выделить сразу несколько объектов"
+msgstr "Зажав клавишу CTRL можно выделить сразу несколько записей"
 
 #: tfrmlinker.btnsave.caption
 msgctxt "TFRMLINKER.BTNSAVE.CAPTION"
@@ -1913,6 +1969,10 @@ msgstr "&О программе..."
 msgid "Add file name to command line"
 msgstr "Добавить имя файла в командную строку"
 
+#: tfrmmain.actaddnewsearch.caption
+msgid "New search instance..."
+msgstr "Новый экземпляр поиска..."
+
 #: tfrmmain.actaddpathandfilenametocmdline.caption
 msgid "Add path and file name to command line"
 msgstr "Добавить путь и имя файла в командную строку"
@@ -1932,7 +1992,7 @@ msgstr "Краткий вид"
 
 #: tfrmmain.actcalculatespace.caption
 msgid "Calculate &Occupied Space"
-msgstr "Рассчитать &занимаемое место..."
+msgstr "Подсчитать &занимаемое место..."
 
 #: tfrmmain.actchangedir.caption
 msgid "Change directory"
@@ -1962,7 +2022,7 @@ msgstr "Проверить ко&нтрольные суммы..."
 
 #: tfrmmain.actclearlogfile.caption
 msgid "Clear log file"
-msgstr "Очистить лог файл"
+msgstr "Очистить файл протокола"
 
 #: tfrmmain.actclearlogwindow.caption
 msgid "Clear log window"
@@ -2008,7 +2068,7 @@ msgstr "Колоночный вид"
 
 #: tfrmmain.actcomparecontents.caption
 msgid "Compare by &Contents"
-msgstr "Сравнивать п&о содержимому"
+msgstr "Сравнить п&о содержимому"
 
 #: tfrmmain.actcomparedirectories.caption
 msgctxt "TFRMMAIN.ACTCOMPAREDIRECTORIES.CAPTION"
@@ -2018,7 +2078,7 @@ msgstr "Сравнить &каталоги"
 #: tfrmmain.actcomparedirectories.hint
 msgctxt "TFRMMAIN.ACTCOMPAREDIRECTORIES.HINT"
 msgid "Compare Directories"
-msgstr "Сравнить &каталоги"
+msgstr "Сравнить каталоги"
 
 #: tfrmmain.actconfigdirhotlist.caption
 msgctxt "tfrmmain.actconfigdirhotlist.caption"
@@ -2031,7 +2091,20 @@ msgstr "Настройка Избранных Вкладок"
 
 #: tfrmmain.actconfigfoldertabs.caption
 msgid "Configuration of folder tabs"
-msgstr "Настройка вкладок каталогов"
+msgstr "Настройка вкладок папок"
+
+#: tfrmmain.actconfighotkeys.caption
+msgctxt "tfrmmain.actconfighotkeys.caption"
+msgid "Configuration of hot keys"
+msgstr "Настройка горячих клавиш"
+
+#: tfrmmain.actconfigsavesettings.caption
+msgid "Save Settings"
+msgstr "Со&хранить настройки"
+
+#: tfrmmain.actconfigsearches.caption
+msgid "Configuration of searches"
+msgstr "Настройка поиска"
 
 #: tfrmmain.actconfigtoolbars.caption
 msgid "Toolbar..."
@@ -2109,6 +2182,10 @@ msgctxt "TFRMMAIN.ACTDELETE.CAPTION"
 msgid "Delete"
 msgstr "Удалить"
 
+#: tfrmmain.actdeletesearches.caption
+msgid "For all searches, cancel, close and free memory"
+msgstr "Остановить и закрыть все окна"
+
 #: tfrmmain.actdirhistory.caption
 msgctxt "TFRMMAIN.ACTDIRHISTORY.CAPTION"
 msgid "Directory history"
@@ -2143,6 +2220,10 @@ msgstr "Редактировать путь в заголовке панели"
 msgid "Swap &Panels"
 msgstr "П&оменять панели местами"
 
+#: tfrmmain.actexecutescript.caption
+msgid "Execute Script"
+msgstr "Выполнить скрипт"
+
 #: tfrmmain.actexit.caption
 msgctxt "TFRMMAIN.ACTEXIT.CAPTION"
 msgid "E&xit"
@@ -2176,6 +2257,14 @@ msgstr "Показать все фа&йлы без подкаталогов"
 #: tfrmmain.actfocuscmdline.caption
 msgid "Focus command line"
 msgstr "Перейти к командной строке"
+
+#: tfrmmain.actfocusswap.caption
+msgid "Swap focus"
+msgstr "Сменить фокус"
+
+#: tfrmmain.actfocusswap.hint
+msgid "Switch between left and right file list"
+msgstr "Переключиться на другую файловую панель"
 
 #: tfrmmain.actgotofirstfile.caption
 msgid "Place cursor on first file in list"
@@ -2274,9 +2363,21 @@ msgstr "Создать &каталог"
 msgid "Select All with the Same E&xtension"
 msgstr "Выделить файлы по рас&ширению"
 
+#: tfrmmain.actmarkcurrentname.caption
+msgid "Select all files with same name"
+msgstr "Выделить все файлы по текущему имени"
+
+#: tfrmmain.actmarkcurrentnameext.caption
+msgid "Select all files with same name and extension"
+msgstr "Выделить все файлы по текущему имени и расширению"
+
+#: tfrmmain.actmarkcurrentpath.caption
+msgid "Select all in same path"
+msgstr "Выделить все с этим путём"
+
 #: tfrmmain.actmarkinvert.caption
 msgid "&Invert Selection"
-msgstr "&Инверсия выделения"
+msgstr "&Инвертировать выделение"
 
 #: tfrmmain.actmarkmarkall.caption
 msgid "&Select All"
@@ -2337,7 +2438,7 @@ msgstr "Попробовать открыть архив"
 
 #: tfrmmain.actopenbar.caption
 msgid "Open bar file"
-msgstr "Открыть bar файл"
+msgstr "Открыть bar-файл"
 
 #: tfrmmain.actopendirinnewtab.caption
 msgid "Open &Folder in a New Tab"
@@ -2481,7 +2582,7 @@ msgstr "Пуск &терминала"
 
 #: tfrmmain.actsavefavoritetabs.caption
 msgid "Save current tabs to a New Favorite Tabs"
-msgstr "Сохранить текущие вкладки как Новые Избранные Вкладки"
+msgstr "Сохранить текущие как Новые Избранные Вкладки"
 
 #: tfrmmain.actsaveselection.caption
 msgid "Sa&ve Selection"
@@ -2522,7 +2623,7 @@ msgstr "Изменить атри&буты"
 
 #: tfrmmain.actsettaboptiondirsinnewtab.caption
 msgid "Locked with Directories Opened in New &Tabs"
-msgstr "О&ткрывать каталоги в новой вкладке"
+msgstr "Заблокировать и о&ткрывать каталоги в новой вкладке"
 
 #: tfrmmain.actsettaboptionnormal.caption
 msgid "&Normal"
@@ -2548,7 +2649,7 @@ msgstr "Открыть, используя системные ассоциаци
 
 #: tfrmmain.actshowbuttonmenu.caption
 msgid "Show button menu"
-msgstr "Показать кнопочное меню"
+msgstr "Показать панель инструментов"
 
 #: tfrmmain.actshowcmdlinehistory.caption
 msgid "Show command line history"
@@ -2562,7 +2663,7 @@ msgstr "Меню"
 #: tfrmmain.actshowsysfiles.caption
 msgctxt "TFRMMAIN.ACTSHOWSYSFILES.CAPTION"
 msgid "Show &Hidden/System Files"
-msgstr "По&казывать системные файлы"
+msgstr "По&казать скрытые/системные файлы"
 
 #: tfrmmain.actsortbyattr.caption
 msgid "Sort by &Attributes"
@@ -2590,7 +2691,7 @@ msgstr "Открыть список дисков"
 
 #: tfrmmain.actswitchignorelist.caption
 msgid "Enable/disable ignore list file to not show file names"
-msgstr "Функция исключений файловых имён: вкл/выкл"
+msgstr "Функция исключения имён файлов: вкл/выкл"
 
 #: tfrmmain.actsymlink.caption
 msgctxt "TFRMMAIN.ACTSYMLINK.CAPTION"
@@ -2603,7 +2704,7 @@ msgstr "&Синхронизировать каталоги..."
 
 #: tfrmmain.acttargetequalsource.caption
 msgid "Target &= Source"
-msgstr "&Две одинаковых панели"
+msgstr "Получатель &= Источнику"
 
 #: tfrmmain.acttestarchive.caption
 msgid "&Test Archive(s)"
@@ -2642,6 +2743,18 @@ msgstr "Сортировка по параметрам"
 msgid "Unselect All with the Same Ex&tension"
 msgstr "Снять выделение по расши&рению"
 
+#: tfrmmain.actunmarkcurrentname.caption
+msgid "Unselect all files with same name"
+msgstr "Снять выделение по текущему имени"
+
+#: tfrmmain.actunmarkcurrentnameext.caption
+msgid "Unselect all files with same name and extension"
+msgstr "Снять выделение по текущему имени и расширению"
+
+#: tfrmmain.actunmarkcurrentpath.caption
+msgid "Unselect all in same path"
+msgstr "Снять всё выделение с этим путём"
+
 #: tfrmmain.actview.caption
 msgctxt "tfrmmain.actview.caption"
 msgid "View"
@@ -2661,7 +2774,11 @@ msgstr "Перейти к предыдущему элементу истории
 
 #: tfrmmain.actviewlogfile.caption
 msgid "View log file"
-msgstr "Просмотреть содержимое лог-файла"
+msgstr "Просмотреть содержимое файла протокола"
+
+#: tfrmmain.actviewsearches.caption
+msgid "View current search instances"
+msgstr "Список запущенных окон поиска"
 
 #: tfrmmain.actvisithomepage.caption
 msgid "&Visit Double Commander Website"
@@ -2669,7 +2786,7 @@ msgstr "&Посетить сайт Double Commander"
 
 #: tfrmmain.actwipe.caption
 msgid "Wipe"
-msgstr "Стереть"
+msgstr "Стереть (Wipe)"
 
 #: tfrmmain.actworkwithdirectoryhotlist.caption
 msgid "Work with Directory Hotlist and parameters"
@@ -2739,7 +2856,7 @@ msgstr ".."
 
 #: tfrmmain.btnleftup.hint
 msgid "Go to parent directory"
-msgstr "Перейти в вышестоящий каталог"
+msgstr "Перейти в родительский каталог"
 
 #: tfrmmain.btnrightdirectoryhotlist.caption
 msgctxt "TFRMMAIN.BTNRIGHTDIRECTORYHOTLIST.CAPTION"
@@ -2982,6 +3099,11 @@ msgctxt "tfrmmain.miline50.caption"
 msgid "-"
 msgstr "-"
 
+#: tfrmmain.miline55.caption
+msgctxt "tfrmmain.miline55.caption"
+msgid "-"
+msgstr "-"
+
 #: tfrmmain.miline6.caption
 msgctxt "TFRMMAIN.MILINE6.CAPTION"
 msgid "-"
@@ -3063,7 +3185,7 @@ msgstr "&Команды"
 
 #: tfrmmain.mnuconfig.caption
 msgid "C&onfiguration"
-msgstr "&Настройка"
+msgstr "&Настройки"
 
 #: tfrmmain.mnucontextline1.caption
 msgctxt "tfrmmain.mnucontextline1.caption"
@@ -3174,7 +3296,7 @@ msgstr "Выбрать все категории по умолчанию"
 
 #: tfrmmaincommandsdlg.gbselection.caption
 msgid "Selection:"
-msgstr "Выбор:"
+msgstr "Выделенная:"
 
 #: tfrmmaincommandsdlg.lblcategory.caption
 msgid "&Categories:"
@@ -3219,6 +3341,16 @@ msgctxt "tfrmmaincommandsdlg.lblselectedcommandhotkey.caption"
 msgid "Hotkey"
 msgstr "Горячая клавиша"
 
+#: tfrmmaskinputdlg.btnaddattribute.caption
+msgctxt "tfrmmaskinputdlg.btnaddattribute.caption"
+msgid "&Add"
+msgstr "&Добавить"
+
+#: tfrmmaskinputdlg.btnattrshelp.caption
+msgctxt "tfrmmaskinputdlg.btnattrshelp.caption"
+msgid "&Help"
+msgstr "Помощ&ь"
+
 #: tfrmmaskinputdlg.btncancel.caption
 msgctxt "TFRMMASKINPUTDLG.BTNCANCEL.CAPTION"
 msgid "&Cancel"
@@ -3235,11 +3367,15 @@ msgstr "&ОК"
 
 #: tfrmmaskinputdlg.chkcasesensitive.caption
 msgid "Case sensitive"
-msgstr "Регистрозависимый"
+msgstr "Учитывать регистр"
 
 #: tfrmmaskinputdlg.chkignoreaccentsandligatures.caption
 msgid "Ignore accents and ligatures"
 msgstr "Игнорировать акценты и лигатуры"
+
+#: tfrmmaskinputdlg.lblattributes.caption
+msgid "Attri&butes:"
+msgstr "Атри&буты:"
 
 #: tfrmmaskinputdlg.lblprompt.caption
 msgid "Input Mask:"
@@ -3353,6 +3489,7 @@ msgid "PNM"
 msgstr "PNM"
 
 #: tfrmmodview.teheight.text
+msgctxt "tfrmmodview.teheight.text"
 msgid "Height"
 msgstr "Высота"
 
@@ -3730,7 +3867,7 @@ msgstr "&ОК"
 #: tfrmoptions.caption
 msgctxt "tfrmoptions.caption"
 msgid "Options"
-msgstr "Настройка"
+msgstr "Настройки"
 
 #: tfrmoptions.lblemptyeditor.caption
 msgid "Please select one of the subpages, this page does not contain any settings."
@@ -3784,7 +3921,7 @@ msgstr "Пока&зывать консольный вывод"
 #: tfrmoptionsarchivers.gbarchiveroptions.caption
 msgctxt "TFRMOPTIONSARCHIVERS.GBARCHIVEROPTIONS.CAPTION"
 msgid "Options"
-msgstr "Настройка"
+msgstr "Настройки"
 
 #: tfrmoptionsarchivers.lblarchiveadd.caption
 msgctxt "TFRMOPTIONSARCHIVERS.LBLARCHIVEADD.CAPTION"
@@ -3874,7 +4011,7 @@ msgstr "Обновлять список файлов"
 #: tfrmoptionsbehavior.cbalwaysshowtrayicon.caption
 msgctxt "TFRMOPTIONSBEHAVIOR.CBALWAYSSHOWTRAYICON.CAPTION"
 msgid "Al&ways show tray icon"
-msgstr "Вс&егда показывать иконку в трее"
+msgstr "Вс&егда показывать значок в трее"
 
 #: tfrmoptionsbehavior.cbblacklistunmounteddevices.caption
 msgid "Automatically &hide unmounted devices"
@@ -3930,6 +4067,10 @@ msgstr "Фиксированная ширина колонок"
 msgctxt "TFRMOPTIONSCOLUMNSVIEW.CBCUTTEXTTOCOLWIDTH.CAPTION"
 msgid "Cut &text to column width"
 msgstr "Обр&езать текст по ширине колонки"
+
+#: tfrmoptionscolumnsview.cbextendcellwidth.caption
+msgid "&Extend cell width if text is not fitting into column"
+msgstr "Рас&ширить ширину ячейки, если текст не умещается в колонке"
 
 #: tfrmoptionscolumnsview.cbgridhorzline.caption
 msgctxt "TFRMOPTIONSCOLUMNSVIEW.CBGRIDHORZLINE.CAPTION"
@@ -3994,6 +4135,11 @@ msgctxt "TFRMOPTIONSCONFIGURATION.CHKSEARCHREPLACEHISTORY.CAPTION"
 msgid "Searc&h/Replace history"
 msgstr "Истори&ю поиска/замены"
 
+#: tfrmoptionsconfiguration.gbdirectories.caption
+msgctxt "tfrmoptionsconfiguration.gbdirectories.caption"
+msgid "Directories"
+msgstr "Каталоги"
+
 #: tfrmoptionsconfiguration.gblocconfigfiles.caption
 msgctxt "TFRMOPTIONSCONFIGURATION.GBLOCCONFIGFILES.CAPTION"
 msgid "Location of configuration files"
@@ -4012,6 +4158,14 @@ msgstr "Сортировка дерева конфигурации (слева)"
 msgctxt "TFRMOPTIONSCONFIGURATION.LBLCMDLINECONFIGDIR.CAPTION"
 msgid "Set on command line"
 msgstr "Задано через командную строку"
+
+#: tfrmoptionsconfiguration.lbliconthemes.caption
+msgid "Icon themes:"
+msgstr "Темы значков:"
+
+#: tfrmoptionsconfiguration.lblthumbcache.caption
+msgid "Thumbnails cache:"
+msgstr "Кэш эскизов:"
 
 #: tfrmoptionsconfiguration.rbprogramdir.caption
 msgctxt "TFRMOPTIONSCONFIGURATION.RBPROGRAMDIR.CAPTION"
@@ -4378,7 +4532,7 @@ msgstr "Сохранить"
 #: tfrmoptionscustomcolumns.cballowovercolor.caption
 msgctxt "tfrmoptionscustomcolumns.cballowovercolor.caption"
 msgid "Allow Overcolor"
-msgstr "Раскраска файлов"
+msgstr "Разрешить наложение цвета"
 
 #: tfrmoptionscustomcolumns.cbapplychangeforallcolumns.caption
 msgid "When clicking to change something, change for all columns"
@@ -4487,44 +4641,203 @@ msgstr "Добавить колонку"
 msgid "Position of frame panel after the comparison:"
 msgstr "Позиция панели после сравнения:"
 
+#: tfrmoptionsdirectoryhotlist.actaddactiveframedir.caption
+msgid "Add directory of the &active frame"
+msgstr "Добавить каталог &активной вкладки"
+
+#: tfrmoptionsdirectoryhotlist.actaddbothframedir.caption
+msgid "Add &directories of the active && inactive frames"
+msgstr "Добавить каталоги активной &и неактивной вкладок"
+
+#: tfrmoptionsdirectoryhotlist.actaddbrowseddir.caption
+msgid "Add directory I will bro&wse to"
+msgstr "Диалог выбора &каталога"
+
+#: tfrmoptionsdirectoryhotlist.actaddcopyofentry.caption
+msgctxt "tfrmoptionsdirectoryhotlist.actaddcopyofentry.caption"
+msgid "Add a copy of the selected entry"
+msgstr "Добавить копию выделенного элемента"
+
+#: tfrmoptionsdirectoryhotlist.actaddselectionsfromframe.caption
+msgid "Add current &selected or active directories of active frame"
+msgstr "Добавить &выделенные или каталог под курсором в активной вкладке"
+
+#: tfrmoptionsdirectoryhotlist.actaddseparator.caption
+msgctxt "tfrmoptionsdirectoryhotlist.actaddseparator.caption"
+msgid "Add a separator"
+msgstr "Добавить разделитель"
+
+#: tfrmoptionsdirectoryhotlist.actaddsubmenu.caption
+msgid "Add a sub menu"
+msgstr "Добавить подменю"
+
+#: tfrmoptionsdirectoryhotlist.actaddtypeddir.caption
+msgctxt "tfrmoptionsdirectoryhotlist.actaddtypeddir.caption"
+msgid "Add directory I will type"
+msgstr "Добавить вручную"
+
+#: tfrmoptionsdirectoryhotlist.actcollapseall.caption
+msgctxt "tfrmoptionsdirectoryhotlist.actcollapseall.caption"
+msgid "Collapse all"
+msgstr "Свернуть все"
+
+#: tfrmoptionsdirectoryhotlist.actcollapseitem.caption
+msgid "Collapse item"
+msgstr "Свернуть элемент"
+
+#: tfrmoptionsdirectoryhotlist.actcut.caption
+msgid "Cut selection of entries"
+msgstr "Вырезать выделенные элементы"
+
+#: tfrmoptionsdirectoryhotlist.actdeleteall.caption
+msgid "Delete all!"
+msgstr "Удалить все!"
+
+#: tfrmoptionsdirectoryhotlist.actdeleteselecteditem.caption
+msgctxt "tfrmoptionsdirectoryhotlist.actdeleteselecteditem.caption"
+msgid "Delete selected item"
+msgstr "Удалить выделенный элемент"
+
+#: tfrmoptionsdirectoryhotlist.actdeletesubmenuandelem.caption
+msgid "Delete sub-menu and all its elements"
+msgstr "Удалить подменю и все его элементы"
+
+#: tfrmoptionsdirectoryhotlist.actdeletesubmenukeepelem.caption
+msgid "Delete just sub-menu but keep elements"
+msgstr "Удалить подменю, но оставить все его элементы"
+
+#: tfrmoptionsdirectoryhotlist.actexpanditem.caption
+msgid "Expand item"
+msgstr "Развернуть элемент"
+
+#: tfrmoptionsdirectoryhotlist.actfocustreewindow.caption
+msgid "Focus tree window"
+msgstr "Фокус на дерево элементов"
+
+#: tfrmoptionsdirectoryhotlist.actgotofirstitem.caption
+msgid "Goto first item"
+msgstr "Перейти к первому элементу"
+
+#: tfrmoptionsdirectoryhotlist.actgotolastitem.caption
+msgid "Goto last item"
+msgstr "Перейти к последнему элементу"
+
+#: tfrmoptionsdirectoryhotlist.actgotonextitem.caption
+msgid "Go to next item"
+msgstr "Перейти к следующему элементу"
+
+#: tfrmoptionsdirectoryhotlist.actgotopreviousitem.caption
+msgid "Go to previous item"
+msgstr "Перейти к предыдущему элементу"
+
+#: tfrmoptionsdirectoryhotlist.actinsertactiveframedir.caption
+msgid "Insert directory of the &active frame"
+msgstr "Вставить каталог &активной вкладки"
+
+#: tfrmoptionsdirectoryhotlist.actinsertbothframedir.caption
+msgid "Insert &directories of the active && inactive frames"
+msgstr "Вставить каталоги активной &и неактивной вкладок"
+
+#: tfrmoptionsdirectoryhotlist.actinsertbrowseddir.caption
+msgid "Insert directory I will bro&wse to"
+msgstr "Диалог выбора &каталога"
+
+#: tfrmoptionsdirectoryhotlist.actinsertcopyofentry.caption
+msgid "Insert a copy of the selected entry"
+msgstr "Вставить копию выделенного элемента"
+
+#: tfrmoptionsdirectoryhotlist.actinsertselectionsfromframe.caption
+msgid "Insert current &selected or active directories of active frame"
+msgstr "Вставить &выделенные или каталог под курсором в активной вкладке"
+
+#: tfrmoptionsdirectoryhotlist.actinsertseparator.caption
+msgid "Insert a separator"
+msgstr "Вставить разделитель"
+
+#: tfrmoptionsdirectoryhotlist.actinsertsubmenu.caption
+msgid "Insert sub menu"
+msgstr "Вставить подменю"
+
+#: tfrmoptionsdirectoryhotlist.actinserttypeddir.caption
+msgctxt "tfrmoptionsdirectoryhotlist.actinserttypeddir.caption"
+msgid "Insert directory I will type"
+msgstr "Вставить вручную"
+
+#: tfrmoptionsdirectoryhotlist.actmovetonext.caption
+msgid "Move to next"
+msgstr "Переместить вниз"
+
+#: tfrmoptionsdirectoryhotlist.actmovetoprevious.caption
+msgid "Move to previous"
+msgstr "Переместить вверх"
+
+#: tfrmoptionsdirectoryhotlist.actopenallbranches.caption
+msgctxt "tfrmoptionsdirectoryhotlist.actopenallbranches.caption"
+msgid "Open all branches"
+msgstr "Развернуть все ветки"
+
+#: tfrmoptionsdirectoryhotlist.actpaste.caption
+msgid "Paste what was cut"
+msgstr "Вставить вырезаннное"
+
+#: tfrmoptionsdirectoryhotlist.actsearchandreplaceinpath.caption
+msgid "Search && replace in &path"
+msgstr "Найти и заменить в &пути"
+
+#: tfrmoptionsdirectoryhotlist.actsearchandreplaceinpathandtarget.caption
+msgid "Search && replace in both path and target"
+msgstr "&Найти и заменить в пути и целевом пути"
+
+#: tfrmoptionsdirectoryhotlist.actsearchandreplaceintargetpath.caption
+msgid "Search && replace in &target path"
+msgstr "Найти и заменить в &целевом пути"
+
+#: tfrmoptionsdirectoryhotlist.acttweakpath.caption
+msgid "Tweak path"
+msgstr "Изменить путь"
+
+#: tfrmoptionsdirectoryhotlist.acttweaktargetpath.caption
+msgid "Tweak target path"
+msgstr "Изменить целевой путь"
+
 #: tfrmoptionsdirectoryhotlist.btnadd.caption
 msgctxt "tfrmoptionsdirectoryhotlist.btnadd.caption"
-msgid "Add..."
-msgstr "Добавить..."
+msgid "A&dd..."
+msgstr "&Добавить..."
 
 #: tfrmoptionsdirectoryhotlist.btnbackup.caption
 msgctxt "tfrmoptionsdirectoryhotlist.btnbackup.caption"
-msgid "Backup..."
-msgstr "Резервирование..."
+msgid "Bac&kup..."
+msgstr "Ре&зервирование..."
 
 #: tfrmoptionsdirectoryhotlist.btndelete.caption
 msgctxt "tfrmoptionsdirectoryhotlist.btndelete.caption"
-msgid "Delete..."
-msgstr "Удалить..."
+msgid "De&lete..."
+msgstr "&Удалить..."
 
 #: tfrmoptionsdirectoryhotlist.btnexport.caption
 msgctxt "tfrmoptionsdirectoryhotlist.btnexport.caption"
-msgid "Export..."
-msgstr "Экспорт..."
+msgid "E&xport..."
+msgstr "&Экспорт..."
 
 #: tfrmoptionsdirectoryhotlist.btnhelp.caption
 msgctxt "tfrmoptionsdirectoryhotlist.btnhelp.caption"
-msgid "Help"
-msgstr "Помощь"
+msgid "&Help"
+msgstr "Помо&щь"
 
 #: tfrmoptionsdirectoryhotlist.btnimport.caption
 msgctxt "tfrmoptionsdirectoryhotlist.btnimport.caption"
-msgid "Import..."
-msgstr "Импорт..."
+msgid "Impo&rt..."
+msgstr "&Импорт..."
 
 #: tfrmoptionsdirectoryhotlist.btninsert.caption
 msgctxt "tfrmoptionsdirectoryhotlist.btninsert.caption"
-msgid "Insert..."
-msgstr "Вставить..."
+msgid "&Insert..."
+msgstr "&Вставить..."
 
 #: tfrmoptionsdirectoryhotlist.btnmiscellaneous.caption
-msgid "Miscellaneous..."
-msgstr "Разное..."
+msgid "&Miscellaneous..."
+msgstr "&Разное..."
 
 #: tfrmoptionsdirectoryhotlist.btnrelativepath.hint
 msgctxt "tfrmoptionsdirectoryhotlist.btnrelativepath.hint"
@@ -4534,39 +4847,39 @@ msgstr "Некоторые функции для выбора подходяще
 #: tfrmoptionsdirectoryhotlist.btnrelativetarget.hint
 msgctxt "tfrmoptionsdirectoryhotlist.btnrelativetarget.hint"
 msgid "Some functions to select appropriate target"
-msgstr "Некоторые функции для выбора подходящего назначения"
+msgstr "Некоторые функции для выбора целевого пути"
 
 #: tfrmoptionsdirectoryhotlist.btnsort.caption
 msgctxt "tfrmoptionsdirectoryhotlist.btnsort.caption"
-msgid "Sort..."
-msgstr "Сортировать..."
+msgid "&Sort..."
+msgstr "&Сортировать..."
 
 #: tfrmoptionsdirectoryhotlist.cbaddtarget.caption
-msgid "When adding directory, add also target"
-msgstr "При добавлении папки, также добавить папку назначения"
+msgid "&When adding directory, add also target"
+msgstr "При добавлении также добавить и це&левой путь"
 
 #: tfrmoptionsdirectoryhotlist.cbfullexpandtree.caption
 msgctxt "tfrmoptionsdirectoryhotlist.cbfullexpandtree.caption"
-msgid "Always expand tree"
-msgstr "Всегда разворачивать дерево"
+msgid "Alwa&ys expand tree"
+msgstr "Все&гда разворачивать дерево"
 
 #: tfrmoptionsdirectoryhotlist.cbshowonlyvalidenv.caption
-msgid "Show only valid environment variables"
-msgstr "Показывать только приемлемые переменные окружения"
+msgid "Show only &valid environment variables"
+msgstr "Показывать только приемлемые п&еременные окружения"
 
 #: tfrmoptionsdirectoryhotlist.cbshowpathinpopup.caption
-msgid "In popup, show [path also]"
-msgstr "В контекстном меню показывать также и путь"
+msgid "In pop&up, show [path also]"
+msgstr "Показывать в меню так&же и [путь]"
 
 #: tfrmoptionsdirectoryhotlist.cbsorthotdirpath.text
 msgctxt "tfrmoptionsdirectoryhotlist.cbsorthotdirpath.text"
 msgid "Name, a-z"
-msgstr "Имя, a-z"
+msgstr "Имя, а-я"
 
 #: tfrmoptionsdirectoryhotlist.cbsorthotdirtarget.text
 msgctxt "tfrmoptionsdirectoryhotlist.cbsorthotdirtarget.text"
 msgid "Name, a-z"
-msgstr "Имя, a-z"
+msgstr "Имя, а-я"
 
 #: tfrmoptionsdirectoryhotlist.gbdirectoryhotlist.caption
 msgid "Directory Hotlist (reorder by drag && drop)"
@@ -4589,301 +4902,113 @@ msgstr "Путь:"
 
 #: tfrmoptionsdirectoryhotlist.lbledithotdirtarget.editlabel.caption
 msgctxt "tfrmoptionsdirectoryhotlist.lbledithotdirtarget.editlabel.caption"
-msgid "Target:"
-msgstr "Целевой путь:"
-
-#: tfrmoptionsdirectoryhotlist.miactiveframedirectory.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miactiveframedirectory.caption"
-msgid "directory of the active frame"
-msgstr "каталог активной панели"
-
-#: tfrmoptionsdirectoryhotlist.miactiveinactiveframedirectory.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miactiveinactiveframedirectory.caption"
-msgid "directories of the active && inactive frames"
-msgstr "каталоги активной и неактивной панелей"
-
-#: tfrmoptionsdirectoryhotlist.miaddcommand.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miaddcommand.caption"
-msgid "a command"
-msgstr "команду"
-
-#: tfrmoptionsdirectoryhotlist.miaddcommand2.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miaddcommand2.caption"
-msgid "Add a command"
-msgstr "Добавить команду"
-
-#: tfrmoptionsdirectoryhotlist.miaddcopyofselected.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miaddcopyofselected.caption"
-msgid "a copy of the selected entry"
-msgstr "копия выделенного элемента"
-
-#: tfrmoptionsdirectoryhotlist.miaddcopyofselected2.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miaddcopyofselected2.caption"
-msgid "Add a copy of the selected entry"
-msgstr "Добавить копию выделенного элемента"
-
-#: tfrmoptionsdirectoryhotlist.miaddseparator.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miaddseparator.caption"
-msgid "a separator"
-msgstr "разделитель"
-
-#: tfrmoptionsdirectoryhotlist.miaddseparator2.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miaddseparator2.caption"
-msgid "Add a separator"
-msgstr "Добавить разделитель"
-
-#: tfrmoptionsdirectoryhotlist.miaddsubmenu.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miaddsubmenu.caption"
-msgid "sub-menu"
-msgstr "подменю"
-
-#: tfrmoptionsdirectoryhotlist.miaddsubmenu2.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miaddsubmenu2.caption"
-msgid "Add sub-menu"
-msgstr "Добавить подменю"
-
-#: tfrmoptionsdirectoryhotlist.mibrowsetodirectory.caption
-msgctxt "tfrmoptionsdirectoryhotlist.mibrowsetodirectory.caption"
-msgid "directory I will browse to"
-msgstr "каталог, который выберу"
-
-#: tfrmoptionsdirectoryhotlist.micollapseall.caption
-msgctxt "tfrmoptionsdirectoryhotlist.micollapseall.caption"
-msgid "Collapse all"
-msgstr "Свернуть все"
+msgid "&Target:"
+msgstr "&Целевой путь:"
 
 #: tfrmoptionsdirectoryhotlist.micurrentlevelofitemonly.caption
 msgctxt "tfrmoptionsdirectoryhotlist.micurrentlevelofitemonly.caption"
-msgid "...current level of item(s) selected only"
-msgstr "...текущий уровень элемента(ов) только для выделенных"
-
-#: tfrmoptionsdirectoryhotlist.micurrentselectedoractivedirectories.caption
-msgid "current selected or active directories of active frame"
-msgstr "текущие выделенные или активные каталоги в активной панели"
-
-#: tfrmoptionsdirectoryhotlist.micutselection.caption
-msgctxt "tfrmoptionsdirectoryhotlist.micutselection.caption"
-msgid "Cut"
-msgstr "Вырезать"
-
-#: tfrmoptionsdirectoryhotlist.mideleteallhotdirs.caption
-msgctxt "tfrmoptionsdirectoryhotlist.mideleteallhotdirs.caption"
-msgid "delete all!"
-msgstr "удалить все!"
-
-#: tfrmoptionsdirectoryhotlist.mideletecompletesubmenu.caption
-msgctxt "tfrmoptionsdirectoryhotlist.mideletecompletesubmenu.caption"
-msgid "sub-menu and all its elements"
-msgstr "подменю и все его элементы"
-
-#: tfrmoptionsdirectoryhotlist.mideletejustsubmenu.caption
-msgctxt "tfrmoptionsdirectoryhotlist.mideletejustsubmenu.caption"
-msgid "just sub-menu but keep elements"
-msgstr "только подменю без элементов"
-
-#: tfrmoptionsdirectoryhotlist.mideleteselectedentry.caption
-msgctxt "tfrmoptionsdirectoryhotlist.mideleteselectedentry.caption"
-msgid "selected item"
-msgstr "выделенный элемент"
-
-#: tfrmoptionsdirectoryhotlist.mideleteselectedentry2.caption
-msgctxt "tfrmoptionsdirectoryhotlist.mideleteselectedentry2.caption"
-msgid "Delete selected item"
-msgstr "Удалить выделенный элемент"
+msgid "...current le&vel of item(s) selected only"
+msgstr "...текущий &уровень элемента(ов), только выделенные"
 
 #: tfrmoptionsdirectoryhotlist.midetectifpathexist.caption
 msgctxt "tfrmoptionsdirectoryhotlist.midetectifpathexist.caption"
-msgid "Scan all hotdir's path to validate the ones that actually exist"
-msgstr "Сканировать все пути в избранных для проверки на существование"
+msgid "Scan all &hotdir's path to validate the ones that actually exist"
+msgstr "Проверить &существование всех путей"
 
 #: tfrmoptionsdirectoryhotlist.midetectifpathtargetexist.caption
 msgctxt "tfrmoptionsdirectoryhotlist.midetectifpathtargetexist.caption"
-msgid "Scan all hotdir's path && target to validate the ones that actually exist"
-msgstr "Сканировать все пути в избранных и назначениях для проверки на существование"
+msgid "&Scan all hotdir's path && target to validate the ones that actually exist"
+msgstr "Проверить существование &всех путей и целевых путей"
 
 #: tfrmoptionsdirectoryhotlist.miexporttohotlistfile.caption
-msgid "to a Directory Hotlist file (.hotlist)"
-msgstr "в файл Избранных каталогов (.hotlist)"
+msgid "to a Directory &Hotlist file (.hotlist)"
+msgstr "в файл &Избранных каталогов (.hotlist)"
 
 #: tfrmoptionsdirectoryhotlist.miexporttototalcommanderk.caption
 msgctxt "tfrmoptionsdirectoryhotlist.miexporttototalcommanderk.caption"
-msgid "to a \"wincmd.ini\" of TC (keep existing)"
-msgstr "в файл \"wincmd.ini\" от TC (оставить существующий)"
+msgid "to a \"wincmd.ini\" of TC (&keep existing)"
+msgstr "в файл \"wincmd.ini\" TC (&оставить существующие)"
 
 #: tfrmoptionsdirectoryhotlist.miexporttototalcommandernk.caption
 msgctxt "tfrmoptionsdirectoryhotlist.miexporttototalcommandernk.caption"
-msgid "to a \"wincmd.ini\" of TC (erase existing)"
-msgstr "в файл \"wincmd.ini\" от TC (удалить существующий)"
+msgid "to a \"wincmd.ini\" of TC (&erase existing)"
+msgstr "в файл \"wincmd.ini\" TC (&удалить существующие)"
 
 #: tfrmoptionsdirectoryhotlist.migotoconfiguretcinfo1.caption
 msgctxt "tfrmoptionsdirectoryhotlist.migotoconfiguretcinfo1.caption"
-msgid "Go to configure TC related info"
-msgstr "Перейти к настройкам, связанным с TC"
+msgid "Go to &configure TC related info"
+msgstr "Перейти к &настройкам, связанным с TC"
 
 #: tfrmoptionsdirectoryhotlist.migotoconfiguretcinfo2.caption
 msgctxt "tfrmoptionsdirectoryhotlist.migotoconfiguretcinfo2.caption"
-msgid "Go to configure TC related info"
-msgstr "Перейти к настройкам, связанным с TC"
+msgid "Go to &configure TC related info"
+msgstr "Перейти к &настройкам, связанным с TC"
 
 #: tfrmoptionsdirectoryhotlist.mihotdirtestmenu.caption
 msgid "HotDirTestMenu"
 msgstr ""
 
 #: tfrmoptionsdirectoryhotlist.miimportfromhotlistfile.caption
-msgid "from a Directory Hotlist file (.hotlist)"
-msgstr "из файла Избранных каталогов (.hotlist)"
+msgid "from a Directory &Hotlist file (.hotlist)"
+msgstr "из файла &Избранных каталогов (.hotlist)"
 
 #: tfrmoptionsdirectoryhotlist.miimporttotalcommander.caption
-msgid "from \"wincmd.ini\" of TC"
-msgstr "из файла \"wincmd.ini\" от TC"
+msgid "from \"&wincmd.ini\" of TC"
+msgstr "из &файла \"wincmd.ini\" ТС"
 
-#: tfrmoptionsdirectoryhotlist.miopenallbranches.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miopenallbranches.caption"
-msgid "Open all branches"
-msgstr "Открыть все ветки"
-
-#: tfrmoptionsdirectoryhotlist.mipasteselection.caption
-msgctxt "tfrmoptionsdirectoryhotlist.mipasteselection.caption"
-msgid "Paste"
-msgstr "&Вставить"
+#: tfrmoptionsdirectoryhotlist.minavigate.caption
+msgid "&Navigate..."
+msgstr "&Навигация..."
 
 #: tfrmoptionsdirectoryhotlist.mirestorebackuphotlist.caption
-msgid "Restore a backup of Directory Hotlist"
-msgstr "Восстановить из резервной копии Избранных каталогов"
+msgid "&Restore a backup of Directory Hotlist"
+msgstr "&Восстановить Избранные каталоги из резервной копии"
 
 #: tfrmoptionsdirectoryhotlist.misavebackuphotlist.caption
-msgid "Save a backup of current Directory Hotlist"
-msgstr "Сохранить резервную копию Избранных каталогов"
+msgid "&Save a backup of current Directory Hotlist"
+msgstr "&Сохранить резервную копию Избранных каталогов"
 
 #: tfrmoptionsdirectoryhotlist.misearchandreplace.caption
 msgctxt "tfrmoptionsdirectoryhotlist.misearchandreplace.caption"
-msgid "Search and replace..."
-msgstr "Найти и заменить..."
-
-#: tfrmoptionsdirectoryhotlist.misearchandreplaceinpath.caption
-msgid "in path..."
-msgstr "в пути..."
-
-#: tfrmoptionsdirectoryhotlist.misearchandreplaceintargetpath.caption
-msgid "in target path..."
-msgstr "в целевом пути..."
-
-#: tfrmoptionsdirectoryhotlist.misearchinreplaceinbothpaths.caption
-msgid "in path and target path..."
-msgstr "в пути и целевом пути..."
-
-#: tfrmoptionsdirectoryhotlist.miseparator1.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miseparator1.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionsdirectoryhotlist.miseparator10.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miseparator10.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionsdirectoryhotlist.miseparator11.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miseparator11.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionsdirectoryhotlist.miseparator12.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miseparator12.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionsdirectoryhotlist.miseparator13.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miseparator13.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionsdirectoryhotlist.miseparator2.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miseparator2.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionsdirectoryhotlist.miseparator3.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miseparator3.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionsdirectoryhotlist.miseparator4.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miseparator4.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionsdirectoryhotlist.miseparator5.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miseparator5.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionsdirectoryhotlist.miseparator6.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miseparator6.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionsdirectoryhotlist.miseparator7.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miseparator7.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionsdirectoryhotlist.miseparator8.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miseparator8.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmoptionsdirectoryhotlist.miseparator9.caption
-msgctxt "tfrmoptionsdirectoryhotlist.miseparator9.caption"
-msgid "-"
-msgstr "-"
+msgid "Search and &replace..."
+msgstr "Найти и &заменить..."
 
 #: tfrmoptionsdirectoryhotlist.misorteverything.caption
 msgctxt "tfrmoptionsdirectoryhotlist.misorteverything.caption"
-msgid "...everything, from A to Z!"
-msgstr "...все, от А до Я!"
+msgid "...everything, from A to &Z!"
+msgstr "...все, от А до &Я!"
 
 #: tfrmoptionsdirectoryhotlist.misortsinglegroup.caption
 msgctxt "tfrmoptionsdirectoryhotlist.misortsinglegroup.caption"
-msgid "...single group of item(s) only"
-msgstr "...только одну группу элементов"
-
-#: tfrmoptionsdirectoryhotlist.misortsinglegroup2.caption
-msgctxt "tfrmoptionsdirectoryhotlist.misortsinglegroup2.caption"
-msgid "Sort single group of item(s) only"
-msgstr "Сортировать только одну группу элементов"
+msgid "...single &group of item(s) only"
+msgstr "...только &одну группу элементов"
 
 #: tfrmoptionsdirectoryhotlist.misortsinglesubmenu.caption
 msgctxt "tfrmoptionsdirectoryhotlist.misortsinglesubmenu.caption"
-msgid "...content of submenu(s) selected, no sublevel"
-msgstr "...содержимое подменю выделено, не подуровень"
+msgid "...&content of submenu(s) selected, no sublevel"
+msgstr "...&содержимое выделенного(ых) подменю, но не подуровни"
 
 #: tfrmoptionsdirectoryhotlist.misortsubmenuandsublevel.caption
 msgctxt "tfrmoptionsdirectoryhotlist.misortsubmenuandsublevel.caption"
-msgid "...content of submenu(s) selected and all sublevels"
-msgstr "...содержимое подменю выделено и все подуровни"
+msgid "...content of submenu(s) selected and &all sublevels"
+msgstr "...содержимое выделенного(ых) подменю и &все подуровни"
 
 #: tfrmoptionsdirectoryhotlist.mitestresultinghotlistmenu.caption
 msgctxt "tfrmoptionsdirectoryhotlist.mitestresultinghotlistmenu.caption"
-msgid "Test resulting menu"
-msgstr "Проверить полученное меню"
+msgid "Test resultin&g menu"
+msgstr "Проверить полученное &меню"
 
-#: tfrmoptionsdirectoryhotlist.mitypethedirectory.caption
-msgctxt "tfrmoptionsdirectoryhotlist.mitypethedirectory.caption"
-msgid "directory I will type"
-msgstr "каталог, который буду вводить вручную"
+#: tfrmoptionsdirectoryhotlist.mitweakpath.caption
+msgid "Tweak &path"
+msgstr "Изменить &путь"
 
-#: tfrmoptionsdirectoryhotlist.mitypethedirectory2.caption
-msgctxt "tfrmoptionsdirectoryhotlist.mitypethedirectory2.caption"
-msgid "Add directory I will type"
-msgstr "Добавить каталог, который буду вводить"
-
-#: tfrmoptionsdirectoryhotlist.mitypethedirectory3.caption
-msgid "Insert directory I will type"
-msgstr "Вставить каталог, который буду вводить"
+#: tfrmoptionsdirectoryhotlist.mitweaktargetpath.caption
+msgid "Tweak &target path"
+msgstr "Изменить &целевой путь"
 
 #: tfrmoptionsdirectoryhotlist.rgwheretoadd.caption
-msgid "Addition from main panel:"
-msgstr "Добавление из главной панели:"
+msgid "Addition from main panel"
+msgstr "Добавление из главной панели"
 
 #: tfrmoptionsdragdrop.cbdraganddropaskformateachtime.caption
 msgid "From all the supported formats, ask which one to use every time"
@@ -4899,7 +5024,7 @@ msgstr "При перетаскивании текста, генерироват
 
 #: tfrmoptionsdragdrop.cbshowconfirmationdialog.caption
 msgid "&Show confirmation dialog after drop"
-msgstr "По&казать диалог подтверждения после окончания перетаскивания"
+msgstr "По&казать диалог подтверждения при перетаскивании"
 
 #: tfrmoptionsdragdrop.gbtextdraganddroprelatedoptions.caption
 msgid "When drag && dropping text into panels:"
@@ -5078,7 +5203,7 @@ msgstr "Удалить..."
 
 #: tfrmoptionsfavoritetabs.btnimportexport.caption
 msgid "Import/Export"
-msgstr "Импортировать/Экспортировать"
+msgstr "Импорт/Экспорт"
 
 #: tfrmoptionsfavoritetabs.btninsert.caption
 msgctxt "tfrmoptionsfavoritetabs.btninsert.caption"
@@ -5135,7 +5260,7 @@ msgstr "Что восстановить для выбранной записи:"
 
 #: tfrmoptionsfavoritetabs.lblexistingtabstokeep.caption
 msgid "Existing tabs to keep:"
-msgstr "Существующие вкладки держать:"
+msgstr "Сохранять существующие вкладки:"
 
 #: tfrmoptionsfavoritetabs.lblsavedirhistory.caption
 msgid "Save dir history:"
@@ -5143,11 +5268,11 @@ msgstr "Сохранять историю каталогов:"
 
 #: tfrmoptionsfavoritetabs.lbltargetpanelleftsavedtabs.caption
 msgid "Tabs saved on left to be restored to:"
-msgstr "Вкладки сохранённые слева будут восстановлены:"
+msgstr "Сохранённые слева вкладки будут восстановлены:"
 
 #: tfrmoptionsfavoritetabs.lbltargetpanelrightsavedtabs.caption
 msgid "Tabs saved on right to be restored to:"
-msgstr "Вкладки сохранённые справа будут восстановлены:"
+msgstr "Сохранённые справа вкладки будут восстановлены:"
 
 #: tfrmoptionsfavoritetabs.menuitem1.caption
 msgctxt "tfrmoptionsfavoritetabs.menuitem1.caption"
@@ -5186,7 +5311,7 @@ msgstr "Свернуть все"
 #: tfrmoptionsfavoritetabs.micurrentlevelofitemonly.caption
 msgctxt "tfrmoptionsfavoritetabs.micurrentlevelofitemonly.caption"
 msgid "...current level of item(s) selected only"
-msgstr "...текущий уровень элемента(ов) только для выделенных"
+msgstr "...текущий уровень элемента(ов), только выделенные"
 
 #: tfrmoptionsfavoritetabs.micutselection.caption
 msgctxt "tfrmoptionsfavoritetabs.micutselection.caption"
@@ -5255,7 +5380,7 @@ msgstr "Вставить подменю"
 #: tfrmoptionsfavoritetabs.miopenallbranches.caption
 msgctxt "tfrmoptionsfavoritetabs.miopenallbranches.caption"
 msgid "Open all branches"
-msgstr "Открыть все ветки"
+msgstr "Развернуть все ветки"
 
 #: tfrmoptionsfavoritetabs.mipasteselection.caption
 msgctxt "tfrmoptionsfavoritetabs.mipasteselection.caption"
@@ -5325,12 +5450,12 @@ msgstr "Сортировать только одну группу элемент
 #: tfrmoptionsfavoritetabs.misortsinglesubmenu.caption
 msgctxt "tfrmoptionsfavoritetabs.misortsinglesubmenu.caption"
 msgid "...content of submenu(s) selected, no sublevel"
-msgstr "...содержимое подменю выделено, не подуровень"
+msgstr "...содержимое выделенного(ых) подменю, но не подуровни"
 
 #: tfrmoptionsfavoritetabs.misortsubmenuandsublevel.caption
 msgctxt "tfrmoptionsfavoritetabs.misortsubmenuandsublevel.caption"
 msgid "...content of submenu(s) selected and all sublevels"
-msgstr "...содержимое подменю выделено и все подуровни"
+msgstr "...содержимое выделенного(ых) подменю и все подуровни"
 
 #: tfrmoptionsfavoritetabs.mitestresultingfavoritetabsmenu.caption
 msgctxt "tfrmoptionsfavoritetabs.mitestresultingfavoritetabsmenu.caption"
@@ -5539,7 +5664,7 @@ msgstr "Запустить в терминале"
 #: tfrmoptionsfileassoc.miview.caption
 msgctxt "tfrmoptionsfileassoc.miview.caption"
 msgid "View"
-msgstr "Просмотр"
+msgstr "Просмотреть"
 
 #: tfrmoptionsfileassoc.miviewer.caption
 msgctxt "tfrmoptionsfileassoc.miviewer.caption"
@@ -5552,7 +5677,7 @@ msgstr "Просмотреть с помощью..."
 
 #: tfrmoptionsfileassoc.sbtnicon.hint
 msgid "Click me to change icon!"
-msgstr "Нажмите здесь для смены иконки"
+msgstr "Нажмите здесь для смены значка"
 
 #: tfrmoptionsfileassocextra.cbexecuteviashell.caption
 msgctxt "tfrmoptionsfileassocextra.cbexecuteviashell.caption"
@@ -5602,11 +5727,11 @@ msgstr "Показывать окно подтверждения для след
 
 #: tfrmoptionsfileoperations.cbcopyconfirmation.caption
 msgid "Cop&y operation"
-msgstr "&Копирования"
+msgstr "&Копирование"
 
 #: tfrmoptionsfileoperations.cbdeleteconfirmation.caption
 msgid "&Delete operation"
-msgstr "&Удаления"
+msgstr "&Удаление"
 
 #: tfrmoptionsfileoperations.cbdeletetotrash.caption
 msgctxt "TFRMOPTIONSFILEOPERATIONS.CBDELETETOTRASH.CAPTION"
@@ -5615,7 +5740,7 @@ msgstr "Уд&аление в Корзину (с Shift - око&нчательн�
 
 #: tfrmoptionsfileoperations.cbdeletetotrashconfirmation.caption
 msgid "D&elete to trash operation"
-msgstr "У&даления в корзину"
+msgstr "У&даление в корзину"
 
 #: tfrmoptionsfileoperations.cbdropreadonlyflag.caption
 msgctxt "TFRMOPTIONSFILEOPERATIONS.CBDROPREADONLYFLAG.CAPTION"
@@ -5624,12 +5749,7 @@ msgstr "&Сбросить флаг \"Только для чтения\""
 
 #: tfrmoptionsfileoperations.cbmoveconfirmation.caption
 msgid "&Move operation"
-msgstr "П&еремещения"
-
-#: tfrmoptionsfileoperations.cbpartialnamesearch.caption
-msgctxt "TFRMOPTIONSFILEOPERATIONS.CBPARTIALNAMESEARCH.CAPTION"
-msgid "&Search for part of file name"
-msgstr "По&иск по части имени"
+msgstr "П&еремещение"
 
 #: tfrmoptionsfileoperations.cbprocesscomments.caption
 msgctxt "TFRMOPTIONSFILEOPERATIONS.CBPROCESSCOMMENTS.CAPTION"
@@ -5649,20 +5769,11 @@ msgstr "Показ&ывать панель выбора вкладок в диа
 #: tfrmoptionsfileoperations.cbskipfileoperror.caption
 msgctxt "TFRMOPTIONSFILEOPERATIONS.CBSKIPFILEOPERROR.CAPTION"
 msgid "S&kip file operations errors and write them to log window"
-msgstr "Пропускать о&шибки при файловых операциях и выводить их в окно лога"
-
-#: tfrmoptionsfileoperations.dbtextsearch.caption
-msgid "Text search in files"
-msgstr "Поиск текста в файлах"
+msgstr "Пропускать о&шибки при файловых операциях и выводить их в окно протокола"
 
 #: tfrmoptionsfileoperations.gbexecutingoperations.caption
 msgid "Executing operations"
-msgstr "Операции исполнения"
-
-#: tfrmoptionsfileoperations.gbfilesearch.caption
-msgctxt "TFRMOPTIONSFILEOPERATIONS.GBFILESEARCH.CAPTION"
-msgid "File search"
-msgstr "Поиск файлов"
+msgstr "Выполнение операций"
 
 #: tfrmoptionsfileoperations.gbuserinterface.caption
 msgid "User interface"
@@ -5680,10 +5791,6 @@ msgstr "Размер буфера для вычисления &хэш (Кб):"
 msgid "Show operations progress &initially in"
 msgstr "Показыват&ь прогресс операций в"
 
-#: tfrmoptionsfileoperations.lblsearchdefaulttemplate.caption
-msgid "Default search template:"
-msgstr "Шаблон поиска по умолчанию:"
-
 #: tfrmoptionsfileoperations.lbltypeofduplicatedrename.caption
 msgctxt "tfrmoptionsfileoperations.lbltypeofduplicatedrename.caption"
 msgid "Duplicated name auto-rename style:"
@@ -5693,16 +5800,6 @@ msgstr "Стиль автопереименования совпадающих �
 msgctxt "TFRMOPTIONSFILEOPERATIONS.LBLWIPEPASSNUMBER.CAPTION"
 msgid "&Number of wipe passes:"
 msgstr "Число перезаписе&й при стирании (Wipe):"
-
-#: tfrmoptionsfileoperations.rbusemmapinsearch.caption
-msgctxt "TFRMOPTIONSFILEOPERATIONS.RBUSEMMAPINSEARCH.CAPTION"
-msgid "Use memory mapping for search te&xt in files"
-msgstr "Использовать отобра&жение в память"
-
-#: tfrmoptionsfileoperations.rbusestreaminsearch.caption
-msgctxt "TFRMOPTIONSFILEOPERATIONS.RBUSESTREAMINSEARCH.CAPTION"
-msgid "&Use stream for search text in files"
-msgstr "Испо&льзовать поток"
 
 #: tfrmoptionsfilepanelscolors.btnbackcolor.caption
 msgctxt "TFRMOPTIONSFILEPANELSCOLORS.BTNBACKCOLOR.CAPTION"
@@ -5766,7 +5863,7 @@ msgstr "Сбросить на умолчания DC"
 #: tfrmoptionsfilepanelscolors.cballowovercolor.caption
 msgctxt "tfrmoptionsfilepanelscolors.cballowovercolor.caption"
 msgid "Allow Overcolor"
-msgstr "Раскраска файлов"
+msgstr "Разрешить наложение цвета"
 
 #: tfrmoptionsfilepanelscolors.cbbuseframecursor.caption
 msgctxt "TFRMOPTIONSFILEPANELSCOLORS.CBBUSEFRAMECURSOR.CAPTION"
@@ -5853,6 +5950,57 @@ msgctxt "TFRMOPTIONSFILEPANELSCOLORS.LBLTEXTCOLOR.CAPTION"
 msgid "T&ext Color:"
 msgstr "&Текст:"
 
+#: tfrmoptionsfilesearch.cbinitiallyclearfilemask.caption
+msgid "When launching file search, clear file mask filter"
+msgstr "При запуске поиска очистить фильтр маски файла"
+
+#: tfrmoptionsfilesearch.cbpartialnamesearch.caption
+msgid "&Search for part of file name"
+msgstr "По&иск по части имени"
+
+#: tfrmoptionsfilesearch.cbshowmenubarinfindfiles.caption
+msgid "Show menu bar in \"Find files\""
+msgstr "Показать меню окна в \"Поиск файлов\""
+
+#: tfrmoptionsfilesearch.dbtextsearch.caption
+msgid "Text search in files"
+msgstr "Поиск текста в файлах"
+
+#: tfrmoptionsfilesearch.gbfilesearch.caption
+msgctxt "tfrmoptionsfilesearch.gbfilesearch.caption"
+msgid "File search"
+msgstr "Поиск файлов"
+
+#: tfrmoptionsfilesearch.lblnewsearchfilters.caption
+msgid "Current filters with \"New search\" button:"
+msgstr "Текущие фильтры после нажатия \"Новый поиск\":"
+
+#: tfrmoptionsfilesearch.lblsearchdefaulttemplate.caption
+msgid "Default search template:"
+msgstr "Шаблон поиска по умолчанию:"
+
+#: tfrmoptionsfilesearch.rbusemmapinsearch.caption
+msgid "Use memory mapping for search te&xt in files"
+msgstr "Использовать отобра&жение в память"
+
+#: tfrmoptionsfilesearch.rbusestreaminsearch.caption
+msgid "&Use stream for search text in files"
+msgstr "Испо&льзовать поток"
+
+#: tfrmoptionsfilesviews.btnaddattribute.caption
+msgctxt "tfrmoptionsfilesviews.btnaddattribute.caption"
+msgid "&Add"
+msgstr "&Добавить"
+
+#: tfrmoptionsfilesviews.btnattrshelp.caption
+msgctxt "tfrmoptionsfilesviews.btnattrshelp.caption"
+msgid "&Help"
+msgstr "Помощ&ь"
+
+#: tfrmoptionsfilesviews.cbdblclicktoparent.caption
+msgid "Enable changing to &parent folder when double-clicking on empty part of file view"
+msgstr "Разрешить переход в родительский каталог двойным кликом по свободному месту в файловой панели"
+
 #: tfrmoptionsfilesviews.cbdelayloadingtabs.caption
 msgid "Do&n't load file list until a tab is activated"
 msgstr "&Не загружать список файлов, пока вкладка активируется"
@@ -5868,7 +6016,7 @@ msgstr "По&дсвечивать новые и изменённые файлы"
 
 #: tfrmoptionsfilesviews.cbinplacerename.caption
 msgid "Enable inplace &renaming when clicking twice on a name"
-msgstr "Включить &переименование прямо в строке по двойному щелчку по имени"
+msgstr "Включить &переименование прямо в строке по двойному клику по имени"
 
 #: tfrmoptionsfilesviews.cblistfilesinthread.caption
 msgctxt "TFRMOPTIONSFILESVIEWS.CBLISTFILESINTHREAD.CAPTION"
@@ -5878,25 +6026,44 @@ msgstr "Загру&жать список файлов в отдельном по
 #: tfrmoptionsfilesviews.cbloadiconsseparately.caption
 msgctxt "TFRMOPTIONSFILESVIEWS.CBLOADICONSSEPARATELY.CAPTION"
 msgid "Load icons af&ter file list"
-msgstr "За&гружать иконки после списка файлов"
+msgstr "За&гружать значки после списка файлов"
 
 #: tfrmoptionsfilesviews.cbshowsystemfiles.caption
 msgid "Show s&ystem and hidden files"
-msgstr "Показывать систе&мные файлы"
+msgstr "Показывать систе&мные и скрытые файлы"
 
 #: tfrmoptionsfilesviews.cbspacemovesdown.caption
 msgctxt "TFRMOPTIONSFILESVIEWS.CBSPACEMOVESDOWN.CAPTION"
 msgid "&When selecting files with <SPACEBAR>, move down to next file (as with <INSERT>)"
 msgstr "При в&ыделении файлов пробелом перемещать курсор на следующий файл"
 
+#: tfrmoptionsfilesviews.chkmarkmaskfilterwindows.caption
+msgctxt "tfrmoptionsfilesviews.chkmarkmaskfilterwindows.caption"
+msgid "Windows style filter when marking files (\"*.*\" also select files without extension, etc.)"
+msgstr "Фильтр для файлов в стиле Windows (\"*.*\" выделяет также файлы без расширения и т.д.)"
+
+#: tfrmoptionsfilesviews.chkmarkmaskshowattribute.caption
+msgctxt "tfrmoptionsfilesviews.chkmarkmaskshowattribute.caption"
+msgid "Use an independent attribute filter in mask input dialog each time"
+msgstr "Каждый раз показывать в окне ввода независимый фильтр маски атрибутов"
+
 #: tfrmoptionsfilesviews.gbformatting.caption
 msgid "Formatting"
 msgstr "Форматирование"
+
+#: tfrmoptionsfilesviews.gbmarking.caption
+msgid "Marking/Unmarking entries"
+msgstr "Выделение/снятие выделения"
 
 #: tfrmoptionsfilesviews.gbsorting.caption
 msgctxt "TFRMOPTIONSFILESVIEWS.GBSORTING.CAPTION"
 msgid "Sorting"
 msgstr "Сортировка"
+
+#: tfrmoptionsfilesviews.lbattributemask.caption
+msgctxt "tfrmoptionsfilesviews.lbattributemask.caption"
+msgid "Default attribute mask value to use:"
+msgstr "Маска атрибута по умолчанию:"
 
 #: tfrmoptionsfilesviews.lblcasesensitivity.caption
 msgid "Case s&ensitivity:"
@@ -5980,7 +6147,7 @@ msgstr "&Маска:"
 #: tfrmoptionsfiletypescolors.lblcategoryname.caption
 msgctxt "TFRMOPTIONSFILETYPESCOLORS.LBLCATEGORYNAME.CAPTION"
 msgid "Category &name:"
-msgstr "&Наименование:"
+msgstr "&Имя:"
 
 #: tfrmoptionsfonts.btnpatheditfnt.caption
 msgctxt "tfrmoptionsfonts.btnpatheditfnt.caption"
@@ -6043,7 +6210,7 @@ msgstr "О&сновной"
 
 #: tfrmoptionsfonts.lblpatheditfont.caption
 msgid "Path font"
-msgstr "Имя текущего &каталога"
+msgstr "Текущий &путь"
 
 #: tfrmoptionsfonts.lblsearchresultsfont.caption
 msgid "Search results font"
@@ -6059,18 +6226,67 @@ msgctxt "TFRMOPTIONSFONTS.LBLVIEWERFONT.CAPTION"
 msgid "&Viewer font"
 msgstr "Прос&мотрщик"
 
-#: tfrmoptionshotkeys.btnaddhotkey.caption
+#: tfrmoptionshotkeys.actaddhotkey.caption
+msgctxt "tfrmoptionshotkeys.actaddhotkey.caption"
 msgid "Add &hotkey"
 msgstr "&Добавить"
 
-#: tfrmoptionshotkeys.btndeletehotkey.caption
+#: tfrmoptionshotkeys.actcopy.caption
+msgctxt "tfrmoptionshotkeys.actcopy.caption"
+msgid "Copy"
+msgstr "&Копировать"
+
+#: tfrmoptionshotkeys.actdelete.caption
+msgctxt "tfrmoptionshotkeys.actdelete.caption"
+msgid "Delete"
+msgstr "Удалить"
+
+#: tfrmoptionshotkeys.actdeletehotkey.caption
+msgctxt "tfrmoptionshotkeys.actdeletehotkey.caption"
 msgid "&Delete hotkey"
 msgstr "&Удалить"
 
-#: tfrmoptionshotkeys.btnedithotkey.caption
-msgctxt "tfrmoptionshotkeys.btnedithotkey.caption"
+#: tfrmoptionshotkeys.actedithotkey.caption
+msgctxt "tfrmoptionshotkeys.actedithotkey.caption"
 msgid "&Edit hotkey"
 msgstr "&Редактировать"
+
+#: tfrmoptionshotkeys.actnextcategory.caption
+msgid "Next category"
+msgstr "Следующая категория"
+
+#: tfrmoptionshotkeys.actpopupfilerelatedmenu.caption
+msgid "Make popup the file related menu"
+msgstr "Меню действий для набора"
+
+#: tfrmoptionshotkeys.actpreviouscategory.caption
+msgid "Previous category"
+msgstr "Предыдущая категория"
+
+#: tfrmoptionshotkeys.actrename.caption
+msgctxt "tfrmoptionshotkeys.actrename.caption"
+msgid "Rename"
+msgstr "Переименовать"
+
+#: tfrmoptionshotkeys.actrestoredefault.caption
+msgid "Restore DC default"
+msgstr "Восстановить настройки DC"
+
+#: tfrmoptionshotkeys.actsavenow.caption
+msgid "Save now"
+msgstr "Сохранить сейчас"
+
+#: tfrmoptionshotkeys.actsortbycommand.caption
+msgid "Sort by command name"
+msgstr "По имени команды"
+
+#: tfrmoptionshotkeys.actsortbyhotkeysgrouped.caption
+msgid "Sort by hotkeys (grouped)"
+msgstr "По горячим клавишам (группировать)"
+
+#: tfrmoptionshotkeys.actsortbyhotkeysoneperline.caption
+msgid "Sort by hotkeys (one per row)"
+msgstr "По горячим клавишам (одна на строку)"
 
 #: tfrmoptionshotkeys.lbfilter.caption
 msgctxt "TFRMOPTIONSHOTKEYS.LBFILTER.CAPTION"
@@ -6092,35 +6308,27 @@ msgctxt "TFRMOPTIONSHOTKEYS.LBLSCFILES.CAPTION"
 msgid "&Shortcut files:"
 msgstr "&Набор горячих клавиш:"
 
-#: tfrmoptionshotkeys.stgcommands.columns[0].title.caption
-msgctxt "tfrmoptionshotkeys.stgcommands.columns[0].title.caption"
+#: tfrmoptionshotkeys.lblsortorder.caption
+msgid "So&rt order:"
+msgstr "Порядок &сортировки:"
+
+#: tfrmoptionshotkeys.micategories.caption
+msgid "Categories"
+msgstr "Категории"
+
+#: tfrmoptionshotkeys.micommands.caption
+msgctxt "tfrmoptionshotkeys.micommands.caption"
 msgid "Command"
 msgstr "Команда"
 
-#: tfrmoptionshotkeys.stgcommands.columns[1].title.caption
-msgctxt "tfrmoptionshotkeys.stgcommands.columns[1].title.caption"
-msgid "Hotkeys"
-msgstr "Горячие клавиши"
+#: tfrmoptionshotkeys.miseparator1.caption
+msgctxt "tfrmoptionshotkeys.miseparator1.caption"
+msgid "-"
+msgstr "-"
 
-#: tfrmoptionshotkeys.stgcommands.columns[2].title.caption
-msgctxt "tfrmoptionshotkeys.stgcommands.columns[2].title.caption"
-msgid "Description"
-msgstr "Описание"
-
-#: tfrmoptionshotkeys.stghotkeys.columns[0].title.caption
-msgctxt "TFRMOPTIONSHOTKEYS.STGHOTKEYS.COLUMNS[0].TITLE.CAPTION"
-msgid "Hotkey"
-msgstr "Горячая клавиша"
-
-#: tfrmoptionshotkeys.stghotkeys.columns[1].title.caption
-msgctxt "TFRMOPTIONSHOTKEYS.STGHOTKEYS.COLUMNS[1].TITLE.CAPTION"
-msgid "Parameters"
-msgstr "Параметры"
-
-#: tfrmoptionshotkeys.stghotkeys.columns[2].title.caption
-msgctxt "TFRMOPTIONSHOTKEYS.STGHOTKEYS.COLUMNS[2].TITLE.CAPTION"
-msgid "Controls"
-msgstr "Элементы"
+#: tfrmoptionshotkeys.misortorder.caption
+msgid "Sort order"
+msgstr "Порядок сортировки"
 
 #: tfrmoptionsicons.cbiconsexclude.caption
 msgctxt "TFRMOPTIONSICONS.CBICONSEXCLUDE.CAPTION"
@@ -6136,33 +6344,44 @@ msgctxt "tfrmoptionsicons.cbiconsinmenussize.text"
 msgid "16x16"
 msgstr "16x16"
 
+#: tfrmoptionsicons.cbiconsonbuttons.caption
+msgid "Show icons on buttons"
+msgstr "Показывать значки на кнопках"
+
 #: tfrmoptionsicons.cbiconsshowoverlay.caption
 msgctxt "TFRMOPTIONSICONS.CBICONSSHOWOVERLAY.CAPTION"
 msgid "Show o&verlay icons, e.g. for links"
 msgstr "Показывать овер&лейные значки (например, для ярлыков)"
 
-#: tfrmoptionsicons.cbiconssize.text
-msgctxt "TFRMOPTIONSICONS.CBICONSSIZE.TEXT"
-msgid "16x16"
-msgstr "16x16"
-
 #: tfrmoptionsicons.gbdisablespecialicons.caption
 msgid "Disable special icons"
-msgstr "Отключить загрузку специальных иконок"
-
-#: tfrmoptionsicons.gbiconsinmenus.caption
-msgid "Icons in menus"
-msgstr "Значки в меню"
+msgstr "Отключить загрузку специальных значков"
 
 #: tfrmoptionsicons.gbiconssize.caption
 msgctxt "TFRMOPTIONSICONS.GBICONSSIZE.CAPTION"
 msgid " Icon size "
 msgstr " Размер значков "
 
+#: tfrmoptionsicons.gbicontheme.caption
+msgid "Icon theme"
+msgstr "Тема значков"
+
+#: tfrmoptionsicons.gbshowicons.caption
+msgid "Show icons"
+msgstr "Показывать значки"
+
 #: tfrmoptionsicons.gbshowiconsmode.caption
 msgctxt "TFRMOPTIONSICONS.GBSHOWICONSMODE.CAPTION"
 msgid " Show icons to the left of the filename "
 msgstr " Показ значков, связанных с типом файлов "
+
+#: tfrmoptionsicons.lbldiskpanel.caption
+msgid "Disk panel:"
+msgstr "Панель дисков:"
+
+#: tfrmoptionsicons.lblfilepanel.caption
+msgid "File panel:"
+msgstr "Панель файлов:"
 
 #: tfrmoptionsicons.rbiconsshowall.caption
 msgctxt "TFRMOPTIONSICONS.RBICONSSHOWALL.CAPTION"
@@ -6275,7 +6494,7 @@ msgstr "Ко&мандная строка"
 #: tfrmoptionslayout.cbshowcurdir.caption
 msgctxt "TFRMOPTIONSLAYOUT.CBSHOWCURDIR.CAPTION"
 msgid "Show current director&y"
-msgstr "Имя тек&ущего каталога"
+msgstr "Тек&ущий путь"
 
 #: tfrmoptionslayout.cbshowdiskpanel.caption
 msgctxt "TFRMOPTIONSLAYOUT.CBSHOWDISKPANEL.CAPTION"
@@ -6328,7 +6547,7 @@ msgstr "В&кладки каталогов"
 #: tfrmoptionslayout.cbtermwindow.caption
 msgctxt "TFRMOPTIONSLAYOUT.CBTERMWINDOW.CAPTION"
 msgid "Show te&rminal window"
-msgstr "Консол&ь"
+msgstr "Окно термина&ла"
 
 #: tfrmoptionslayout.cbtwodiskpanels.caption
 msgctxt "TFRMOPTIONSLAYOUT.CBTWODISKPANELS.CAPTION"
@@ -6348,11 +6567,11 @@ msgstr "Некоторые функции для выбора подходяще
 #: tfrmoptionslog.btnviewlogfile.hint
 msgctxt "tfrmoptionslog.btnviewlogfile.hint"
 msgid "View log file content"
-msgstr "Просмотреть содержимое файла отчёта"
+msgstr "Просмотреть содержимое файла протокола"
 
 #: tfrmoptionslog.cbincludedateinlogfilename.caption
 msgid "Include date in log filename"
-msgstr "Добавлять дату в имя файла отчёта"
+msgstr "Добавлять дату в имя файла протокола"
 
 #: tfrmoptionslog.cblogarcop.caption
 msgctxt "TFRMOPTIONSLOG.CBLOGARCOP.CAPTION"
@@ -6386,7 +6605,7 @@ msgstr "О&шибки"
 #: tfrmoptionslog.cblogfile.caption
 msgctxt "TFRMOPTIONSLOG.CBLOGFILE.CAPTION"
 msgid "C&reate a log file:"
-msgstr "Соз&дать файл отчёта:"
+msgstr "Соз&дать файл протокола:"
 
 #: tfrmoptionslog.cbloginfo.caption
 msgctxt "TFRMOPTIONSLOG.CBLOGINFO.CAPTION"
@@ -6449,7 +6668,7 @@ msgstr "&Удалить эскизы для отсутствующих файл�
 #: tfrmoptionsmisc.btnviewconfigfile.hint
 msgctxt "tfrmoptionsmisc.btnviewconfigfile.hint"
 msgid "View log file content"
-msgstr "Просмотреть содержимое файла отчёта"
+msgstr "Просмотреть содержимое файла протокола"
 
 #: tfrmoptionsmisc.chkdesccreateunicode.caption
 msgctxt "tfrmoptionsmisc.chkdesccreateunicode.caption"
@@ -6460,14 +6679,10 @@ msgstr "Создавать новые с кодировкой:"
 msgid "Always &go to the root of a drive when changing drives"
 msgstr "При смене диска всегда пере&ходить в корневой каталог"
 
-#: tfrmoptionsmisc.chkmarkmaskfilterwindows.caption
-msgid "Windows style filter when marking files (\"*.*\" also select files without extension, etc.)"
-msgstr "Фильтр для файлов в стиле Windows (\"*.*\" выделяет также файлы без расширения и т.д.)"
-
 #: tfrmoptionsmisc.chkshowwarningmessages.caption
 msgctxt "tfrmoptionsmisc.chkshowwarningmessages.caption"
 msgid "Show &warning messages (\"OK\" button only)"
-msgstr "По&казывать не критические сообщения об ошибках (с одной кнопкой \"ОК\")"
+msgstr "По&казывать некритические сообщения об ошибках (с одной кнопкой \"ОК\")"
 
 #: tfrmoptionsmisc.chkthumbsave.caption
 msgctxt "tfrmoptionsmisc.chkthumbsave.caption"
@@ -6648,7 +6863,7 @@ msgstr "&Начало (имя должно начинаться с набран�
 #: tfrmoptionsquicksearchfilter.cbexactending.caption
 msgctxt "TFRMOPTIONSQUICKSEARCHFILTER.CBEXACTENDING.CAPTION"
 msgid "En&ding (last character before a typed dot . must match)"
-msgstr "&Конец (последние символы до набранной точки '.' должны совпадать)"
+msgstr "&Конец (последние символы до набранной точки \".\" должны совпадать)"
 
 #: tfrmoptionsquicksearchfilter.cgpoptions.caption
 msgctxt "TFRMOPTIONSQUICKSEARCHFILTER.CGPOPTIONS.CAPTION"
@@ -6670,12 +6885,12 @@ msgstr "Искать"
 
 #: tfrmoptionstabs.cbkeeprenamednamebacktonormal.caption
 msgid "Keep renamed name when unlocking a tab"
-msgstr "Сохранять переименованное название при разблокировании вкладки"
+msgstr "Сохранять изменённое имя при разблокировании вкладки"
 
 #: tfrmoptionstabs.cbtabsactivateonclick.caption
 msgctxt "TFRMOPTIONSTABS.CBTABSACTIVATEONCLICK.CAPTION"
 msgid "Activate target &panel when clicking on one of its Tabs"
-msgstr "Делат&ь панель активной при щелчке по одной из её вкладок"
+msgstr "Делат&ь панель активной при клике по одной из её вкладок"
 
 #: tfrmoptionstabs.cbtabsalwaysvisible.caption
 msgctxt "TFRMOPTIONSTABS.CBTABSALWAYSVISIBLE.CAPTION"
@@ -6745,7 +6960,7 @@ msgstr "символов"
 
 #: tfrmoptionstabs.lbltabsactionondoubleclick.caption
 msgid "Action to do when double click on a tab:"
-msgstr "Действие по двойному щелчку на вкладке:"
+msgstr "Действие по двойному клику на вкладке:"
 
 #: tfrmoptionstabs.lbltabsposition.caption
 msgctxt "TFRMOPTIONSTABS.LBLTABSPOSITION.CAPTION"
@@ -6778,15 +6993,15 @@ msgstr "Перейти к настройкам Избранных Вкладок
 
 #: tfrmoptionstabsextra.cbgotoconfigaftersave.caption
 msgid "Goto to Favorite Tabs Configuration after saving a new one"
-msgstr "Перейти к настройкам Избранных Вкладок после сохранения новой вкладки"
+msgstr "Перейти к настройкам Избранных Вкладок после сохранения новых"
 
 #: tfrmoptionstabsextra.cbusefavoritetabsextraoptions.caption
 msgid "Enable Favorite Tabs extra options (select target side when restore, etc.)"
-msgstr "Включить дополнительные параметры Избранных Вкладок (выбор целевой стороны при восстановлении и т.д.)"
+msgstr "Включить дополнительные параметры Избранных Вкладок (выбор стороны при восстановлении и т.д.)"
 
 #: tfrmoptionstabsextra.gbdefaulttabsavedrestoration.caption
 msgid "Default extra settings when saving new Favorite Tabs:"
-msgstr "Дополнительные настройки по умолчанию для новой Избранной Вкладки:"
+msgstr "Дополнительные настройки по умолчанию для новых Избранных Вкладок:"
 
 #: tfrmoptionstabsextra.gbtabs.caption
 msgid "Folder tabs headers extra"
@@ -6794,7 +7009,7 @@ msgstr "Дополнительные параметры Избранных Вк�
 
 #: tfrmoptionstabsextra.lbldefaultexistingtabstokeep.caption
 msgid "When restoring tab, existing tabs to keep:"
-msgstr "При восстановлении вкладки, существующие вкладки держать:"
+msgstr "Сохранить существующие вкладки при восстановлении:"
 
 #: tfrmoptionstabsextra.lbldefaulttargetpanelleftsaved.caption
 msgid "Tabs saved on left will be restored to:"
@@ -6888,7 +7103,7 @@ msgstr "&Редактировать"
 #: tfrmoptionstoolbar.btninsertbutton.caption
 msgctxt "tfrmoptionstoolbar.btninsertbutton.caption"
 msgid "&Insert new button"
-msgstr "&Вставить"
+msgstr "Доба&вить"
 
 #: tfrmoptionstoolbar.btnopencmddlg.caption
 msgid "Select"
@@ -7000,19 +7215,19 @@ msgstr "Добавить панель со ВСЕМИ командами DC"
 
 #: tfrmoptionstoolbar.miaddexternalcommandsubmenu.caption
 msgid "for an external command"
-msgstr "для внешней команды"
+msgstr "внешнюю команду"
 
 #: tfrmoptionstoolbar.miaddinternalcommandsubmenu.caption
 msgid "for an internal command"
-msgstr "для внутренней команды"
+msgstr "внутреннюю команду"
 
 #: tfrmoptionstoolbar.miaddseparatorsubmenu.caption
 msgid "for a separator"
-msgstr "для разделителя"
+msgstr "разделитель"
 
 #: tfrmoptionstoolbar.miaddsubtoolbarsubmenu.caption
 msgid "for a sub-tool bar"
-msgstr "для под-панели инструментов"
+msgstr "меню"
 
 #: tfrmoptionstoolbar.mibackup.caption
 msgctxt "tfrmoptionstoolbar.mibackup.caption"
@@ -7046,12 +7261,12 @@ msgstr "в файл TC .BAR (удалить существующий)"
 #: tfrmoptionstoolbar.miexportcurrenttotcinikeep.caption
 msgctxt "tfrmoptionstoolbar.miexportcurrenttotcinikeep.caption"
 msgid "to a \"wincmd.ini\" of TC (keep existing)"
-msgstr "в файл \"wincmd.ini\" от TC (оставить существующий)"
+msgstr "в файл \"wincmd.ini\" TC (оставить существующий)"
 
 #: tfrmoptionstoolbar.miexportcurrenttotcininokeep.caption
 msgctxt "tfrmoptionstoolbar.miexportcurrenttotcininokeep.caption"
 msgid "to a \"wincmd.ini\" of TC (erase existing)"
-msgstr "в файл \"wincmd.ini\" от TC (удалить существующий)"
+msgstr "в файл \"wincmd.ini\" TC (удалить существующий)"
 
 #: tfrmoptionstoolbar.miexportseparator1.caption
 msgctxt "tfrmoptionstoolbar.miexportseparator1.caption"
@@ -7099,12 +7314,12 @@ msgstr "в файл TC .BAR (удалить существующий)"
 #: tfrmoptionstoolbar.miexporttoptotcinikeep.caption
 msgctxt "tfrmoptionstoolbar.miexporttoptotcinikeep.caption"
 msgid "to a \"wincmd.ini\" of TC (keep existing)"
-msgstr "в файл \"wincmd.ini\" от TC (оставить существующий)"
+msgstr "в файл \"wincmd.ini\" TC (оставить существующий)"
 
 #: tfrmoptionstoolbar.miexporttoptotcininokeep.caption
 msgctxt "tfrmoptionstoolbar.miexporttoptotcininokeep.caption"
 msgid "to a \"wincmd.ini\" of TC (erase existing)"
-msgstr "в файл \"wincmd.ini\" от TC (удалить существующий)"
+msgstr "в файл \"wincmd.ini\" TC (удалить существующий)"
 
 #: tfrmoptionstoolbar.miexternalcommandaftercurrent.caption
 msgctxt "tfrmoptionstoolbar.miexternalcommandaftercurrent.caption"
@@ -7133,7 +7348,7 @@ msgstr "Импорт..."
 
 #: tfrmoptionstoolbar.miimportbackup.caption
 msgid "Restore a backup of Toolbar"
-msgstr "Восстановить из резервной копии Панели инструментов"
+msgstr "Восстановить Панель инструментов из резервной копии"
 
 #: tfrmoptionstoolbar.miimportbackupaddcurrent.caption
 msgctxt "tfrmoptionstoolbar.miimportbackupaddcurrent.caption"
@@ -7225,7 +7440,7 @@ msgstr "заменить наивысшую панель инструменто�
 
 #: tfrmoptionstoolbar.miimporttcini.caption
 msgid "from \"wincmd.ini\" of TC..."
-msgstr "из файла \"wincmd.ini\" от TC..."
+msgstr "из файла \"wincmd.ini\" TC..."
 
 #: tfrmoptionstoolbar.miimporttciniaddcurrent.caption
 msgctxt "tfrmoptionstoolbar.miimporttciniaddcurrent.caption"
@@ -7828,7 +8043,7 @@ msgstr "Аа"
 
 #: tfrmquicksearch.sbcasesensitive.hint
 msgid "Case Sensitive"
-msgstr "Регистрозависимый"
+msgstr "Учитывать регистр"
 
 #: tfrmquicksearch.sbdirectories.caption
 msgid "D"
@@ -7854,7 +8069,7 @@ msgstr "{"
 
 #: tfrmquicksearch.sbmatchbeginning.hint
 msgid "Match Beginning"
-msgstr "Начало"
+msgstr "Совпадает с началом"
 
 #: tfrmquicksearch.sbmatchending.caption
 msgid "}"
@@ -7862,7 +8077,7 @@ msgstr "}"
 
 #: tfrmquicksearch.sbmatchending.hint
 msgid "Match Ending"
-msgstr "Конец"
+msgstr "Совпадает с концом"
 
 #: tfrmquicksearch.tglfilter.caption
 msgctxt "tfrmquicksearch.tglfilter.caption"
@@ -8210,6 +8425,10 @@ msgstr "&ОК"
 msgid "Create symbolic link"
 msgstr "Создать символьную ссылку"
 
+#: tfrmsymlink.chkuserelativepath.caption
+msgid "Use &relative path when possible"
+msgstr "&Относительный путь если возможно"
+
 #: tfrmsymlink.lblexistingfile.caption
 msgctxt "TFRMSYMLINK.LBLEXISTINGFILE.CAPTION"
 msgid "&Destination that the link will point to"
@@ -8469,7 +8688,7 @@ msgstr "Поддерживает &шифрование"
 
 #: tfrmtweakplugin.cbpk_caps_hide.caption
 msgid "Sho&w as normal files (hide packer icon)"
-msgstr "Пока&зывать как нормальные файлы (скрывать иконку архива)"
+msgstr "Пока&зывать как нормальные файлы (скрывать значок архива)"
 
 #: tfrmtweakplugin.cbpk_caps_mempack.caption
 msgid "Supports pac&king in memory"
@@ -8536,6 +8755,10 @@ msgstr "О просмотрщике..."
 #: tfrmviewer.actabout.hint
 msgid "Displays the About message"
 msgstr "Показывает сообщение о..."
+
+#: tfrmviewer.actchangeencoding.caption
+msgid "Change encoding"
+msgstr "Сменить кодировку"
 
 #: tfrmviewer.actcopyfile.caption
 msgctxt "TFRMVIEWER.ACTCOPYFILE.CAPTION"
@@ -9000,6 +9223,32 @@ msgctxt "TWFXPLUGINCOPYMOVEOPERATIONOPTIONSUI.LBLFILEEXISTS.CAPTION"
 msgid "When file exists"
 msgstr "Если файл существует"
 
+#: uexifreader.rsdatetimeoriginal
+msgid "Date taken"
+msgstr "Дата съёмки"
+
+#: uexifreader.rsimageheight
+msgctxt "uexifreader.rsimageheight"
+msgid "Height"
+msgstr "Высота"
+
+#: uexifreader.rsimagewidth
+msgctxt "uexifreader.rsimagewidth"
+msgid "Width"
+msgstr "Ширина"
+
+#: uexifreader.rsmake
+msgid "Manufacturer"
+msgstr "Производитель"
+
+#: uexifreader.rsmodel
+msgid "Camera model"
+msgstr "Модель камеры"
+
+#: uexifreader.rsorientation
+msgid "Orientation"
+msgstr "Ориентация"
+
 #: ulng.msgtrytolocatecrcfile
 msgid ""
 "This file cannot be found and could help to validate final combination of files:\n"
@@ -9062,13 +9311,17 @@ msgstr "Проверка контрольной суммы"
 msgid "Total:"
 msgstr "Всего:"
 
+#: ulng.rsclearfiltersornot
+msgid "Do you want to clear filters for this new search?"
+msgstr "Хотите очистить фильтры для этого нового поиска?"
+
 #: ulng.rsclipboardcontainsinvalidtoolbardata
 msgid "Clipboard doesn't contain any valid toolbar data."
 msgstr "Буфер обмена не содержит данных панели инструментов"
 
 #: ulng.rscmdcategorylistinorder
 msgid "All;Active Panel;Left Panel;Right Panel;File Operations;Configuration;Network;Miscellaneous;Parallel Port;Print;Mark;Security;Clipboard;FTP;Navigation;Help;Window;Command Line;Tools;View;User;Tabs;Sorting;Log"
-msgstr "Все;Активная панель;Левая панель;Правая панель;Файловые операции;Настройка;Сеть;Разное;Параллельный порт;Печать;Выделение; Безопасности;Буфер обмена;FTP;Навигация;Помощь;Окно;Командная строка;Инструменты;Вид;Пользователь;Вкладки;Сортировка;Протокол"
+msgstr "Все;Активная панель;Левая панель;Правая панель;Файловые операции;Настройка;Сеть;Разное;Параллельный порт;Печать;Выделение;Безопасность;Буфер обмена;FTP;Навигация;Помощь;Окно;Командная строка;Инструменты;Вид;Пользователь;Вкладки;Сортировка;Протокол"
 
 #: ulng.rscmdkindofsort
 msgid "Legacy sorted;A-Z sorted"
@@ -9134,7 +9387,7 @@ msgstr "Настроить файловые ассоциации"
 
 #: ulng.rsconfirmexecution
 msgid "Confirming command line and parameters"
-msgstr "Подтвердить командную строку и параметры"
+msgstr "Подтверждение командной строки и параметров"
 
 #: ulng.rscopynametemplate
 msgid "Copy (%d) %s"
@@ -9219,20 +9472,24 @@ msgid "&Continue"
 msgstr "&Продолжить"
 
 #: ulng.rsdlgbuttoncopyinto
-msgid "Copy &Into"
-msgstr "&Копировать в"
+msgid "&Merge"
+msgstr "&Объединить"
 
 #: ulng.rsdlgbuttoncopyintoall
-msgid "Copy Into &All"
-msgstr "К&опировать в (для всех)"
+msgid "Mer&ge All"
+msgstr "Объ&единить (для всех)"
 
 #: ulng.rsdlgbuttonexitprogram
 msgid "E&xit program"
 msgstr "&Выйти из программы"
 
+#: ulng.rsdlgbuttonignore
+msgid "Ig&nore"
+msgstr "Игнорировать"
+
 #: ulng.rsdlgbuttonignoreall
 msgid "I&gnore All"
-msgstr "И&гнорировать всех"
+msgstr "И&гнорировать все"
 
 #: ulng.rsdlgbuttonno
 msgid "&No"
@@ -9283,6 +9540,10 @@ msgstr "П&родолжить"
 #: ulng.rsdlgbuttonretry
 msgid "Re&try"
 msgstr "Пов&торить"
+
+#: ulng.rsdlgbuttonretryadmin
+msgid "As Ad&ministrator"
+msgstr "Как &Администратор"
 
 #: ulng.rsdlgbuttonskip
 msgid "&Skip"
@@ -9408,7 +9669,7 @@ msgstr "Запустить в терминале и оставить откры�
 
 #: ulng.rsfavtabspanelsideselection
 msgid "Left;Right;Active;Inactive;Both;None"
-msgstr "Слева;Справа;В активной;В неактивной;Обе;Нет"
+msgstr "Слева;Справа;В активной;В неактивной;В обеих;Нет"
 
 #: ulng.rsfavtabssavedirhistory
 msgid "No;Yes"
@@ -9419,8 +9680,8 @@ msgid "Exported_from_DC"
 msgstr ""
 
 #: ulng.rsfileopdirectoryexistsoptions
-msgid "Ask;Overwrite;Copy into;Skip"
-msgstr "Спрашивать;Перезаписывать;Копировать в;Пропускать"
+msgid "Ask;Merge;Skip"
+msgstr "Спрашивать;Объединять;Пропускать"
 
 #: ulng.rsfileopfileexistsoptions
 msgid "Ask;Overwrite;Overwrite Older;Skip"
@@ -9581,7 +9842,7 @@ msgid ""
 "\n"
 "Are you sure you want to proceed?\n"
 msgstr ""
-"Внимание! Восстановление из резервного файла .hotlist очистит существующий список и заменит его импортированным.\n"
+"Внимание! Восстановление из резервной копии очистит существующий список Избранных каталогов и заменит его импортированным.\n"
 "\n"
 "Вы уверены что хотите продолжить?\n"
 
@@ -9610,24 +9871,76 @@ msgstr "Поиск файлов"
 
 #: ulng.rshotkeycategorymain
 msgid "Main"
-msgstr "Основной"
+msgstr "Основные"
 
 #: ulng.rshotkeycategoryviewer
 msgctxt "ulng.rshotkeycategoryviewer"
 msgid "Viewer"
 msgstr "Внутренняя программа просмотра"
 
+#: ulng.rshotkeyfilealreadyexists
+msgid ""
+"A setup with that name already exists.\n"
+"Do you want to overwrite it?\n"
+msgstr ""
+"Файл с таким именем уже существует.\n"
+"Хотите переписать его?\n"
+
+#: ulng.rshotkeyfileconfirmdefault
+msgid "Are you sure you want to restore default?"
+msgstr "Вы уверены, что хотите восстановить значения по умолчанию?"
+
+#: ulng.rshotkeyfileconfirmerasure
+msgid "Are you sure you want to erase setup \"%s\"?"
+msgstr "Вы уверены, что хотите удалить набор \"%s\"?"
+
+#: ulng.rshotkeyfilecopyof
+msgid "Copy of %s"
+msgstr "Копия %s"
+
+#: ulng.rshotkeyfileinputnewname
+msgid "Input your new name"
+msgstr "Введите новое имя"
+
+#: ulng.rshotkeyfilemustkeepone
+msgid "You must keep at least one shortcut file."
+msgstr "Вы должны сохранить по крайней мере один файл горячих клавиш."
+
+#: ulng.rshotkeyfilenewname
+msgid "New name"
+msgstr "Новое имя"
+
+#: ulng.rshotkeyfilesavemodified
+msgid ""
+"\"%s\" setup has been modified.\n"
+"Do you want to save it now?\n"
+msgstr ""
+"Файл \"%s\" был изменён.\n"
+"Хотите сохранить его сейчас?\n"
+
+#: ulng.rshotkeynoscenter
+msgid "No shortcut with \"ENTER\""
+msgstr "Не использовать \"ENTER\""
+
+#: ulng.rshotkeysortorder
+msgid "By command name;By shortcut key (grouped);By shortcut key (one per row)"
+msgstr "По имени команды;По горячим клавишам (группир.);По горячим клавишам (по одной)"
+
 #: ulng.rsimporttoolbarproblem
 msgid "Cannot find reference to default bar file"
-msgstr "Не могу найти ссылку на файл панели инструментов по умолчанию"
+msgstr "Не удалось найти ссылку на файл панели инструментов по умолчанию"
+
+#: ulng.rslistoffindfileswindows
+msgid "List of \"Find files\" windows"
+msgstr "Список окон \"Поиск файлов\""
 
 #: ulng.rsmarkminus
 msgid "Unselect mask"
-msgstr "Маска снятия выбора"
+msgstr "Снять выделение по маске"
 
 #: ulng.rsmarkplus
 msgid "Select mask"
-msgstr "Маска выбора"
+msgstr "Выделить по маске"
 
 #: ulng.rsmaskinput
 msgid "Input mask:"
@@ -9653,6 +9966,18 @@ msgstr "Введите имя нового набора колонок"
 msgctxt "ulng.rsmnuactions"
 msgid "Actions"
 msgstr "Команды"
+
+#: ulng.rsmnucontentdefault
+msgid "<Default>"
+msgstr "<По умолчанию>"
+
+#: ulng.rsmnucontentoctal
+msgid "Octal"
+msgstr "Восьмеричный"
+
+#: ulng.rsmnucopynetnamestoclip
+msgid "Copy names with UNC path"
+msgstr "Копировать в буфер имена с UNC-путём"
 
 #: ulng.rsmnudisconnectnetworkdrive
 msgid "Disconnect Network Drive..."
@@ -9723,9 +10048,17 @@ msgstr "Просмотреть"
 msgid "Account:"
 msgstr "Учётная запись:"
 
+#: ulng.rsmsgalldcintcmds
+msgid "All Double Commander internal commands"
+msgstr "Все внутренние команды Double Commander"
+
 #: ulng.rsmsgarchivercustomparams
 msgid "Additional parameters for archiver command-line:"
 msgstr "Дополнительные параметры командной строки архиватора:"
+
+#: ulng.rsmsgaskquoteornot
+msgid "Do you want to enclose between quotes?"
+msgstr "Хотите взять в кавычки?"
 
 #: ulng.rsmsgbadcrc32
 msgid ""
@@ -9734,10 +10067,10 @@ msgid ""
 "\n"
 "Do you want to keep the resulting corrupted file anyway?\n"
 msgstr ""
-"Плохой CRC32 для файла назначения:\n"
+"Неверная контрольная сумма файла назначения:\n"
 "\"%s\"\n"
 "\n"
-"Хотите оставить повреждённый файл назначения?\n"
+"Хотите оставить повреждённый файл?\n"
 
 #: ulng.rsmsgcannotcopymoveitself
 msgid "You can not copy/move a file \"%s\" to itself!"
@@ -9746,6 +10079,10 @@ msgstr "Нельзя скопировать/переместить файл \"%s
 #: ulng.rsmsgcannotdeletedirectory
 msgid "Cannot delete directory %s"
 msgstr "Нельзя удалить каталог %s"
+
+#: ulng.rsmsgcannotoverwritedirectory
+msgid "Cannot overwrite directory \"%s\" with non-directory \"%s\""
+msgstr "Невозможно перезаписать каталог \"%s\" файлом, не являющимся каталогом \"%s\""
 
 #: ulng.rsmsgchdirfailed
 msgid "ChDir to [%s] failed!"
@@ -9759,6 +10096,10 @@ msgstr "Закрыть все неактивные вкладки?"
 msgid "This tab (%s) is locked! Close anyway?"
 msgstr "Вкладка (%s) заблокирована! Закрыть?"
 
+#: ulng.rsmsgcofirmuserparam
+msgid "Confirmation of parameter"
+msgstr "Подтверждение параметра"
+
 #: ulng.rsmsgconfirmquit
 msgid "Are you sure you want to quit?"
 msgstr "Вы уверены что хотите выйти?"
@@ -9769,7 +10110,7 @@ msgstr "Файл %s изменён. Хотите скопировать его �
 
 #: ulng.rsmsgcouldnotcopybackward
 msgid "Could not copy backward - do you want to keep the changed file?"
-msgstr "Не удалось скопировать обратно - хотите сохранить измененный файл?"
+msgstr "Не удалось скопировать обратно: хотите сохранить изменённый файл?"
 
 #: ulng.rsmsgcpfldr
 msgid "Copy %d selected files/directories?"
@@ -9785,7 +10126,7 @@ msgstr "< Создать новый тип файла \"%s файлы\" >"
 
 #: ulng.rsmsgdctoolbarwheretosave
 msgid "Enter location and filename where to save a DC Toolbar file"
-msgstr "Введите место расположения и имя файла, куда сохранить файл Панели инструментов DC"
+msgstr "Укажите место и имя файла для сохранения файла Панели инструментов DC"
 
 #: ulng.rsmsgdefaultcustomactionname
 msgid "Custom action"
@@ -9845,11 +10186,11 @@ msgstr "Данные повреждены"
 
 #: ulng.rsmsgerrcannotconnect
 msgid "Can not connect to server: \"%s\""
-msgstr "Не могу соединиться с сервером: \"%s\""
+msgstr "Не удалось соединиться с сервером: \"%s\""
 
 #: ulng.rsmsgerrcannotcopyfile
 msgid "Cannot copy file %s to %s"
-msgstr "Не могу копировать файл из %s в %s"
+msgstr "Не удалось скопировать файл из %s в %s"
 
 #: ulng.rsmsgerrcreatefiledirectoryexists
 msgid "There already exists a directory named \"%s\"."
@@ -9869,11 +10210,11 @@ msgstr "Прервано пользователем."
 
 #: ulng.rsmsgerreclose
 msgid "Error closing file"
-msgstr "Не могу закрыть файл"
+msgstr "Ошибка закрытия файла"
 
 #: ulng.rsmsgerrecreate
 msgid "Cannot create file"
-msgstr "Не могу создать файл"
+msgstr "Не удалось создать файл"
 
 #: ulng.rsmsgerrendarchive
 msgid "No more files in archive"
@@ -9881,7 +10222,7 @@ msgstr "В архиве нет больше файлов"
 
 #: ulng.rsmsgerreopen
 msgid "Cannot open existing file"
-msgstr "Не могу открыть файл"
+msgstr "Не удалось открыть существующий файл"
 
 #: ulng.rsmsgerreread
 msgid "Error reading from file"
@@ -9893,7 +10234,7 @@ msgstr "Ошибка записи в файл"
 
 #: ulng.rsmsgerrforcedir
 msgid "Can not create directory %s!"
-msgstr "Не могу создать каталог %s!"
+msgstr "Не удалось создать каталог %s!"
 
 #: ulng.rsmsgerrinvalidlink
 msgid "Invalid link"
@@ -9925,31 +10266,31 @@ msgstr "Ошибка синтаксиса в регулярном выражен
 
 #: ulng.rsmsgerrrename
 msgid "Cannot rename file %s to %s"
-msgstr "Невозможно переименовать файл %s в %s"
+msgstr "Не удалось переименовать файл %s в %s"
 
 #: ulng.rsmsgerrsaveassociation
 msgid "Can not save association!"
-msgstr "Не могу сохранить ассоциацию!"
+msgstr "Не удалось сохранить ассоциацию!"
 
 #: ulng.rsmsgerrsavefile
 msgid "Cannot save file"
-msgstr "Невозможно сохранить файл"
+msgstr "Не удалось сохранить файл"
 
 #: ulng.rsmsgerrsetattribute
 msgid "Can not set attributes for \"%s\""
-msgstr "Невозможно установить атрибуты для \"%s\""
+msgstr "Не удалось установить атрибуты для \"%s\""
 
 #: ulng.rsmsgerrsetdatetime
 msgid "Can not set date/time for \"%s\""
-msgstr "Невозможно установить дату/время для \"%s\""
+msgstr "Не удалось установить дату/время для \"%s\""
 
 #: ulng.rsmsgerrsetownership
 msgid "Can not set owner/group for \"%s\""
-msgstr "Не могу установить владельца/группу для \"%s\""
+msgstr "Не удалось установить владельца/группу для \"%s\""
 
 #: ulng.rsmsgerrsetpermissions
 msgid "Can not set permissions for \"%s\""
-msgstr "Не могу установить права доступа для \"%s\""
+msgstr "Не удалось установить права доступа для \"%s\""
 
 #: ulng.rsmsgerrsmallbuf
 msgid "Buffer too small"
@@ -10015,7 +10356,7 @@ msgstr "Имя подменю"
 
 #: ulng.rsmsgfavoritetabsthiswillloadfavtabs
 msgid "This will load the Favorite Tabs: \"%s\""
-msgstr "Это позволит загрузить Избранные Вкладки: \"%s\""
+msgstr "Будут загружены Избранные Вкладки: \"%s\""
 
 #: ulng.rsmsgfavortietabssaveoverexisting
 msgid "Save current tabs over existing Favorite Tabs entry"
@@ -10053,6 +10394,16 @@ msgstr "Активные файловые операции"
 msgid "Some file operations have not yet finished. Closing Double Commander may result in data loss."
 msgstr "Некоторые операции ещё не завершены. Закрытие Double Commander может привести к потере данных."
 
+#: ulng.rsmsgfilepathovermaxpath
+msgid ""
+"The target name length (%d) is more than %d characters!\n"
+"%s\n"
+"Most programs will not be able to access a file/directory with such a long name!\n"
+msgstr ""
+"Длина целевого пути (%d) превышает %d символов!\n"
+"%s\n"
+"Большинство программ не смогут обратиться к файлу/каталогу с таким длинным именем!\n"
+
 #: ulng.rsmsgfilereadonly
 msgid "File %s is marked as read-only/hidden/system. Delete it?"
 msgstr "Файл %s помечен как доступный только для чтения/скрытый/системный. Удалить?"
@@ -10062,8 +10413,8 @@ msgid "The file size of \"%s\" is too big for destination file system!"
 msgstr "Размер файла \"%s\" слишком большой для файловой системы получателя!"
 
 #: ulng.rsmsgfolderexistsrwrt
-msgid "Folder %s exists, overwrite?"
-msgstr "Каталог %s существует, переписать?"
+msgid "Folder %s exists, merge?"
+msgstr "Каталог %s существует, объединить?"
 
 #: ulng.rsmsgfollowsymlink
 msgid "Follow symlink \"%s\"?"
@@ -10071,19 +10422,19 @@ msgstr "Следовать ссылке \"%s\"?"
 
 #: ulng.rsmsgfortextformattoimport
 msgid "Select the text format to import"
-msgstr "Выберите текстовый формат для импорта"
+msgstr "Выберите формат текста для импорта"
 
 #: ulng.rsmsghotdiraddselecteddirectories
 msgid "Add %d selected dirs"
-msgstr "Добавить %d выделенных каталогов"
+msgstr "Добавить %d выделенных каталога(ов)"
 
 #: ulng.rsmsghotdiraddselecteddirectory
 msgid "Add selected dir: "
-msgstr "Добавить выделенный каталог: "
+msgstr "Добавить выделенный: "
 
 #: ulng.rsmsghotdiraddthisdirectory
 msgid "Add current dir: "
-msgstr "Добавить текущий каталог: "
+msgstr "Добавить текущий: "
 
 #: ulng.rsmsghotdircommandname
 msgid "Do command"
@@ -10136,7 +10487,7 @@ msgstr "Экспорт Избранных каталогов - Выделите 
 
 #: ulng.rsmsghotdirexportsel
 msgid "Export selected"
-msgstr "Экспорт выделенных"
+msgstr "Только выделенные"
 
 #: ulng.rsmsghotdirimportall
 msgctxt "ulng.rsmsghotdirimportall"
@@ -10150,12 +10501,12 @@ msgstr "Импорт Избранных каталогов - Выделите о
 #: ulng.rsmsghotdirimportsel
 msgctxt "ulng.rsmsghotdirimportsel"
 msgid "Import selected"
-msgstr "Импортировать выделенный"
+msgstr "Только выделенные"
 
 #: ulng.rsmsghotdirjustpath
 msgctxt "ulng.rsmsghotdirjustpath"
-msgid "Path"
-msgstr "Путь:"
+msgid "&Path:"
+msgstr "Пут&ь:"
 
 #: ulng.rsmsghotdirlocatehotlistfile
 msgid "Locate \".hotlist\" file to import"
@@ -10163,11 +10514,11 @@ msgstr "Укажите файл \".hotlist\" для импорта"
 
 #: ulng.rsmsghotdirname
 msgid "Hotdir name"
-msgstr "Имя избранного каталога"
+msgstr "Имя записи"
 
 #: ulng.rsmsghotdirnbnewentries
 msgid "Number of new entries: %d"
-msgstr "Число новых элементов: %d"
+msgstr "Число новых записей: %d"
 
 #: ulng.rsmsghotdirnothingtoexport
 msgid "Nothing selected to export!"
@@ -10179,15 +10530,15 @@ msgstr "Путь избранного каталога"
 
 #: ulng.rsmsghotdirreaddselecteddirectory
 msgid "Re-Add selected dir: "
-msgstr "Передобавление выбранного каталога: "
+msgstr "Снова добавить выбранный: "
 
 #: ulng.rsmsghotdirreaddthisdirectory
 msgid "Re-Add current dir: "
-msgstr "Передобавление текущего каталога: "
+msgstr "Снова добавить текущий: "
 
 #: ulng.rsmsghotdirrestorewhat
 msgid "Enter location and filename of Directory Hotlist to restore"
-msgstr "Введите место расположения и имя файла Избранных каталогов для восстановления"
+msgstr "Укажите место и имя файла Избранных каталогов для восстановления"
 
 #: ulng.rsmsghotdirsimplecommand
 msgctxt "ulng.rsmsghotdirsimplecommand"
@@ -10201,13 +10552,13 @@ msgstr "(конец подменю)"
 
 #: ulng.rsmsghotdirsimplemenu
 msgctxt "ulng.rsmsghotdirsimplemenu"
-msgid "Menu name:"
-msgstr "Имя меню:"
+msgid "Menu &name:"
+msgstr "Имя &меню:"
 
 #: ulng.rsmsghotdirsimplename
 msgctxt "ulng.rsmsghotdirsimplename"
-msgid "Name:"
-msgstr "Имя:"
+msgid "&Name:"
+msgstr "И&мя:"
 
 #: ulng.rsmsghotdirsimpleseparator
 msgctxt "ulng.rsmsghotdirsimpleseparator"
@@ -10217,7 +10568,7 @@ msgstr "(разделитель)"
 #: ulng.rsmsghotdirsubmenuname
 msgctxt "ulng.rsmsghotdirsubmenuname"
 msgid "Submenu name"
-msgstr "Имя подменю"
+msgstr "Подменю"
 
 #: ulng.rsmsghotdirtarget
 msgid "Hotdir target"
@@ -10225,11 +10576,11 @@ msgstr "Путь избранного целевого каталога"
 
 #: ulng.rsmsghotdirtiporderpath
 msgid "Determine if you want the active frame to be sorted in a specified order after changing directory"
-msgstr "Определите, как вы хотите чтобы активная панель была отсортирована после изменения каталога"
+msgstr "Задаёт порядок сортировки в активной панели после смены каталога"
 
 #: ulng.rsmsghotdirtipordertarget
 msgid "Determine if you want the not active frame to be sorted in a specified order after changing directory"
-msgstr "Определите, как вы хотите чтобы НЕактивная панель была отсортирована после изменения каталога"
+msgstr "Задаёт порядок сортировки в неактивной панели после смены каталога"
 
 #: ulng.rsmsghotdirtipspecialdirbut
 msgid "Some functions to select appropriate path relative, absolute, windows special folders, etc."
@@ -10243,7 +10594,7 @@ msgid ""
 msgstr ""
 "Всего объектов сохранено: %d\n"
 "\n"
-"Имя резервного файла: %s\n"
+"Резервная копия: %s\n"
 
 #: ulng.rsmsghotdirtotalexported
 msgid "Total entries exported: "
@@ -10259,7 +10610,7 @@ msgstr ""
 
 #: ulng.rsmsghotdirwheretosave
 msgid "Enter location and filename where to save a Directory Hotlist file"
-msgstr "Введите место расположения и имя файла куда сохранить файл Избранных каталогов"
+msgstr "Укажите место и имя файла для сохранения файла Избранных каталогов"
 
 #: ulng.rsmsgincorrectfilelength
 msgid "Incorrect resulting filelength for file : \"%s\""
@@ -10399,11 +10750,11 @@ msgstr "Стирание каталога %s"
 
 #: ulng.rsmsgmasterpassword
 msgid "Master Password"
-msgstr "Мастер пароль:"
+msgstr "Главный пароль:"
 
 #: ulng.rsmsgmasterpasswordenter
 msgid "Please enter the master password:"
-msgstr "Введите мастер пароль:"
+msgstr "Введите главный пароль:"
 
 #: ulng.rsmsgnewfile
 msgid "New file"
@@ -10431,11 +10782,15 @@ msgstr "Недостаточно места на получателе. Повт�
 
 #: ulng.rsmsgnotdelete
 msgid "Can not delete file %s"
-msgstr "Не могу удалить файл %s"
+msgstr "Не удалось удалить файл %s"
 
 #: ulng.rsmsgnotimplemented
 msgid "Not implemented."
 msgstr "Не реализовано."
+
+#: ulng.rsmsgobjectnotexists
+msgid "Object does not exist!"
+msgstr "Объект не существует!"
 
 #: ulng.rsmsgpanelpreview
 msgctxt "ulng.rsmsgpanelpreview"
@@ -10516,7 +10871,7 @@ msgstr "Выберите исполняемый файл"
 
 #: ulng.rsmsgselectonlychecksumfiles
 msgid "Please select only checksum files!"
-msgstr "Необходимо выбрать только файлы контрольных сумм!"
+msgstr "Пожалуйста, выберите только файлы контрольных сумм!"
 
 #: ulng.rsmsgsellocnextvol
 msgid "Please select location of next volume"
@@ -10540,7 +10895,7 @@ msgstr "Добавить путь из неактивной панели"
 
 #: ulng.rsmsgspecialdirbrowssel
 msgid "Browse and use selected path"
-msgstr "Выбрать и использовать выбранный путь"
+msgstr "Диалог выбора каталога"
 
 #: ulng.rsmsgspecialdirenvvar
 msgid "Use environment variable..."
@@ -10548,23 +10903,23 @@ msgstr "Использовать переменную окружения..."
 
 #: ulng.rsmsgspecialdirgotodc
 msgid "Go to Double Commander special path..."
-msgstr "Перейти в специальную папку DC..."
+msgstr "Каталог Double Commander..."
 
 #: ulng.rsmsgspecialdirgotoenvvar
 msgid "Go to environment variable..."
-msgstr "Перейти в переменную окружения..."
+msgstr "Переменная окружения..."
 
 #: ulng.rsmsgspecialdirgotoother
 msgid "Go to other Windows special folder..."
-msgstr "Перейти в другие специальные папки Windows..."
+msgstr "Другая специальная папка Windows..."
 
 #: ulng.rsmsgspecialdirgototc
 msgid "Go to Windows special folder (TC)..."
-msgstr "Перейти в специальные папки Windows (TC)..."
+msgstr "Специальная папка Windows (TC)..."
 
 #: ulng.rsmsgspecialdirmakereltohotdir
 msgid "Make relative to hotdir path"
-msgstr "Сделать путь относительным к пути из избранных каталогов"
+msgstr "Сделать относительным к пути из избранных каталогов"
 
 #: ulng.rsmsgspecialdirmkabso
 msgid "Make path absolute"
@@ -10572,19 +10927,19 @@ msgstr "Сделать путь абсолютным"
 
 #: ulng.rsmsgspecialdirmkdcrel
 msgid "Make relative to Double Commander special path..."
-msgstr "Сделать путь относительным к спец. папке DC..."
+msgstr "Сделать относительным к спец. папке DC..."
 
 #: ulng.rsmsgspecialdirmkenvrel
 msgid "Make relative to environment variable..."
-msgstr "Сделать путь относительным к переменному окружения..."
+msgstr "Сделать относительным к переменной окружения..."
 
 #: ulng.rsmsgspecialdirmktctel
 msgid "Make relative to Windows special folder (TC)..."
-msgstr "Сделать путь относительным к спец. папке Windows (TC)..."
+msgstr "Сделать относительным к спец. папке Windows (TC)..."
 
 #: ulng.rsmsgspecialdirmkwnrel
 msgid "Make relative to other Windows special folder..."
-msgstr "Сделать путь относительным к другой спец. папке Windows..."
+msgstr "Сделать относительным к другой спец. папке Windows..."
 
 #: ulng.rsmsgspecialdirusedc
 msgid "Use Double Commander special path..."
@@ -10623,7 +10978,7 @@ msgid ""
 "Error! Cannot find the TC configuration file:\n"
 "%s\n"
 msgstr ""
-"Ошибка! Не могу найти файл конфигурации TC:\n"
+"Ошибка! Не удалось найти файл конфигурации TC:\n"
 "%s\n"
 
 #: ulng.rsmsgtcexecutablenotfound
@@ -10631,7 +10986,7 @@ msgid ""
 "Error! Cannot find the TC configuration executable:\n"
 "%s\n"
 msgstr ""
-"Ошибка! Не могу найти исполняемый файл TC:\n"
+"Ошибка! Не удалось найти исполняемый файл TC:\n"
 "%s\n"
 
 #: ulng.rsmsgtcisrunning
@@ -10639,7 +10994,7 @@ msgid ""
 "Error! TC is still running but it should be closed for this operation.\n"
 "Close it and press OK or press CANCEL to abort.\n"
 msgstr ""
-"Ошибка! TC всё ещё запущен, но он должен быть закрыт для этой операции.\n"
+"Ошибка! TC всё ещё запущен, но для этой операции он должен быть закрыт.\n"
 "Закройте его и нажмите OK или нажмите ОТМЕНА для прекращения.\n"
 
 #: ulng.rsmsgtctoolbarnotfound
@@ -10647,16 +11002,16 @@ msgid ""
 "Error! Cannot find the desired wanted TC toolbar output folder:\n"
 "%s\n"
 msgstr ""
-"Ошибка! Не могу найти приемлемый каталог для Панели инструментов TC:\n"
+"Ошибка! Не удалось найти каталог панели инструментов TC:\n"
 "%s\n"
 
 #: ulng.rsmsgtctoolbarwheretosave
 msgid "Enter location and filename where to save a TC Toolbar file"
-msgstr "Введите место расположения и имя файла куда сохранить Панель инструментов TC"
+msgstr "Укажите расположение и имя файла для сохранения Панели инструментов TC"
 
 #: ulng.rsmsgthisisnowinclipboard
 msgid "\"%s\" is now in the clipboard"
-msgstr "\"%s\" скопирован в буфер обмена"
+msgstr "В буфер обмена скопировано: \"%s\""
 
 #: ulng.rsmsgtitleextnotinfiletype
 msgid "Extension of selected file is not in any recognized file types"
@@ -10672,7 +11027,7 @@ msgstr "Укажите файл \".BAR\" для импорта"
 
 #: ulng.rsmsgtoolbarrestorewhat
 msgid "Enter location and filename of Toolbar to restore"
-msgstr "Введите место расположения и имя файла Панели инструментов для восстановления"
+msgstr "Укажите место и имя файла Панели инструментов для восстановления"
 
 #: ulng.rsmsgtoolbarsaved
 msgid ""
@@ -10714,6 +11069,14 @@ msgstr "Имя пользователя:"
 msgid "User name (Firewall):"
 msgstr "Имя пользователя (Firewall):"
 
+#: ulng.rsmsgverify
+msgid "VERIFICATION:"
+msgstr "ПРОВЕРКА:"
+
+#: ulng.rsmsgverifywrong
+msgid "The target file is corrupted, checksum mismatch!"
+msgstr "Целевой файл поврежден, не совпадает контрольная сумма!"
+
 #: ulng.rsmsgvolumelabel
 msgid "Volume label:"
 msgstr "Метка диска:"
@@ -10734,13 +11097,37 @@ msgstr "Стереть выбранный \"%s\"?"
 msgid "with"
 msgstr "с"
 
+#: ulng.rsmulrenautorename
+msgid "Do auto-rename to \"name (1).ext\", \"name (2).ext\" etc.?"
+msgstr "Автоматически переименовывать в \"name (1).ext\", \"name (2).ext\" и т.д.?"
+
 #: ulng.rsmulrenfilenamestylelist
 msgid "No change;UPPERCASE;lowercase;First char uppercase;First Char Of Every Word Uppercase;"
 msgstr "Без изменений;ПРОПИСНЫЕ;строчные;С прописной;Каждое Слово С Прописной;"
 
+#: ulng.rsmulrenwarningduplicate
+msgid "Warning, duplicate names!"
+msgstr "Внимание, одинаковые имена!"
+
 #: ulng.rsmulrenwronglinesnumber
 msgid "File contains wrong number of lines: %d, should be %d!"
 msgstr "В файле содержится неверное количество строк: %d, должно быть: %d!"
+
+#: ulng.rsnewsearchclearfilteroptions
+msgid "Keep;Clear;Prompt"
+msgstr "Сохранить;Очистить;Спросить"
+
+#: ulng.rsnoequivalentinternalcommand
+msgid "No internal equivalent command"
+msgstr "Нет эквивалентной внутренней команды"
+
+#: ulng.rsnofindfileswindowyet
+msgid "Sorry, no \"Find files\" window yet..."
+msgstr "Извините, нет окон \"Поиск файлов\"..."
+
+#: ulng.rsnootherfindfileswindowtoclose
+msgid "Sorry, no other \"Find files\" window to close and free from memory..."
+msgstr "Извините, нет других окон \"Поиск файлов\"..."
 
 #: ulng.rsoperaborted
 msgid "Aborted"
@@ -10957,8 +11344,8 @@ msgid "Working"
 msgstr "Работа"
 
 #: ulng.rsoptaddfrommainpanel
-msgid "Add at beginning;Add at the end;Smart add"
-msgstr "Добавлять в начало;Добавлять в конец;Добавлять по логике"
+msgid "Add at &beginning;Add at the end;Smart add"
+msgstr "Добавить в &начало;Добавить в конец;Умное добавление"
 
 #: ulng.rsoptarchivedelete
 msgctxt "ulng.rsoptarchivedelete"
@@ -10981,12 +11368,12 @@ msgstr "ID:"
 #: ulng.rsoptarchiveidpos
 msgctxt "ulng.rsoptarchiveidpos"
 msgid "ID Position:"
-msgstr "ID Position:"
+msgstr "Смещение ID:"
 
 #: ulng.rsoptarchiveidseekrange
 msgctxt "ulng.rsoptarchiveidseekrange"
 msgid "ID Seek Range:"
-msgstr "ID Seek Range:"
+msgstr "Диапазон поиска ID:"
 
 #: ulng.rsoptarchiveparam
 msgid "Parameter"
@@ -11046,7 +11433,7 @@ msgstr "Введите расширение"
 
 #: ulng.rsoptfavoritetabswheretoaddinlist
 msgid "Add at beginning;Add at the end;Alphabetical sort"
-msgstr "Добавлять в начало;Добавлять в конец;Добавлять по алфавиту"
+msgstr "Добавить в начало;Добавить в конец;По алфавиту"
 
 #: ulng.rsoptfileoperationsprogresskind
 msgid "separate window;minimized separate window;operations panel"
@@ -11054,7 +11441,7 @@ msgstr "отдельное окно;минимизировать отдельн�
 
 #: ulng.rsoptfilesizeformat
 msgid "float;B;K;M;G"
-msgstr "плавающий;B;K;M;G"
+msgstr "плавающий;байты;килобайты;мегабайты;гигабайты"
 
 #: ulng.rsopthotkeysadddeleteshortcutlong
 msgid "Shortcut %s for cm_Delete will be registered, so it can be used to reverse this setting."
@@ -11070,7 +11457,7 @@ msgstr "Добавить сочетание"
 
 #: ulng.rsopthotkeyscannotsetshortcut
 msgid "Cannot set shortcut"
-msgstr "Невозможно установить сочетание"
+msgstr "Не удалось установить клавиатурное сочетание"
 
 #: ulng.rsopthotkeyschangeshortcut
 msgid "Change shortcut"
@@ -11221,7 +11608,7 @@ msgstr "Файловые ассоциации"
 #: ulng.rsoptionseditorfilenewfiletypes
 msgctxt "ulng.rsoptionseditorfilenewfiletypes"
 msgid "New"
-msgstr "Создать"
+msgstr "Новый"
 
 #: ulng.rsoptionseditorfileoperations
 msgctxt "ulng.rsoptionseditorfileoperations"
@@ -11233,9 +11620,14 @@ msgctxt "ulng.rsoptionseditorfilepanels"
 msgid "File panels"
 msgstr "Файловые панели"
 
+#: ulng.rsoptionseditorfilesearch
+msgctxt "ulng.rsoptionseditorfilesearch"
+msgid "File search"
+msgstr "Поиск файлов"
+
 #: ulng.rsoptionseditorfilesviews
 msgid "Files views"
-msgstr "Просмотр файлов"
+msgstr "Список файлов"
 
 #: ulng.rsoptionseditorfiletypes
 msgctxt "ulng.rsoptionseditorfiletypes"
@@ -11433,7 +11825,7 @@ msgstr "Файлов: %d, папок: %d"
 
 #: ulng.rspropserrchmod
 msgid "Can not change access rights for \"%s\""
-msgstr "Не могу изменить права доступа для  \"%s\""
+msgstr "Не удалось изменить права доступа для  \"%s\""
 
 #: ulng.rspropserrchown
 msgid "Can not change owner for \"%s\""
@@ -11485,9 +11877,29 @@ msgstr "ПОИСК"
 msgid "<unnamed template>"
 msgstr "<безымянный шаблон>"
 
+#: ulng.rssearchwithdsxplugininprogress
+msgid ""
+"A file search using DSX plugin is already in progress.\n"
+"We need that one to be completed before to launch a new one.\n"
+msgstr ""
+"Поиск файлов с DSX-плагином уже запущен.\n"
+"Необходимо завершить его, прежде чем начать новый.\n"
+
+#: ulng.rssearchwithwdxplugininprogress
+msgid ""
+"A file search using WDX plugin is already in progress.\n"
+"We need that one to be completed before to launch a new one.\n"
+msgstr ""
+"Поиск файлов с WDX-плагином уже запущен.\n"
+"Необходимо завершить его, прежде чем начать новый.\n"
+
 #: ulng.rsselectdir
 msgid "Select a directory"
 msgstr "Выберите каталог"
+
+#: ulng.rsselectyoufindfileswindow
+msgid "Select your window"
+msgstr "Выберите окно"
 
 #: ulng.rsshowhelpfor
 msgid "&Show help for %s"
@@ -11519,6 +11931,10 @@ msgstr "Имя файла"
 #: ulng.rssimplewordfiles
 msgid "files"
 msgstr "файлы"
+
+#: ulng.rssimplewordletter
+msgid "Letter"
+msgstr "Буква"
 
 #: ulng.rssimplewordparameter
 msgid "Param"
@@ -11569,7 +11985,7 @@ msgstr "Неправильный размер файла"
 
 #: ulng.rsspliterrsplitfile
 msgid "Unable to split the file!"
-msgstr "Не могу разрезать файл!"
+msgstr "Не удалось разрезать файл!"
 
 #: ulng.rssplitmsgmanyparts
 msgid "The number of parts is more than 100! Continue?"
@@ -11679,7 +12095,7 @@ msgstr "Простой текст"
 
 #: ulng.rstabsactionondoubleclickchoices
 msgid "Do nothing;Close tab;Access Favorite Tabs;Tabs popup menu"
-msgstr "Ничего не делать;Закрыть вкладку;Доступ к Избранным Вкладкам;Всплывающее меню вкладок"
+msgstr "Ничего не делать;Закрыть вкладку;Доступ к Избранным Вкладкам;Меню вкладок"
 
 #: ulng.rstimeunitday
 msgctxt "ulng.rstimeunitday"
@@ -11832,11 +12248,11 @@ msgstr "Только имя файла"
 
 #: ulng.rsvarotherexamples
 msgid "Other example of what's possible"
-msgstr "Другое"
+msgstr "Прочие возможные примеры"
 
 #: ulng.rsvarpath
-msgid "Path, with ending delimiter"
-msgstr "Путь с разделителем в конце"
+msgid "Path, without ending delimiter"
+msgstr "Путь без разделителя в конце"
 
 #: ulng.rsvarpercentchangetopound
 msgid "From here to the end of the line, the percent-variable indicator is the \"#\" sign"
@@ -11856,7 +12272,7 @@ msgstr "Представить каждое имя в виде \"-a \" или к
 
 #: ulng.rsvarpromptuserforparam
 msgid "%[Prompt user for param;Default value proposed]"
-msgstr "%[Параметр;Значение]"
+msgstr "%[Запрос;Значение]"
 
 #: ulng.rsvarrelativepathandfilename
 msgid "Filename with relative path"

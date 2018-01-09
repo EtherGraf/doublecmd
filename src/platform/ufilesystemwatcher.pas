@@ -76,13 +76,13 @@ type
 implementation
 
 uses
-  LCLProc, uDebug, uExceptions, syncobjs, fgl
+  LCLProc, LazUTF8, uDebug, uExceptions, syncobjs, fgl
   {$IF DEFINED(MSWINDOWS)}
-  ,Windows, JwaWinNT, JwaWinBase, LazUTF8, DCWindows, DCStrUtils, uGlobs, uOSUtils
+  , Windows, JwaWinNT, JwaWinBase, DCWindows, DCStrUtils, uGlobs, uOSUtils
   {$ELSEIF DEFINED(LINUX)}
-  ,inotify, BaseUnix, FileUtil, DCConvertEncoding
+  , inotify, BaseUnix, FileUtil, DCConvertEncoding, DCUnix
   {$ELSEIF DEFINED(BSD)}
-  ,BSD, Unix, BaseUnix, UnixType, FileUtil
+  , BSD, Unix, BaseUnix, UnixType, FileUtil, DCOSUtils
   {$ENDIF};
 
 {$IF DEFINED(MSWINDOWS)}
@@ -898,6 +898,7 @@ begin
   if FpPipe(FEventPipe) = 0 then
   begin
     // set both ends of pipe non blocking
+    FileCloseOnExec(FEventPipe[0]); FileCloseOnExec(FEventPipe[1]);
     FpFcntl(FEventPipe[0], F_SetFl, FpFcntl(FEventPipe[0], F_GetFl) or O_NONBLOCK);
     FpFcntl(FEventPipe[1], F_SetFl, FpFcntl(FEventPipe[1], F_GetFl) or O_NONBLOCK);
   end
@@ -922,23 +923,23 @@ begin
   // close both ends of pipe
   if FEventPipe[0] <> -1 then
   begin
-    FpClose(FEventPipe[0]);
+    FileClose(FEventPipe[0]);
     FEventPipe[0] := -1;
   end;
   if FEventPipe[1] <> -1 then
   begin
-    FpClose(FEventPipe[1]);
+    FileClose(FEventPipe[1]);
     FEventPipe[1] := -1;
   end;
   if FNotifyHandle <> feInvalidHandle then
   begin
-    FpClose(FNotifyHandle);
+    FileClose(FNotifyHandle);
     FNotifyHandle := feInvalidHandle;
   end;
   {$ELSEIF DEFINED(BSD)}
   if FNotifyHandle <> feInvalidHandle then
   begin
-    FpClose(FNotifyHandle);
+    FileClose(FNotifyHandle);
     FNotifyHandle := feInvalidHandle;
   end;
   {$ENDIF}
@@ -1279,7 +1280,7 @@ end;
 procedure TOSWatch.CreateHandle;
 {$IF DEFINED(MSWINDOWS)}
 begin
-  FHandle := CreateFileW(PWideChar(UnicodeLongName(FWatchPath)),
+  FHandle := CreateFileW(PWideChar(UTF16LongName(FWatchPath)),
                FILE_LIST_DIRECTORY,
                CREATEFILEW_SHAREMODE,
                nil,
@@ -1337,7 +1338,7 @@ begin
   if wfAttributesChange in FWatchFilter then
     hNotifyFilter := hNotifyFilter or NOTE_ATTRIB or NOTE_REVOKE;
 
-  FHandle := fpOpen(UTF8ToSys(FWatchPath), O_RDONLY);
+  FHandle := mbFileOpen(FWatchPath, fmOpenRead);
   if FHandle < 0 then
   begin
     FHandle := feInvalidHandle;
@@ -1372,7 +1373,7 @@ begin
     fpinotify_rm_watch(FNotifyHandle, FHandle);
     {$ENDIF}
     {$IF DEFINED(BSD)}
-    FpClose(FHandle);
+    FileClose(FHandle);
     {$ENDIF}
     {$IF DEFINED(MSWINDOWS)}
     // If there are outstanding I/O operations on the handle calling CloseHandle

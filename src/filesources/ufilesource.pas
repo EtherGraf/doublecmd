@@ -50,8 +50,8 @@ type
 
     function CreateFileObject(const APath: String): TFile;
 
-    procedure RetrieveProperties(AFile: TFile; PropertiesToSet: TFilePropertiesTypes);
     function CanRetrieveProperties(AFile: TFile; PropertiesToSet: TFilePropertiesTypes): Boolean;
+    procedure RetrieveProperties(AFile: TFile; PropertiesToSet: TFilePropertiesTypes; AVariantProperties: array of String);
 
     function CreateListOperation(TargetPath: String): TFileSourceOperation;
     function CreateCopyOperation(var SourceFiles: TFiles;
@@ -212,7 +212,7 @@ type
     // Create an empty TFile object with appropriate properties for the file.
     class function CreateFile(const APath: String): TFile; virtual;
 
-    procedure RetrieveProperties(AFile: TFile; PropertiesToSet: TFilePropertiesTypes); virtual;
+    procedure RetrieveProperties(AFile: TFile; PropertiesToSet: TFilePropertiesTypes; AVariantProperties: array of String); virtual;
     function CanRetrieveProperties(AFile: TFile; PropertiesToSet: TFilePropertiesTypes): Boolean; virtual;
 
     // These functions create an operation object specific to the file source.
@@ -344,7 +344,7 @@ type
     constructor Create;
     destructor Destroy; override;
 
-    function Find(FileSourceClass: TClass; Address: String): IFileSource;
+    function Find(FileSourceClass: TClass; Address: String; CaseSensitive: Boolean = True): IFileSource;
   end;
 
   EFileSourceException = class(Exception);
@@ -603,7 +603,7 @@ begin
   Result := CreateFile(APath);
 end;
 
-procedure TFileSource.RetrieveProperties(AFile: TFile; PropertiesToSet: TFilePropertiesTypes);
+procedure TFileSource.RetrieveProperties(AFile: TFile; PropertiesToSet: TFilePropertiesTypes; AVariantProperties: array of String);
 begin
   // Does not set any properties by default.
 end;
@@ -921,16 +921,23 @@ begin
   FFileSources.Remove(aFileSource);
 end;
 
-function TFileSourceManager.Find(FileSourceClass: TClass; Address: String): IFileSource;
+function TFileSourceManager.Find(FileSourceClass: TClass; Address: String;
+  CaseSensitive: Boolean): IFileSource;
 var
-  i: Integer;
+  I: Integer;
+  StrCmp: function(const S1, S2: String): Integer;
 begin
-  for i := 0 to FFileSources.Count - 1 do
+  if CaseSensitive then
+    StrCmp:= @CompareStr
+  else begin
+    StrCmp:= @CompareText;
+  end;
+  for I := 0 to FFileSources.Count - 1 do
   begin
-    if (FFileSources[i].IsClass(FileSourceClass)) and
-       (FFileSources[i].CurrentAddress = Address) then
+    if (FFileSources[I].IsClass(FileSourceClass)) and
+       (StrCmp(FFileSources[I].CurrentAddress, Address) = 0) then
     begin
-      Result := FFileSources[i];
+      Result := FFileSources[I];
       Exit;
     end;
   end;

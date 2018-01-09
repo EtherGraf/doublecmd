@@ -107,11 +107,13 @@ type
     FRenameFileIndex: PtrInt;
     tmRenameFile: TTimer;
     FMouseRename: Boolean;
+    FMouseFocus: Boolean;
     procedure AfterChangePath; override;
     // Simulates releasing mouse button that started a dragging operation,
     // but was released in another window or another application.
     procedure ClearAfterDragDrop; virtual;
     procedure CreateDefault(AOwner: TWinControl); override;
+    procedure DisplayFileListChanged; override;
     {en
        Changes drawing colors depending on if this panel is active.
     }
@@ -148,6 +150,7 @@ type
     procedure MainControlMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
     procedure MainControlShowHint(Sender: TObject; HintInfo: PHintInfo);
     procedure MainControlUTF8KeyPress(Sender: TObject; var UTF8Key: TUTF8Char);
+    procedure MainControlResize(Sender: TObject);
     procedure MainControlWindowProc(var TheMessage: TLMessage);
     {en
        Updates the drop row index, which is used to draw a rectangle
@@ -159,6 +162,7 @@ type
 
 //    procedure ShowRenameFileEdit(AFile: TFile); virtual;
     procedure ShowRenameFileEdit(AFile: TFile); virtual;
+    procedure UpdateRenameFileEditPosition; virtual;abstract;
     procedure RenameSelectPart(AActionType:TRenameFileActionType); virtual;
 
     property MainControl: TWinControl read FMainControl write SetMainControl;
@@ -202,7 +206,7 @@ uses
   LCLIntf, LCLProc, LazUTF8, Forms, Dialogs,
   fMain, uShowMsg, uLng, uFileProperty, uFileSource, uFileSourceOperationTypes,
   uGlobs, uInfoToolTip, uDisplayFile, uFileSystemFileSource, uFileSourceUtil,
-  uArchiveFileSourceUtil, uFormCommands;
+  uArchiveFileSourceUtil, uFormCommands, uKeyboard, uFileSourceSetFilePropertyOperation;
 
 type
   TControlHandlersHack = class(TWinControl)
@@ -220,6 +224,7 @@ procedure TFileViewWithMainCtrl.cm_ContextMenu(const Params: array of string);
 var
   Rect: TRect;
   Point: TPoint;
+  AFileIndex: PtrInt;
   UserWishForContextMenu: TUserWishForContextMenu = uwcmComplete;
   bUserWishJustActionMenu: boolean;
 begin
@@ -234,11 +239,19 @@ begin
       UserWishForContextMenu:=uwcmComplete;
   end;
 
-  Rect := GetFileRect(GetActiveFileIndex);
-  Point.X := Rect.Left + ((Rect.Right - Rect.Left) div 2);
-  Point.Y := Rect.Top + ((Rect.Bottom - Rect.Top) div 2);
+  AFileIndex:= GetActiveFileIndex;
+  if AFileIndex < 0 then
+  begin
+    Point.X:= 0;
+    Point.Y:= 0;
+  end
+  else begin
+    Rect := GetFileRect(AFileIndex);
+    Point.X := Rect.Left + ((Rect.Right - Rect.Left) div 2);
+    Point.Y := Rect.Top + ((Rect.Bottom - Rect.Top) div 2);
+  end;
   Point := MainControl.ClientToScreen(Point);
-  SetCursorPos(Point.X+100, Point.Y+25);
+  // SetCursorPos(Point.X+100, Point.Y+25);
   frmMain.Commands.DoContextMenu(Self, Point.X, Point.Y, False, UserWishForContextMenu);
 end;
 
@@ -279,6 +292,13 @@ begin
   if Assigned(HotMan) then
     HotMan.UnRegister(MainControl);
   inherited Destroy;
+end;
+
+procedure TFileViewWithMainCtrl.DisplayFileListChanged;
+begin
+  inherited DisplayFileListChanged;
+  if edtRename.Visible then
+    UpdateRenameFileEditPosition;
 end;
 
 procedure TFileViewWithMainCtrl.DoActiveChanged;
@@ -347,7 +367,7 @@ begin
           end
           else if FileIsArchive(AFile.FSFile.FullPath) then
             begin
-              TargetFileSource:= GetArchiveFileSource(FileSource, AFile.FSFile);
+              TargetFileSource:= GetArchiveFileSource(FileSource, AFile.FSFile, EmptyStr, False, False);
               if Assigned(TargetFileSource) then TargetPath:= TargetFileSource.GetRootDir;
             end;
         end;
@@ -426,13 +446,17 @@ begin
   FileIndex := GetFileIndexFromCursor(Point.x, Point.y, AtFileList);
   if IsFileIndexInRange(FileIndex) then
   begin
-{$IF DEFINED(LCLQT)}
+{$IF DEFINED(LCLQT) or DEFINED(LCLQT5)}
     // Workaround: under Qt4 widgetset long operation (opening archive
     // for example) blocking mouse at whole system while operation executing
     Sleep(100);
     Application.ProcessMessages;
 {$ENDIF}
     ChooseFile(FFiles[FileIndex]);
+  end
+  else if gDblClickToParent then
+  begin
+    ChangePathToParent(True);
   end;
 
 {$IFDEF LCLGTK2}
@@ -458,7 +482,7 @@ begin
     // Drop onto target panel.
     DropParams := TDropParams.Create(
       SourceFiles, // Will be freed automatically.
-      GetDropEffectByKeyAndMouse(GetKeyShiftState,
+      GetDropEffectByKeyAndMouse(GetKeyShiftStateEx,
                                  SourcePanel.FMainControlLastMouseButton),
       MainControl.ClientToScreen(Classes.Point(X, Y)),
       True,
@@ -627,9 +651,13 @@ var
   AFile, APreviousFile: TDisplayFile;
 begin
   SetDragCursor(Shift);
+  if (DragManager <> nil) and DragManager.IsDragging and (Button = mbRight) then
+    Exit;
   FileIndex := GetFileIndexFromCursor(X, Y, AtFileList);
   if not AtFileList then
     Exit;
+
+  FMouseFocus:= MainControl.Focused;
 
   SetFocus;
 
@@ -659,7 +687,7 @@ begin
     case Button of
       mbRight:
       begin
-        SetActiveFile(FileIndex);
+        SetActiveFile(FileIndex, False);
 
         if gMouseSelectionEnabled and (gMouseSelectionButton = 1) then
         begin
@@ -833,6 +861,18 @@ begin
       end;
     end;
 
+  // A single click starts programs and opens files
+  if (gMouseSingleClickStart in [1..3]) and (FMainControlMouseDown = False) and
+     (Shift * [ssShift, ssAlt, ssCtrl] = []) and (not MainControl.Dragging) then
+  begin
+    FileIndex := GetFileIndexFromCursor(X, Y, AtFileList);
+    if IsFileIndexInRange(FileIndex) and
+       (GetActiveFileIndex <> FileIndex) then
+    begin
+      SetActiveFile(FileIndex);
+    end;
+  end;
+
   // Selection with right mouse button, if enabled.
   if FMainControlMouseDown and (FMainControlLastMouseButton = mbRight) and
      gMouseSelectionEnabled and (gMouseSelectionButton = 1) then
@@ -853,13 +893,16 @@ begin
         SelEndIndex := FMouseSelectionStartIndex;
       end;
 
-      SetActiveFile(FileIndex);
+      SetActiveFile(FileIndex, False);
       MarkFiles(SelStartIndex, SelEndIndex, FMouseSelectionLastState);
     end;
   end;
 end;
 
 procedure TFileViewWithMainCtrl.MainControlMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+var
+  FileIndex: PtrInt;
+  AtFileList: Boolean;
 begin
   if IsLoadingFileList then Exit;
 
@@ -872,6 +915,29 @@ begin
 
   if IsMouseSelecting and (GetCaptureControl = MainControl) then
     SetCaptureControl(nil);
+
+  // A single click is used to open items
+  if (gMouseSingleClickStart > 0) and (Button = mbLeft) and
+     (Shift * [ssShift, ssAlt, ssCtrl] = []) and FMouseFocus then
+  begin
+    // A single click only opens folders. For files, a double click is needed.
+    if (gMouseSingleClickStart and 2 <> 0) then
+    begin
+      FileIndex := GetFileIndexFromCursor(X, Y, AtFileList);
+      if IsFileIndexInRange(FileIndex) then
+      begin
+        with FFiles[FileIndex].FSFile do
+        begin
+          if (IsDirectory or IsLinkToDirectory) then
+            MainControlDblClick(Sender);
+        end;
+      end
+    end
+    // A single click starts programs and opens files
+    else begin
+      MainControlDblClick(Sender);
+    end;
+  end;
 
   FMainControlMouseDown := False;
 end;
@@ -908,6 +974,12 @@ begin
   // check if ShiftState is equal to quick search / filter modes
   if quickSearch.CheckSearchOrFilter(UTF8Key) then
     Exit;
+end;
+
+procedure TFileViewWithMainCtrl.MainControlResize(Sender: TObject);
+begin
+  if edtRename.Visible then
+    UpdateRenameFileEditPosition;
 end;
 
 procedure TFileViewWithMainCtrl.MainControlWindowProc(var TheMessage: TLMessage);
@@ -1081,6 +1153,8 @@ begin
         TControlHandlersHack(MainControl).DragCursor:= crArrowCopy
       else
         TControlHandlersHack(MainControl).DragCursor:= crDrag;
+
+      DragManager.DragMove(Mouse.CursorPos);
     end
   else
     TControlHandlersHack(MainControl).DragCursor:= crDrag;
@@ -1119,6 +1193,7 @@ begin
   FMainControl.OnKeyUp        := @MainControlKeyUp;
   FMainControl.OnShowHint     := @MainControlShowHint;
   FMainControl.OnUTF8KeyPress := @MainControlUTF8KeyPress;
+  FMainControl.AddHandlerOnResize(@MainControlResize);
 
   TControlHandlersHack(FMainControl).OnDblClick   := @MainControlDblClick;
   TControlHandlersHack(FMainControl).OnQuadClick  := @MainControlQuadClick;
@@ -1269,14 +1344,16 @@ begin
         aFile := CloneActiveFile;
         try
           try
-            if RenameFile(FileSource, aFile, NewFileName, True) = True then
-            begin
-              edtRename.Visible:=False;
-              SetActiveFile(CurrentPath + NewFileName);
-              SetFocus;
-            end
-            else
-              msgError(Format(rsMsgErrRename, [ExtractFileName(OldFileNameAbsolute), NewFileName]));
+            case RenameFile(FileSource, aFile, NewFileName, True) of
+              sfprSuccess:
+                begin
+                  edtRename.Visible:=False;
+                  SetActiveFile(CurrentPath + NewFileName);
+                  SetFocus;
+                end;
+              sfprError:
+                msgError(Format(rsMsgErrRename, [ExtractFileName(OldFileNameAbsolute), NewFileName]));
+            end;
 
           except
             on e: EInvalidFileProperty do

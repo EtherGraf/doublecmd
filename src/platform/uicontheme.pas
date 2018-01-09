@@ -4,7 +4,7 @@
     Simple implementation of Icon Theme based on FreeDesktop.org specification
     (http://standards.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html)
 
-    Copyright (C) 2009-2014  Alexander Koblov (alexx2000@mail.ru)
+    Copyright (C) 2009-2017 Alexander Koblov (alexx2000@mail.ru)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,9 +16,9 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 }
 
 unit uIconTheme;
@@ -35,6 +35,7 @@ type
 
   TIconDirInfo = record
     IconSize: Integer;
+    IconScale: Integer;
     //IconContext: String; // currently not used
     IconType: TIconType;
     IconMaxSize,
@@ -62,30 +63,32 @@ type
     FTheme,
     FThemeName: String;
     FComment: String;
+    FDefaultTheme: String;
     FInherits: TStringList;
     FOwnsInheritsObject: Boolean;
     FDirectories: TIconDirList;
     FBaseDirList: array of String;         //en> List of directories that have this theme's icons.
     FBaseDirListAtCreate: array of String; //en> Base dir list passed to Create
     function LoadIconDirInfo(const IniFile: TIniFileEx; const sIconDirName: String): PIconDirInfo;
-    function FindIconHelper(aIconName: String; AIconSize: Integer): String;
+    function FindIconHelper(aIconName: String; AIconSize, AIconScale: Integer): String;
     function LoadThemeWithInherited(AInherits: TStringList): Boolean;
     procedure LoadParentTheme(AThemeName: String);
     procedure CacheDirectoryFiles(SubDirIndex: Integer; BaseDirIndex: Integer);
   protected
-    function LookupIcon(AIconName: String; AIconSize: Integer): String;
+    function LookupIcon(AIconName: String; AIconSize, AIconScale: Integer): String;
     function CreateParentTheme(const sThemeName: String): TIconTheme; virtual;
   public
-    constructor Create(sThemeName: String; BaseDirList: array of String); virtual;
+    constructor Create(sThemeName: String; BaseDirList: array of String; ADefaultTheme: String = ''); virtual;
     destructor Destroy; override;
     function Load: Boolean; virtual;
-    function FindIcon(AIconName: String; AIconSize: Integer): String;
-    function DirectoryMatchesSize(SubDirIndex: Integer; AIconSize: Integer): Boolean;
-    function DirectorySizeDistance(SubDirIndex: Integer; AIconSize: Integer): Integer;
+    function FindIcon(AIconName: String; AIconSize: Integer; AIconScale: Integer = 1): String;
+    function DirectoryMatchesSize(SubDirIndex: Integer; AIconSize, AIconScale: Integer): Boolean;
+    function DirectorySizeDistance(SubDirIndex: Integer; AIconSize, AIconScale: Integer): Integer;
     class function CutTrailingExtension(const AIconName: String): String;
     class procedure RegisterExtension(const AExtension: String);
     property ThemeName: String read FThemeName;
     property Directories: TIconDirList read FDirectories;
+    property DefaultTheme: String read FDefaultTheme write FDefaultTheme;
   end;
 
 implementation
@@ -112,24 +115,30 @@ begin
 end;
 
 
-function TIconTheme.DirectoryMatchesSize(SubDirIndex: Integer; AIconSize: Integer): Boolean;
+function TIconTheme.DirectoryMatchesSize(SubDirIndex: Integer; AIconSize,
+  AIconScale: Integer): Boolean;
 begin
   Result:= False;
   // read Type and Size data from subdir
   if SubDirIndex < 0 then Exit;
   with FDirectories.Items[SubDirIndex]^ do
-  case IconType of
-    itFixed:
-      Result:= (IconSize = AIconSize);
-    itScalable:
-      Result:= (IconMinSize <= AIconSize) and (AIconSize <= IconMaxSize);
-    itThreshold:
-      Result:= ((IconSize - IconThreshold) <= AIconSize) and (AIconSize <= (IconSize + IconThreshold));
+  begin
+    if (IconScale <> AIconScale) then
+      Exit;
+    case IconType of
+      itFixed:
+        Result:= (IconSize = AIconSize);
+      itScalable:
+        Result:= (IconMinSize <= AIconSize) and (AIconSize <= IconMaxSize);
+      itThreshold:
+        Result:= ((IconSize - IconThreshold) <= AIconSize) and (AIconSize <= (IconSize + IconThreshold));
+    end;
   end;
 end;
 
 
-function TIconTheme.DirectorySizeDistance(SubDirIndex: Integer; AIconSize: Integer): Integer;
+function TIconTheme.DirectorySizeDistance(SubDirIndex: Integer; AIconSize,
+  AIconScale: Integer): Integer;
 begin
   Result:= 0;
   // read Type and Size data from subdir
@@ -137,32 +146,34 @@ begin
   with FDirectories.Items[SubDirIndex]^ do
   case IconType of
     itFixed:
-      Result:= abs(IconSize - AIconSize);
+      Result:= abs(IconSize * IconScale - AIconSize * AIconScale);
     itScalable:
       begin
-        if AIconSize < IconMinSize then
-          Result:= IconMinSize - AIconSize;
-        if AIconSize > IconMaxSize then
-          Result:= AIconSize - IconMaxSize;
+        if AIconSize * AIconScale < IconMinSize * IconScale then
+          Result:= IconMinSize * IconScale - AIconSize * AIconScale;
+        if AIconSize * AIconScale > IconMaxSize * IconScale then
+          Result:= AIconSize * AIconScale - IconMaxSize * IconScale;
       end;
     itThreshold:
       begin
-        if AIconSize < IconSize - IconThreshold then
-          Result:= IconMinSize - AIconSize;
-        if AIconSize > IconSize + IconThreshold then
-          Result:= AIconSize - IconMaxSize;
+        if AIconSize * AIconScale < (IconSize - IconThreshold) * IconScale then
+          Result:= IconMinSize * IconScale - AIconSize * AIconScale;
+        if AIconSize * AIconScale > (IconSize + IconThreshold) * IconScale then
+          Result:= AIconSize * AIconScale - IconMaxSize * IconScale;
       end;
   end;
 end;
 
 
-constructor TIconTheme.Create(sThemeName: String; BaseDirList: array of String);
+constructor TIconTheme.Create(sThemeName: String; BaseDirList: array of String;
+  ADefaultTheme: String);
 var
  I, J: Integer;
  sElement: String;
 begin
   FTheme:= sThemeName;
   FInherits:= nil;
+  FDefaultTheme:= ADefaultTheme;
   FOwnsInheritsObject:= False;
   FDirectories:= nil;
   J:= 0;
@@ -203,8 +214,16 @@ begin
 end;
 
 function TIconTheme.Load: Boolean;
+var
+  ADefault: String;
+  ADefaultArray: TDynamicStringArray;
 begin
    Result := LoadThemeWithInherited(FInherits);
+   if Result and FOwnsInheritsObject then
+   begin
+     ADefaultArray:= SplitString(FDefaultTheme, PathSeparator);
+     for ADefault in ADefaultArray do LoadParentTheme(ADefault);
+   end;
 end;
 
 function TIconTheme.LoadThemeWithInherited(AInherits: TStringList): Boolean;
@@ -291,16 +310,17 @@ begin
     end;
 end;
 
-function TIconTheme.FindIcon(AIconName: String; AIconSize: Integer): String;
+function TIconTheme.FindIcon(AIconName: String; AIconSize: Integer;
+  AIconScale: Integer): String;
 begin
-  Result:= FindIconHelper(AIconName, AIconSize);
+  Result:= FindIconHelper(AIconName, AIconSize, AIconScale);
 {
   if Result = EmptyStr then
     Result:= LookupFallbackIcon(AIconName);
 }
 end;
 
-function TIconTheme.LookupIcon(AIconName: String; AIconSize: Integer): String;
+function TIconTheme.LookupIcon(AIconName: String; AIconSize, AIconScale: Integer): String;
 var
   I, J, FoundIndex: Integer;
   MinimalSize,
@@ -327,26 +347,26 @@ begin
   for J:= Low(FBaseDirList) to High(FBaseDirList) do
   begin
     for I:= 0 to FDirectories.Count - 1 do
+    begin
+      NewSize:= DirectorySizeDistance(I, AIconSize, AIconScale);
+
+      if (NewSize < MinimalSize) or (NewSize = 0) then
       begin
-        NewSize:= DirectorySizeDistance(I, AIconSize);
+        if not Assigned(FDirectories.Items[I]^.FileListCache[J]) then
+          CacheDirectoryFiles(I, J);
 
-        if NewSize < MinimalSize then
-          begin
-            if not Assigned(FDirectories.Items[I]^.FileListCache[J]) then
-              CacheDirectoryFiles(I, J);
-
-            FoundIndex:= FDirectories.Items[I]^.FileListCache[J].Find(AIconName);
-            if FoundIndex >= 0 then
-              begin
-                MakeResult;
-
-                if NewSize = 0 then  // exact match
-                  Exit
-                else
-                  MinimalSize:= NewSize;
-              end;
-          end;
+        FoundIndex:= FDirectories.Items[I]^.FileListCache[J].Find(AIconName);
+        if FoundIndex >= 0 then
+        begin
+          MakeResult;
+          // Exact match
+          if (NewSize = 0) and (AIconScale = FDirectories.Items[I]^.IconScale) then
+            Exit
+          else
+            MinimalSize:= NewSize;
+        end;
       end;
+    end;
   end;
 end;
 
@@ -364,6 +384,7 @@ begin
   with Result^ do
   begin
     IconSize:= IniFile.ReadInteger(sIconDirName, 'Size', 48);
+    IconScale:= IniFile.ReadInteger(sIconDirName, 'Scale', 1);
     //IconContext:= IniFile.ReadString(sIconDirName, 'Context', EmptyStr); // currently not used
     IconTypeStr:= IniFile.ReadString(sIconDirName, 'Type', 'Threshold');
     IconMaxSize:= IniFile.ReadInteger(sIconDirName, 'MaxSize', IconSize);
@@ -390,11 +411,12 @@ begin
   end;
 end;
 
-function TIconTheme.FindIconHelper(aIconName: String; AIconSize: Integer): String;
+function TIconTheme.FindIconHelper(aIconName: String; AIconSize,
+  AIconScale: Integer): String;
 var
   I: Integer;
 begin
-  Result:= LookupIcon(AIconName, AIconSize);
+  Result:= LookupIcon(AIconName, AIconSize, AIconScale);
   if Result <> EmptyStr then
     Exit;
 
@@ -403,7 +425,7 @@ begin
       // find in parent themes
       for I:= 0 to FInherits.Count - 1 do
         begin
-          Result:= TIconTheme(FInherits.Objects[I]).LookupIcon(aIconName, AIconSize);
+          Result:= TIconTheme(FInherits.Objects[I]).LookupIcon(aIconName, AIconSize, AIconScale);
           if Result <> EmptyStr then
             Exit;
         end;
